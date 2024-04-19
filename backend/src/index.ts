@@ -1,10 +1,15 @@
 import express from 'express'
 import http from 'http'
+import cors from 'cors'
 
 require('dotenv').config()
 
 const app = express()
 const server = http.createServer(app)
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL
+}))
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
