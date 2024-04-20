@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-      "outDir": "./dist",  // Output directory for compiled files
+      "outDir": "./",  // Output directory for compiled files
       "rootDir": "./src",  // Root directory of TypeScript files
       "declaration": true,  // Generates corresponding '.d.ts' file
       "declarationMap": true,  // Creates a map file for '.d.ts' files
