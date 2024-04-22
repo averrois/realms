@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import Navbar from '@/components/Navbar'
+import { Navbar } from '@/components/Navbar/Navbar'
 
 export default async function App() {
     const supabase = createClient()
