@@ -1,3 +1,3 @@
 # Realms
 
-Create a realm with your friends.
+Create pixel art realms to explore and hang out with your friends.

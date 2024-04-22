@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { useModal } from '@/app/hooks/useModal'
 
 type NavbarChildProps = {
     name: string,
@@ -13,6 +14,7 @@ export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => 
 
     const router = useRouter()
     const [menuOpen, setMenuOpen] = useState(false)
+    const [modal, setModal] = useModal()
 
     async function handleSignOut() {
         const supabase = createClient()
@@ -23,7 +25,7 @@ export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => 
 
     return (
         <div className='w-full h-16 bg-secondary flex flex-row items-center p-2 pl-4 relative justify-end md:justify-between'>
-            <button className='bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl text-xl hidden md:flex flex-row items-center gap-2'>
+            <button className='bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl text-xl hidden md:flex flex-row items-center gap-2' onClick={() => setModal('Create Realm')}>
                 Create Realm
                 <PlusCircleIcon className='h-5'/>
             </button>

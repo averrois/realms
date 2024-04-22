@@ -1,5 +1,7 @@
 import { Jersey_25 } from 'next/font/google'
 import "./globals.css";
+import { ModalProvider } from './hooks/useModal'
+import ModalParent from '@/components/Modal/ModalParent'
 
 const jersey = Jersey_25({
     subsets: ['latin'],
@@ -13,7 +15,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "realms",
-  description: "Create a realm with your friends and integrate them with your Discord server.",
+  description: "Create a realm with your friends and integrate with your Discord server.",
 };
 
 export default function RootLayout({
@@ -24,7 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={jersey.className}>
       <body>
-          {children}
+        <ModalProvider>
+            <ModalParent />
+            {children}
+        </ModalProvider>
       </body>
     </html>
   );
