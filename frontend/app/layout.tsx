@@ -1,5 +1,11 @@
 import { GeistSans } from "geist/font/sans";
+import { Jersey_25 } from '@next/font/google'
 import "./globals.css";
+
+const jersey = Jersey_25({
+    subsets: ['latin'],
+    weight: ['400']
+})
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -17,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="en" className={jersey.className}>
       <body>
           {children}
       </body>

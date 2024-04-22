@@ -1,11 +1,11 @@
 import React from 'react'
 
-type NavbarProps = {
+const Navbar:React.FC = () => {
     
-}
-
-const Navbar:React.FC<NavbarProps> = () => {
-    
-    return <div>Have a good coding</div>
+    return (
+        <div className='w-full h-16 bg-secondary'>
+            
+        </div>
+    )
 }
 export default Navbar;
