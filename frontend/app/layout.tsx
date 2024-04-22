@@ -1,5 +1,4 @@
-import { GeistSans } from "geist/font/sans";
-import { Jersey_25 } from '@next/font/google'
+import { Jersey_25 } from 'next/font/google'
 import "./globals.css";
 
 const jersey = Jersey_25({

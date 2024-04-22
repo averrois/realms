@@ -14,7 +14,7 @@ export default async function App() {
     return (
         <div>
             <Navbar />
-            Welcome to the app.
+            <h1 className='text-3xl pl-4 pt-4'>Your Realms</h1>
         </div>
     )
 }
