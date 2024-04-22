@@ -5,7 +5,7 @@ import ModalParent from '@/components/Modal/ModalParent'
 
 const jersey = Jersey_25({
     subsets: ['latin'],
-    weight: ['400']
+    weight: ['400'],
 })
 
 const defaultUrl = process.env.VERCEL_URL
