@@ -10,13 +10,13 @@ const jersey = Jersey_25({
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
+  : "http://localhost:3000"
 
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "realms",
   description: "Create a realm with your friends and integrate with your Discord server.",
-};
+}
 
 export default function RootLayout({
   children,
