@@ -22,8 +22,8 @@ export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => 
     }
 
     return (
-        <div className='w-full h-16 bg-secondary flex flex-row items-center p-2 pl-4 relative justify-between'>
-            <button className='bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl text-xl flex flex-row items-center gap-2'>
+        <div className='w-full h-16 bg-secondary flex flex-row items-center p-2 pl-4 relative justify-end md:justify-between'>
+            <button className='bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl text-xl hidden md:flex flex-row items-center gap-2'>
                 Create Realm
                 <PlusCircleIcon className='h-5'/>
             </button>
@@ -31,7 +31,7 @@ export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => 
                 <p className='text-white text-xl'>{name}</p>
                 <img src={avatar_url} className='aspect-square rounded-full w-12'/>
             </div>
-            {menuOpen && <button className='bg-secondary hover:bg-secondaryhover absolute top-[72px] right-[8px] rounded-md w-32 text-center text-lg' onClick={handleSignOut}>Sign Out</button>}
+            {menuOpen && <button className='bg-secondary hover:bg-secondaryhover absolute top-[72px] right-[8px] rounded-md w-32 text-center text-xl p-1' onClick={handleSignOut}>Sign Out</button>}
         </div>
     )
 }
