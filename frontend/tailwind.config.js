@@ -9,10 +9,11 @@ module.exports = {
       colors: {
         primary: "#232D3F",
         secondary: "#232D3F",
-        tertiary: "#005B41",
+        tertiary: "#874CCC",
         quaternary: "#008170",
         secondaryhover: "#19202e",
         quaternaryhover: "#006b5d",
+        quaternarydisabled: "#014f45"
       },
     },
   },

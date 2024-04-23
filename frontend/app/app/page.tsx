@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Navbar } from '@/components/Navbar/Navbar'
+import { Navbar } from '@/app/app/Navbar/Navbar'
+import RealmsMenu from './RealmsMenu/RealmsMenu'
 
 export default async function App() {
     const supabase = createClient()
@@ -11,10 +12,16 @@ export default async function App() {
         return redirect('/signin')
     }
 
+    const { data, error } = await supabase.from('realms').select('id, name').eq('owner_id', user.id)
+
+    const realms = data || []
+    const errorMessage = error?.message || ''
+
     return (
         <div>
             <Navbar />
             <h1 className='text-3xl pl-4 pt-4'>Your Realms</h1>
+            <RealmsMenu realms={realms} errorMessage={errorMessage}/>
         </div>
     )
 }

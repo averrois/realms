@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC } from 'react';
 
-type Modal = 'None' | 'Create Realm'
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown'
 
 type ModalContextType = [
     modalValue: Modal,
