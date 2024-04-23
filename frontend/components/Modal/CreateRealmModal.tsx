@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 
 const CreateRealmModal:React.FC = () => {
     
-    const [modal] = useModal()
+    const [modal, setModal] = useModal()
     const [realmName, setRealmName] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 
@@ -38,6 +38,7 @@ const CreateRealmModal:React.FC = () => {
         } 
 
         if (data) {
+            setModal('None')
             router.push(`/editor/${data[0].id}`)
         }
 
