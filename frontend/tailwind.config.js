@@ -13,6 +13,7 @@ module.exports = {
         quaternary: "#008170",
         secondaryhover: "#19202e",
         quaternaryhover: "#006b5d",
+        quaternarydisabled: "#014f45"
       },
     },
   },
