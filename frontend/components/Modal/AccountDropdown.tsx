@@ -41,7 +41,7 @@ const AccountDropdown:React.FC = () => {
               enterFrom="opacity-0 translate-y-4 translate-y-0 scale-95"
               enterTo="opacity-100 translate-y-0 scale-100"
               leave="ease-in duration-200"
-              leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+              leaveFrom="opacity-100 translate-y-0 scale-100"
               leaveTo="opacity-0 translate-y-4 translate-y-0 scale-95"
             >
               <Dialog.Panel className={`absolute top-[72px] right-[8px] transform overflow-hidden text-left shadow-xl transition-all`}>
