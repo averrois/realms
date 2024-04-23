@@ -6,12 +6,15 @@ import BasicButton from '../BasicButton'
 import BasicInput from '../BasicInput'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation' 
 
 const CreateRealmModal:React.FC = () => {
     
     const [modal] = useModal()
     const [realmName, setRealmName] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
+
+    const router = useRouter()
 
     async function createRealm() {
         const supabase = createClient()
@@ -24,16 +27,20 @@ const CreateRealmModal:React.FC = () => {
         const uid = user.id
 
         setLoading(true)
-        const { error } = await supabase.from('realms').insert({
+        const { data, error } = await supabase.from('realms').insert({
             owner_id: uid,
             name: realmName,
-        })
+        }).select()
 
         if (error) {
+            setLoading(false)
             toast.error(error?.message)
         } 
 
-        setLoading(false)
+        if (data) {
+            router.push(`/editor/${data[0].id}`)
+        }
+
     }
 
     return (
