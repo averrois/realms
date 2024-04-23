@@ -1,10 +1,8 @@
 'use client'
-import React, { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
-import { useRouter } from 'next/navigation'
+import React from 'react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { useModal } from '@/app/hooks/useModal'
-import BasicButton from '../BasicButton'
+import BasicButton from '../../../components/BasicButton'
 
 type NavbarChildProps = {
     name: string,
@@ -12,14 +10,11 @@ type NavbarChildProps = {
 };
 
 export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => {
-
-    const router = useRouter()
-    const [menuOpen, setMenuOpen] = useState(false)
     const [modal, setModal] = useModal()
 
     return (
-        <div className='w-full h-16 bg-secondary flex flex-row items-center p-2 pl-4 relative justify-end md:justify-between'>
-            <BasicButton onClick={() => setModal('Create Realm')} className='hidden md:flex flex-row items-center gap-2'>
+        <div className='w-full h-16 bg-secondary flex flex-row items-center p-2 pl-4 relative justify-end sm:justify-between'>
+            <BasicButton onClick={() => setModal('Create Realm')} className='hidden sm:flex flex-row items-center gap-2'>
                 Create Realm
                 <PlusCircleIcon className='h-5'/>
             </BasicButton>
