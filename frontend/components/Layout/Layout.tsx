@@ -12,7 +12,7 @@ const Layout:React.FC<LayoutProps> = ({ children }) => {
     
     return (
         <ModalProvider>
-            <ToastContainer />
+            <ToastContainer theme='colored'/>
             <ModalParent />
             {children}
         </ModalProvider>

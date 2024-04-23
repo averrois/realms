@@ -18,7 +18,6 @@ const CreateRealmModal:React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) {
-            toast.error('You must be logged in to create a realm.')
             return
         }
 
@@ -27,7 +26,7 @@ const CreateRealmModal:React.FC = () => {
         setLoading(true)
         const { error } = await supabase.from('realms').insert({
             owner_id: uid,
-            name: 'New Realm',
+            name: realmName,
         })
 
         if (error) {
