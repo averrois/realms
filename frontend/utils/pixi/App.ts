@@ -14,10 +14,6 @@ export class App {
             resizeTo: container,
         })
         this.initialized = true
-
-        this.app.ticker.add(() => {
-            console.log('nice')
-        })
     }
 
     getApp() {
