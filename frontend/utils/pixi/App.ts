@@ -16,7 +16,9 @@ export class App {
         })
         this.initialized = true
 
-        const square = new PIXI.Graphics()
+        await this.loadAssets()
+        const sprite = PIXI.Sprite.from('/sprites/tile-outline.png')
+        this.app.stage.addChild(sprite)
     }
 
     getApp() {
@@ -31,5 +33,9 @@ export class App {
         if (this.initialized) {
             this.app.destroy()
         }
+    }
+
+    async loadAssets() {
+        await PIXI.Assets.load('/sprites/tile-outline.png')
     }
 }
