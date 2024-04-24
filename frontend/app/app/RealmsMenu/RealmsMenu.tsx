@@ -41,9 +41,11 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                         </button>
                     )
                 })}
-                <BasicButton className='fixed bottom-4 w-[90%] h-12' disabled={selectedRealm === ''}>
-                    Join Realm
-                </BasicButton>
+                <div className='fixed bottom-0 w-full bg-black grid place-items-center p-2'>
+                     <BasicButton className='w-[90%] h-12' disabled={selectedRealm === ''}>
+                        Join Realm
+                    </BasicButton>
+                </div>
             </div>
 
             {/* Desktop View */}
