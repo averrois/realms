@@ -16,7 +16,7 @@ export class App {
         this.initialized = true
 
         this.app.ticker.add(() => {
-            console.log('nice')
+            console.log('tick')
         })
     }
 
@@ -26,5 +26,11 @@ export class App {
         }
 
         return this.app
+    }
+
+    destroy() {
+        if (this.initialized) {
+            this.app.destroy()
+        }
     }
 }

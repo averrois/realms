@@ -2,35 +2,29 @@
 import React, { useRef } from 'react'
 import { App } from '@/utils/pixi/App'
 import { useEffect } from 'react'
-import { Application } from 'pixi.js'
 
 const PixiEditor:React.FC = () => {
 
-    const pixiAppRef = useRef<Application | null>(null)
+    const appRef = useRef<App | null>(null)
 
     useEffect(() => {
         const mount = async () => {
             const app = new App()
+            appRef.current = app
             await app.init()
 
             const pixiApp = app.getApp()
-            // Destroy the app if it already exists. This is used for hot reloading.
-            if (pixiAppRef.current) {
-                pixiApp.destroy()
-                return
-            }
 
-            pixiAppRef.current = pixiApp
-            document.getElementById('app-container')!.appendChild(pixiAppRef.current.canvas)
+            document.getElementById('app-container')!.appendChild(pixiApp.canvas)
         }
 
-        if (!pixiAppRef.current) {
+        if (!appRef.current) {
             mount()
         }
         
         return () => {
-            if (pixiAppRef.current) {
-                pixiAppRef.current.destroy()
+            if (appRef.current) {
+                appRef.current.destroy()
             }
         }
     }, [])
