@@ -1,7 +1,5 @@
 import { Jersey_25 } from 'next/font/google'
 import "./globals.css";
-import { ModalProvider } from './hooks/useModal'
-import ModalParent from '@/components/Modal/ModalParent'
 import Layout from '@/components/Layout/Layout'
 
 const jersey = Jersey_25({
