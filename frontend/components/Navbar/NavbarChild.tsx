@@ -2,7 +2,7 @@
 import React from 'react'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { useModal } from '@/app/hooks/useModal'
-import BasicButton from '../../../components/BasicButton'
+import BasicButton from '../BasicButton'
 
 type NavbarChildProps = {
     name: string,

@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Navbar } from '@/app/app/Navbar/Navbar'
+import { Navbar } from '@/components/Navbar/Navbar'
 import RealmsMenu from './RealmsMenu/RealmsMenu'
 
 export default async function App() {
