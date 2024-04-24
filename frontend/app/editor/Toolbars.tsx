@@ -2,6 +2,7 @@
 import React from 'react'
 import ToolButton from './ToolButton'
 import { ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/solid'
+import DynamicLink from '@/components/DynamicLink'
 
 type ToolbarsProps = {
     
@@ -15,9 +16,11 @@ const Toolbars:React.FC<ToolbarsProps> = () => {
 
             </div>
             <div className='h-screen w-[48px] bg-secondary absolute left-0 flex flex-col items-center p-1'>
-                <ToolButton href='/app'>
-                    <ArrowLeftEndOnRectangleIcon className='h-8 w-8 text-white'/>
-                </ToolButton>
+                <div className='hover:bg-secondaryhover w-full aspect-square grid place-items-center rounded-lg'>
+                    <DynamicLink href={'/app'}>
+                        <ArrowLeftEndOnRectangleIcon className='h-8 w-8 text-white'/>
+                    </DynamicLink>
+                </div>
             </div>
         </div>
     )
