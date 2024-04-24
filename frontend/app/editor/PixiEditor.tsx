@@ -31,7 +31,7 @@ const PixiEditor:React.FC = () => {
 
     return (
         <div id='app-container' className='w-full h-screen'>
-
+            
         </div>
     )
 }
