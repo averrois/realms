@@ -13,14 +13,21 @@ const PixiEditor:React.FC = () => {
             const app = new App()
             await app.init()
 
-            pixiAppRef.current = app.getApp()
+            const pixiApp = app.getApp()
+            // Destroy the app if it already exists. This is used for hot reloading.
+            if (pixiAppRef.current) {
+                pixiApp.destroy()
+                return
+            }
+
+            pixiAppRef.current = pixiApp
             document.getElementById('app-container')!.appendChild(pixiAppRef.current.canvas)
         }
 
         if (!pixiAppRef.current) {
             mount()
         }
-
+        
         return () => {
             if (pixiAppRef.current) {
                 pixiAppRef.current.destroy()
