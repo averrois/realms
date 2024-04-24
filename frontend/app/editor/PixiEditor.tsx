@@ -1,20 +1,20 @@
 'use client'
 import React, { useRef } from 'react'
-import { App } from '@/utils/pixi/App'
+import { EditorApp } from '@/utils/pixi/EditorApp'
 import { useEffect } from 'react'
 
 const PixiEditor:React.FC = () => {
 
-    const appRef = useRef<App | null>(null)
+    const appRef = useRef<EditorApp | null>(null)
 
     useEffect(() => {
         const mount = async () => {
-            const app = new App()
+            const app = new EditorApp()
             appRef.current = app
             await app.init()
 
             const pixiApp = app.getApp()
-
+            
             document.getElementById('app-container')!.appendChild(pixiApp.canvas)
         }
 
@@ -30,8 +30,8 @@ const PixiEditor:React.FC = () => {
     }, [])
 
     return (
-        <div id='app-container' className='w-full h-screen'>
-
+        <div id='app-container' className='w-full h-screen absolute'>
+            
         </div>
     )
 }

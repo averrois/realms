@@ -1,8 +1,16 @@
 import * as PIXI from 'pixi.js'
+import { TileMap , getDefaultTileMap } from './types'
+
+PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
-    private initialized: boolean = false
-    private app: PIXI.Application = new PIXI.Application()
+    protected app: PIXI.Application = new PIXI.Application()
+    protected readonly gameScale: number = 5
+    protected initialized: boolean = false
+    protected gameWorldContainer: PIXI.Container = new PIXI.Container({
+        scale: this.gameScale,
+    })
+    protected tileMap: TileMap = getDefaultTileMap()
 
     async init() {
         const container = document.getElementById('app-container')
@@ -12,15 +20,15 @@ export class App {
 
         await this.app.init({
             resizeTo: container,
+            backgroundColor: 0x0F0F0F,
         })
         this.initialized = true
 
-        this.app.ticker.add(() => {
-            console.log('tick')
-        })
+        // Mount containers
+        this.app.stage.addChild(this.gameWorldContainer)
     }
 
-    getApp() {
+    public getApp() {
         if (!this.initialized) {
             throw new Error('App not initialized')
         }
@@ -28,7 +36,7 @@ export class App {
         return this.app
     }
 
-    destroy() {
+    public destroy() {
         if (this.initialized) {
             this.app.destroy()
         }
