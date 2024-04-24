@@ -7,11 +7,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#232D3F",
+        primary: "#0F0F0F",
         secondary: "#232D3F",
+        secondaryhover: "#465b82",
         tertiary: "#005B41",
         quaternary: "#008170",
-        secondaryhover: "#19202e",
         quaternaryhover: "#029c87",
         quaternarydisabled: "#014f45"
       },

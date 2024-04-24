@@ -14,7 +14,7 @@ const PixiEditor:React.FC = () => {
             await app.init()
 
             const pixiApp = app.getApp()
-
+            
             document.getElementById('app-container')!.appendChild(pixiApp.canvas)
         }
 
@@ -30,7 +30,7 @@ const PixiEditor:React.FC = () => {
     }, [])
 
     return (
-        <div id='app-container' className='w-full h-screen'>
+        <div id='app-container' className='w-full h-screen absolute'>
             
         </div>
     )

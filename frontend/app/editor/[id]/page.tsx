@@ -2,6 +2,7 @@ import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import PixiEditor from '../PixiEditor'
+import Toolbars from '../Toolbars'
 
 export default async function RealmEditor({ params }: { params: { id: string } }) {
 
@@ -20,8 +21,9 @@ export default async function RealmEditor({ params }: { params: { id: string } }
     const realm = data[0]
 
     return (
-        <div>
+        <div className='relative'>
             <PixiEditor />
+            <Toolbars />
         </div>
     )
 }

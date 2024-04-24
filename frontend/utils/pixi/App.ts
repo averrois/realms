@@ -7,7 +7,7 @@ export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected readonly gameScale: number = 5
     protected initialized: boolean = false
-    protected tileMapContainer: PIXI.Container = new PIXI.Container({
+    protected gameWorldContainer: PIXI.Container = new PIXI.Container({
         scale: this.gameScale,
     })
     protected tileMap: TileMap = getDefaultTileMap()
@@ -25,7 +25,7 @@ export class App {
         this.initialized = true
 
         // Mount containers
-        this.app.stage.addChild(this.tileMapContainer)
+        this.app.stage.addChild(this.gameWorldContainer)
     }
 
     public getApp() {
