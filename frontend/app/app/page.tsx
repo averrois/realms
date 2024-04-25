@@ -15,7 +15,7 @@ export default async function App() {
 
     const { data, error } = await supabase.from('realms').select('id, name').eq('owner_id', user.id)
 
-    const realms = data || []
+    const realms = data || [] 
     const errorMessage = error?.message || ''
 
     return (

@@ -55,8 +55,8 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                         return (
                             <div key={realm.id}>
                                 <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
-                                    <img src='/pixel-screenshot.jpg' className='w-full h-full'/>
-                                    <div className='absolute animate-pulse w-full h-full bg-secondary'/>
+                                    <img src='/pixel-screenshot.jpg' />
+                                    <div className='animate-pulse w-full h-full bg-secondary'/>
                                 </div>
                                 <div className='mt-1 flex flex-row justify-between'>
                                     <p>{realm.name}</p>
