@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import BasicButton from '@/components/BasicButton'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import DynamicLink from '@/components/DynamicLink'
+import Link from 'next/link'
 
 type Realm = {
     id: string,
@@ -54,14 +54,15 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                     {realms.map((realm) => {
                         return (
                             <div key={realm.id}>
-                                <div className='w-full aspect-video bg-white rounded-3xl overflow-hidden'>
-                                    <img src='/pixel-screenshot.jpg' className='w-full h-full'/>
+                                <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
+                                    <img src='/pixel-screenshot.jpg' />
+                                    <div className='animate-pulse w-full h-full bg-secondary'/>
                                 </div>
                                 <div className='mt-1 flex flex-row justify-between'>
                                     <p>{realm.name}</p>
-                                    <DynamicLink href={`/editor/${realm.id}`}>
-                                        <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-secondary rounded-md'/>
-                                    </DynamicLink>
+                                    <Link href={`/editor/${realm.id}`}>
+                                        <PencilSquareIcon className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1'/>
+                                    </Link>
                                 </div>
                             </div>
                         )
