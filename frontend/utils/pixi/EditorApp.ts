@@ -23,10 +23,11 @@ export class EditorApp extends App {
     }
 
     private drawGridLines = () => {
+        const { width, height } = this.getGridLineDimensions()
         this.gridLines = new PIXI.TilingSprite({
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
-            width: this.app.screen.width,
-            height: this.app.screen.height,
+            width: width,
+            height: height,
         })
 
         this.gridLineContainer.addChild(this.gridLines)
@@ -34,8 +35,17 @@ export class EditorApp extends App {
     }
 
     private onResize = () => {
-        this.gridLines.width = this.app.screen.width
-        this.gridLines.height = this.app.screen.height
+        const { width, height } = this.getGridLineDimensions()
+        this.gridLines.width = width
+        this.gridLines.height = height
+    }
+
+    private getGridLineDimensions = () => {
+        // extra 100 distance for some breathing room 
+        const width = this.app.screen.width + 100
+        const height = this.app.screen.height + 100
+
+        return { width, height }
     }
 
     private setUpInteraction = () => {
@@ -69,8 +79,11 @@ export class EditorApp extends App {
         this.app.stage.position.x += diffX
         this.app.stage.position.y += diffY
 
+        // move the grid lines so they stay in front of camera at all times
         this.gridLineContainer.position.x -= diffX
         this.gridLineContainer.position.y -= diffY
+
+        // scroll the grid lines so they look like they are moving
         this.gridLines.tilePosition.x += diffX
         this.gridLines.tilePosition.y += diffY
     }
