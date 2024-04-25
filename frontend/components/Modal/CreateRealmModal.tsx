@@ -7,6 +7,7 @@ import BasicInput from '../BasicInput'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation' 
+import revalidate from '@/utils/revalidate'
 
 const CreateRealmModal:React.FC = () => {
     
@@ -38,6 +39,7 @@ const CreateRealmModal:React.FC = () => {
         } 
 
         if (data) {
+            revalidate('/app')
             setModal('None')
             toast.success('Your new realm has been created!')
             router.push(`/editor/${data[0].id}`)

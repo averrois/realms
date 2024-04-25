@@ -5,14 +5,11 @@ PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
-    protected readonly gameScale: number = 5
     protected initialized: boolean = false
-    protected gameWorldContainer: PIXI.Container = new PIXI.Container({
-        scale: this.gameScale,
-    })
+    protected gameWorldContainer: PIXI.Container = new PIXI.Container()
     protected tileMap: TileMap = getDefaultTileMap()
 
-    async init() {
+    public async init() {
         const container = document.getElementById('app-container')
         if (!container) {
             throw new Error('Container not found')

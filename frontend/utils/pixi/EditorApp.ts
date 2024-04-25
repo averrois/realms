@@ -4,26 +4,38 @@ import { App } from './App'
 export class EditorApp extends App {
 
     private gridLines: PIXI.Container = new PIXI.Container()
+    private toolMode: 'Hand' = 'Hand'
 
-    async init() {
+    public async init() {
         await super.init()
         this.app.stage.addChild(this.gridLines)
         await this.loadAssets()
         this.drawGridLines()
+
+        this.setUpInteraction()
     }
 
-    async loadAssets() {
+    private async loadAssets() {
         await PIXI.Assets.load('/sprites/tile-outline.png')
     }
 
-    drawGridLines() {
-        for (let y = 0; y < this.tileMap.length; y++) {
-            for (let x = 0; x < this.tileMap[y].length; x++) {
-                const sprite = PIXI.Sprite.from('/sprites/tile-outline.png');
-                sprite.x = x * 80;
-                sprite.y = y * 80;
-                this.gridLines.addChild(sprite);
+    private drawGridLines() {
+        const tilingSprite = new PIXI.TilingSprite({
+            texture: PIXI.Texture.from('/sprites/tile-outline.png'),
+            width: this.app.screen.width,
+            height: this.app.screen.height,
+        })
+
+        this.app.stage.addChild(tilingSprite)
+    }
+
+    private setUpInteraction() {
+        this.app.stage.interactive = true
+        this.app.stage.on('pointerdown', (e) => {
+            if (this.toolMode === 'Hand') {
+                console.log('running')
             }
-        }
+        })
+
     }
 }

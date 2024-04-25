@@ -3,8 +3,6 @@ import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar/Navbar'
 import RealmsMenu from './RealmsMenu/RealmsMenu'
 
-export const dynamic = 'force-dynamic'
-
 export default async function App() {
 
     const supabase = createClient()
