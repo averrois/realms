@@ -25,7 +25,7 @@ export class App {
         this.app.stage.addChild(this.gameWorldContainer)
     }
 
-    public getApp() {
+    public getApp = () => {
         if (!this.initialized) {
             throw new Error('App not initialized')
         }
@@ -33,7 +33,7 @@ export class App {
         return this.app
     }
 
-    public destroy() {
+    public destroy = () => {
         if (this.initialized) {
             this.app.destroy()
         }
