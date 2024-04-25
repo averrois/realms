@@ -31,6 +31,14 @@ export class App {
         return this.app
     }
 
+    protected convertToTileCoordinates = (x: number, y: number) => {
+        const tileSize = 32
+        return {
+            x: Math.floor(x / tileSize),
+            y: Math.floor(y / tileSize),
+        }
+    }
+
     public destroy() {
         if (this.initialized) {
             this.app.destroy()

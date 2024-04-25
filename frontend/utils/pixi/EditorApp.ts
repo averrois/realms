@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
+import signal from '../signal'
 
 export class EditorApp extends App {
 
@@ -66,7 +67,9 @@ export class EditorApp extends App {
 
     private sendCoordinates = () => {
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
-            console.log(e.getLocalPosition(this.app.stage))
+            const position = e.getLocalPosition(this.app.stage)
+            const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
+            signal.emit('coordinates', convertedPosition)
         })
     }
 
