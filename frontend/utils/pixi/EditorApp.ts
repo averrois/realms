@@ -31,12 +31,13 @@ export class EditorApp extends App {
         })
 
         this.gridLineContainer.addChild(this.gridLines)
-        window.addEventListener('resize', this.onResize)
+        this.app.renderer.on('resize', this.onResize)
     }
 
     private onResize = () => {
         this.gridLines.width = this.app.screen.width
         this.gridLines.height = this.app.screen.height
+        console.log('running')
     }
 
     private setUpInteraction = () => {
@@ -104,6 +105,5 @@ export class EditorApp extends App {
 
     public destroy() {
         super.destroy()
-        window.removeEventListener('resize', this.onResize)
     }
 }
