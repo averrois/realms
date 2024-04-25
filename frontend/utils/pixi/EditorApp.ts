@@ -23,11 +23,10 @@ export class EditorApp extends App {
     }
 
     private drawGridLines = () => {
-        const { width, height } = this.getGridLineDimensions()
         this.gridLines = new PIXI.TilingSprite({
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
-            width: width,
-            height: height,
+            width: this.app.screen.width,
+            height: this.app.screen.height,
         })
 
         this.gridLineContainer.addChild(this.gridLines)
@@ -35,22 +34,14 @@ export class EditorApp extends App {
     }
 
     private onResize = () => {
-        const { width, height } = this.getGridLineDimensions()
-        this.gridLines.width = width
-        this.gridLines.height = height
-    }
-
-    private getGridLineDimensions = () => {
-        // extra 100 distance for some breathing room 
-        const width = this.app.screen.width + 100
-        const height = this.app.screen.height + 100
-
-        return { width, height }
+        this.gridLines.width = this.app.screen.width
+        this.gridLines.height = this.app.screen.height
     }
 
     private setUpInteraction = () => {
         this.app.stage.interactive = true
         this.handTool()
+        this.sendCoordinates()
     }
 
     private handTool = () => {
@@ -70,6 +61,12 @@ export class EditorApp extends App {
             if (this.toolMode === 'Hand') {
                 this.onDragStart(e)
             }
+        })
+    }
+
+    private sendCoordinates = () => {
+        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            console.log(e.getLocalPosition(this.app.stage))
         })
     }
 

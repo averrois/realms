@@ -3,7 +3,11 @@ import React, { useRef } from 'react'
 import { EditorApp } from '@/utils/pixi/EditorApp'
 import { useEffect } from 'react'
 
-const PixiEditor:React.FC = () => {
+type PixiEditorProps = {
+    className?: string
+}
+
+const PixiEditor:React.FC<PixiEditorProps> = ({ className }) => {
 
     const appRef = useRef<EditorApp | null>(null)
 
@@ -30,7 +34,7 @@ const PixiEditor:React.FC = () => {
     }, [])
 
     return (
-        <div id='app-container' className='w-full h-screen absolute'>
+        <div id='app-container' className={`overflow-hidden ${className}`}>
             
         </div>
     )

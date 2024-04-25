@@ -9,7 +9,7 @@ type TopBarProps = {
 const TopBar:React.FC<TopBarProps> = () => {
     
     return (
-        <div className='w-full h-[48px] bg-secondary absolute top-0 flex flex-row items-center p-2 border-b-2 border-black'>
+        <div className='w-full h-[48px] bg-secondary flex flex-row items-center p-2 border-b-2 border-black'>
             <div className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1'>
                 <Link href={'/app'}>
                     <ArrowLeftEndOnRectangleIcon className='h-8 w-8 text-white'/>
