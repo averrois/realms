@@ -1,5 +1,4 @@
 import * as PIXI from 'pixi.js'
-import { TileMap , getDefaultTileMap } from './types'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
@@ -7,7 +6,6 @@ export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
     protected gameWorldContainer: PIXI.Container = new PIXI.Container()
-    protected tileMap: TileMap = getDefaultTileMap()
 
     public async init() {
         const container = document.getElementById('app-container')
@@ -33,7 +31,7 @@ export class App {
         return this.app
     }
 
-    public destroy = () => {
+    public destroy() {
         if (this.initialized) {
             this.app.destroy()
         }
