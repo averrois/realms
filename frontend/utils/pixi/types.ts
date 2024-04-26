@@ -1,1 +1,1 @@
-export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut'
+export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'

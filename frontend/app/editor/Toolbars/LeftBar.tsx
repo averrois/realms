@@ -3,7 +3,7 @@ import React from 'react'
 import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool } from '@/utils/pixi/types'
-import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
+import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, Square2StackIcon } from '@heroicons/react/24/solid'
 
 type LeftBarProps = {
     tool: Tool,
@@ -22,6 +22,9 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, selectTool }) => {
             </ToolButton>
             <ToolButton selected={tool === 'ZoomOut'} onClick={() => selectTool('ZoomOut')}>
                 <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
+            </ToolButton>
+            <ToolButton selected={tool === 'Tile'} onClick={() => selectTool('Tile')}>
+                <Square2StackIcon className='h-8 w-8 text-white'/>
             </ToolButton>
         </div>
     )
