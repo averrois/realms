@@ -29,8 +29,8 @@ export class EditorApp extends App {
     private drawGridLines = () => {
         this.gridLines = new PIXI.TilingSprite({
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
-            width: 10000,
-            height: 10000,
+            width: this.app.screen.width,
+            height: this.app.screen.height,
         })
 
         this.gridLineContainer.addChild(this.gridLines)
@@ -38,8 +38,8 @@ export class EditorApp extends App {
     }
 
     private resizeGridLines = () => {
-        this.gridLines.width = 10000
-        this.gridLines.height = 10000
+        this.gridLines.width = this.app.screen.width
+        this.gridLines.height = this.app.screen.height
     }
 
     private setUpUIListeners = () => {
@@ -130,15 +130,11 @@ export class EditorApp extends App {
 
     private sendCoordinates = () => {
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            if (this.isMouseInScreen === false) return
+
             const position = e.getLocalPosition(this.app.stage)
             const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
             signal.emit('coordinates', convertedPosition)
-        })
-        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
-            console.log('enter')
-        })
-        this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
-            console.log('leave')
         })
     }
 

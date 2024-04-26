@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js'
+import signal from '../signal'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
@@ -6,6 +7,7 @@ export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
     protected gameWorldContainer: PIXI.Container = new PIXI.Container()
+    protected isMouseInScreen: boolean = false
 
     public async init() {
         const container = document.getElementById('app-container')
@@ -21,6 +23,8 @@ export class App {
 
         // Mount containers
         this.app.stage.addChild(this.gameWorldContainer)
+
+        this.setUpMouseListeners()
     }
 
     public getApp = () => {
@@ -39,7 +43,23 @@ export class App {
         }
     }
 
+    private onMouseEnter = () => {
+        this.isMouseInScreen = true
+    }
+
+    private onMouseLeave = () => {
+        this.isMouseInScreen = false
+    }
+
+    private setUpMouseListeners = () => {
+        signal.on('mouseEnter', this.onMouseEnter)
+        signal.on('mouseLeave', this.onMouseLeave)
+    }
+
     public destroy() {
+        signal.off('mouseEnter', this.onMouseEnter)
+        signal.off('mouseLeave', this.onMouseLeave)
+
         if (this.initialized) {
             this.app.destroy()
         }

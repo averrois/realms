@@ -14,7 +14,7 @@ class Signal {
         }
     }
 
-    public emit(name: string, data: any): void {
+    public emit(name: string, data?: any): void {
         if (this.listeners[name]) {
             this.listeners[name].forEach(callback => callback(data))
         }

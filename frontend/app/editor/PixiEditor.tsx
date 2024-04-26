@@ -2,6 +2,7 @@
 import React, { useRef } from 'react'
 import { EditorApp } from '@/utils/pixi/EditorApp'
 import { useEffect } from 'react'
+import signal from '@/utils/signal'
 
 type PixiEditorProps = {
     className?: string
@@ -33,8 +34,16 @@ const PixiEditor:React.FC<PixiEditorProps> = ({ className }) => {
         }
     }, [])
 
+    const onMouseEnter = () => {
+        signal.emit('mouseEnter')
+    }
+
+    const onMouseLeave = () => {
+        signal.emit('mouseLeave')
+    }
+
     return (
-        <div id='app-container' className={`overflow-hidden ${className}`}>
+        <div id='app-container' className={`overflow-hidden ${className}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             
         </div>
     )
