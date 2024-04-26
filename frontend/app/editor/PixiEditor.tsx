@@ -35,11 +35,11 @@ const PixiEditor:React.FC<PixiEditorProps> = ({ className }) => {
     }, [])
 
     const onMouseEnter = () => {
-        signal.emit('mouseEnter')
+        signal.emit('mouseOver', true)
     }
 
     const onMouseLeave = () => {
-        signal.emit('mouseLeave')
+        signal.emit('mouseOver', false)
     }
 
     return (

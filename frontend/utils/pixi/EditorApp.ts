@@ -141,23 +141,17 @@ export class EditorApp extends App {
         })
     }
 
-    private onMouseEnter = () => {
-        this.isMouseInScreen = true
-    }
-
-    private onMouseLeave = () => {
-        this.isMouseInScreen = false
+    private onMouseOver = (isOver: boolean) => {
+        this.isMouseInScreen = isOver
     }
 
     private setUpMouseListeners = () => {
-        signal.on('mouseEnter', this.onMouseEnter)
-        signal.on('mouseLeave', this.onMouseLeave)
+        signal.on('mouseOver', this.onMouseOver)
     }
 
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
-        signal.off('mouseEnter', this.onMouseEnter)
-        signal.off('mouseLeave', this.onMouseLeave)
+        signal.off('mouseEnter', this.onMouseOver)
 
         super.destroy()
     }
