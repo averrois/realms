@@ -6,7 +6,6 @@ PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
-    protected gameWorldContainer: PIXI.Container = new PIXI.Container()
 
     public async init() {
         const container = document.getElementById('app-container')
@@ -19,9 +18,6 @@ export class App {
             backgroundColor: 0x0F0F0F,
         })
         this.initialized = true
-
-        // Mount containers
-        this.app.stage.addChild(this.gameWorldContainer)
     }
 
     public getApp = () => {

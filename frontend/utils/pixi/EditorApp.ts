@@ -7,6 +7,7 @@ export class EditorApp extends App {
 
     private gridLineContainer: PIXI.Container = new PIXI.Container()
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
+    private layer1Container: PIXI.Container = new PIXI.Container()  
     private toolMode: Tool = 'None'
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
@@ -15,6 +16,7 @@ export class EditorApp extends App {
 
     public async init() {
         await super.init()
+        this.app.stage.addChild(this.layer1Container)
         this.app.stage.addChild(this.gridLineContainer)
         await this.loadAssets()
         this.drawGridLines()
@@ -72,7 +74,7 @@ export class EditorApp extends App {
                 const tile = PIXI.Sprite.from('/sprites/test-tile.png')
                 tile.x = convertedPosition.x * 32
                 tile.y = convertedPosition.y * 32
-                this.gameWorldContainer.addChild(tile)
+                this.layer1Container.addChild(tile)
             }
         })
     }
@@ -80,7 +82,7 @@ export class EditorApp extends App {
     private zoomInTool = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'ZoomIn') {
-                this.setScale(this.scale + 0.1)
+                this.zoomTo(this.scale + 0.2, e)
             }
         })
     }
@@ -88,9 +90,17 @@ export class EditorApp extends App {
     private zoomOutTool = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'ZoomOut') {
-                this.setScale(this.scale - 0.1)
+                this.zoomTo(this.scale - 0.2, e)
             }
         })
+    }
+
+    private zoomTo = (newScale: number, e: PIXI.FederatedPointerEvent) => {
+        // clamp scale between 0.7 and 3
+        newScale = Math.min(3, Math.max(0.7, newScale))
+        const localPosition = e.getLocalPosition(this.app.stage)
+
+        this.setScale(newScale)
     }
 
     private setScale(newScale: number) {
