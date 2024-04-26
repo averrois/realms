@@ -11,6 +11,7 @@ export class EditorApp extends App {
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
+    protected isMouseInScreen: boolean = false
 
     public async init() {
         await super.init()
@@ -19,6 +20,8 @@ export class EditorApp extends App {
         this.drawGridLines()
 
         this.setUpUIListeners()
+        this.setUpMouseListeners()
+
         this.setUpInteraction()
     }
 
@@ -138,8 +141,24 @@ export class EditorApp extends App {
         })
     }
 
+    private onMouseEnter = () => {
+        this.isMouseInScreen = true
+    }
+
+    private onMouseLeave = () => {
+        this.isMouseInScreen = false
+    }
+
+    private setUpMouseListeners = () => {
+        signal.on('mouseEnter', this.onMouseEnter)
+        signal.on('mouseLeave', this.onMouseLeave)
+    }
+
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
+        signal.off('mouseEnter', this.onMouseEnter)
+        signal.off('mouseLeave', this.onMouseLeave)
+
         super.destroy()
     }
 }
