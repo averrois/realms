@@ -96,9 +96,12 @@ export class EditorApp extends App {
     }
 
     private zoomTo = (newScale: number, e: PIXI.FederatedPointerEvent) => {
+        if (newScale < 0.6 || newScale > 3) return
+
         // clamp scale between 0.7 and 3
-        newScale = Math.min(3, Math.max(0.7, newScale))
         const localPosition = e.getLocalPosition(this.app.stage)
+        const diffX = localPosition.x - this.app.stage.position.x
+        const diffY = localPosition.y - this.app.stage.position.y
 
         this.setScale(newScale)
     }
@@ -144,6 +147,8 @@ export class EditorApp extends App {
         this.app.stage.position.y += diffY 
 
         this.matchGridLinesToStage()
+
+        console.log('Stage position: ', {x: this.app.stage.position.x, y: this.app.stage.position.y})
     }
 
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {
