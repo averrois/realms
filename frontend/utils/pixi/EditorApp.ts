@@ -1,12 +1,13 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
+import { Tool } from './types'
 
 export class EditorApp extends App {
 
     private gridLineContainer: PIXI.Container = new PIXI.Container()
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-    private toolMode: 'Hand' = 'Hand'
+    private toolMode: Tool = 'None'
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
 
@@ -16,6 +17,7 @@ export class EditorApp extends App {
         await this.loadAssets()
         this.drawGridLines()
 
+        this.setUpUIListeners()
         this.setUpInteraction()
     }
 
@@ -37,7 +39,14 @@ export class EditorApp extends App {
     private onResize = () => {
         this.gridLines.width = this.app.screen.width
         this.gridLines.height = this.app.screen.height
-        console.log('running')
+    }
+
+    private setUpUIListeners = () => {
+        signal.on('selectTool', this.onSelectTool)
+    }
+
+    private onSelectTool = (tool: Tool) => {
+        this.toolMode = tool
     }
 
     private setUpInteraction = () => {
@@ -104,6 +113,7 @@ export class EditorApp extends App {
     }
 
     public destroy() {
+        signal.off('selectTool', this.onSelectTool)
         super.destroy()
     }
 }
