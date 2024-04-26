@@ -10,6 +10,7 @@ export class EditorApp extends App {
     private toolMode: Tool = 'None'
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
+    private scale: number = 1
 
     public async init() {
         await super.init()
@@ -28,17 +29,17 @@ export class EditorApp extends App {
     private drawGridLines = () => {
         this.gridLines = new PIXI.TilingSprite({
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
-            width: this.app.screen.width,
-            height: this.app.screen.height,
+            width: 10000,
+            height: 10000,
         })
 
         this.gridLineContainer.addChild(this.gridLines)
-        this.app.renderer.on('resize', this.onResize)
+        this.app.renderer.on('resize', this.resizeGridLines)
     }
 
-    private onResize = () => {
-        this.gridLines.width = this.app.screen.width
-        this.gridLines.height = this.app.screen.height
+    private resizeGridLines = () => {
+        this.gridLines.width = 10000
+        this.gridLines.height = 10000
     }
 
     private setUpUIListeners = () => {
@@ -52,7 +53,31 @@ export class EditorApp extends App {
     private setUpInteraction = () => {
         this.app.stage.interactive = true
         this.handTool()
+        this.zoomInTool()
+        this.zoomOutTool()
         this.sendCoordinates()
+    }
+
+    private zoomInTool = () => {
+        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'ZoomIn') {
+                this.setScale(this.scale + 0.1)
+            }
+        })
+    }
+
+    private zoomOutTool = () => {
+        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'ZoomOut') {
+                this.setScale(this.scale - 0.1)
+            }
+        })
+    }
+
+    private setScale(newScale: number) {
+        this.scale = newScale
+        this.app.stage.scale.set(this.scale)
+        this.resizeGridLines()
     }
 
     private handTool = () => {
@@ -75,14 +100,6 @@ export class EditorApp extends App {
         })
     }
 
-    private sendCoordinates = () => {
-        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
-            const position = e.getLocalPosition(this.app.stage)
-            const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
-            signal.emit('coordinates', convertedPosition)
-        })
-    }
-
     private onDragMove = (e: PIXI.FederatedPointerEvent) => {
         const diffX = e.getLocalPosition(this.app.stage).x - this.initialDragPosition.x
         const diffY = e.getLocalPosition(this.app.stage).y - this.initialDragPosition.y
@@ -101,7 +118,6 @@ export class EditorApp extends App {
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {
         this.dragging = true
         this.initialDragPosition.set(e.getLocalPosition(this.app.stage).x, e.getLocalPosition(this.app.stage).y)
-        console.log(this.initialDragPosition)
         this.app.stage.on('pointermove', this.onDragMove)
     }
 
@@ -110,6 +126,20 @@ export class EditorApp extends App {
             this.app.stage.off('pointermove', this.onDragMove)
             this.dragging = false
         }
+    }
+
+    private sendCoordinates = () => {
+        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            const position = e.getLocalPosition(this.app.stage)
+            const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
+            signal.emit('coordinates', convertedPosition)
+        })
+        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
+            console.log('enter')
+        })
+        this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
+            console.log('leave')
+        })
     }
 
     public destroy() {

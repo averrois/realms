@@ -1,27 +1,27 @@
 'use client'
-import React, { useState } from 'react'
-import signal from '@/utils/signal'
+import React from 'react'
 import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool } from '@/utils/pixi/types'
+import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
 
 type LeftBarProps = {
-    
+    tool: Tool,
+    selectTool: (tool:Tool) => void
 }
 
-const LeftBar:React.FC<LeftBarProps> = () => {
-    
-    const [tool, setTool] = useState<Tool>('None')
-
-    function selectTool(tool:Tool) {
-        setTool(tool)
-        signal.emit('selectTool', tool)
-    }
+const LeftBar:React.FC<LeftBarProps> = ({ tool, selectTool }) => {
 
     return (
-        <div className='w-[48px] bg-secondary flex flex-col items-center p-1'>
+        <div className='w-[48px] bg-secondary flex flex-col items-center p-1 gap-2'>
             <ToolButton selected={tool === 'Hand'} onClick={() => selectTool('Hand')}>
                 <HandRaisedIcon className='h-8 w-8 text-white'/>
+            </ToolButton>
+            <ToolButton selected={tool === 'ZoomIn'} onClick={() => selectTool('ZoomIn')}>
+                <MagnifyingGlassPlusIcon className='h-8 w-8 text-white'/>
+            </ToolButton>
+            <ToolButton selected={tool === 'ZoomOut'} onClick={() => selectTool('ZoomOut')}>
+                <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
         </div>
     )
