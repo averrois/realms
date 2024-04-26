@@ -15,8 +15,12 @@ type EditorProps = {
 const Editor:React.FC<EditorProps> = () => {
     
     const [tool, setTool] = useState<Tool>('None')
+    const [gameLoaded, setGameLoaded] = useState<boolean>(false)
 
     function selectTool(tool:Tool) {
+        // do not allow tool selection if game not loaded
+        if (gameLoaded === false) return
+
         setTool(tool)
         signal.emit('selectTool', tool)
     }
@@ -26,7 +30,7 @@ const Editor:React.FC<EditorProps> = () => {
             <TopBar />
             <div className='w-full grow flex flex-row'>
                 <LeftBar tool={tool} selectTool={selectTool}/>
-                <PixiEditor className='h-full grow'/>
+                <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded}/>
                 <RightSection />
             </div>
             <Coords />

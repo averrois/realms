@@ -6,9 +6,10 @@ import signal from '@/utils/signal'
 
 type PixiEditorProps = {
     className?: string
+    setGameLoaded: (loaded:boolean) => void
 }
 
-const PixiEditor:React.FC<PixiEditorProps> = ({ className }) => {
+const PixiEditor:React.FC<PixiEditorProps> = ({ className, setGameLoaded }) => {
 
     const appRef = useRef<EditorApp | null>(null)
 
@@ -17,6 +18,7 @@ const PixiEditor:React.FC<PixiEditorProps> = ({ className }) => {
             const app = new EditorApp()
             appRef.current = app
             await app.init()
+            setGameLoaded(true)
 
             const pixiApp = app.getApp()
             
