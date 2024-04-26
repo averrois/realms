@@ -96,12 +96,17 @@ export class EditorApp extends App {
     }
 
     private zoomTo = (newScale: number, e: PIXI.FederatedPointerEvent) => {
-        if (newScale < 0.6 || newScale > 3) return
+        if (newScale < 0.6 || newScale > 3) return;
 
-        // clamp scale between 0.7 and 3
         const localPosition = e.getLocalPosition(this.app.stage)
-        const diffX = localPosition.x - this.app.stage.position.x
-        const diffY = localPosition.y - this.app.stage.position.y
+        const globalPosition = e.global
+
+        // Calculate new position to center zoom on the mouse pointer
+        const newPositionX = globalPosition.x - (localPosition.x * newScale) 
+        const newPositionY = globalPosition.y - (localPosition.y * newScale) 
+
+        this.app.stage.position.x = newPositionX
+        this.app.stage.position.y = newPositionY
 
         this.setScale(newScale)
     }
@@ -147,8 +152,6 @@ export class EditorApp extends App {
         this.app.stage.position.y += diffY 
 
         this.matchGridLinesToStage()
-
-        console.log('Stage position: ', {x: this.app.stage.position.x, y: this.app.stage.position.y})
     }
 
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {
