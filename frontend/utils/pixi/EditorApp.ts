@@ -42,8 +42,8 @@ export class EditorApp extends App {
     }
 
     private resizeGridLines = () => {
-        this.gridLines.width = this.app.screen.width
-        this.gridLines.height = this.app.screen.height 
+        this.gridLines.width = this.app.screen.width * (1 / this.scale)
+        this.gridLines.height = this.app.screen.height * (1 / this.scale)
     }
 
     private setUpUIListeners = () => {
@@ -96,6 +96,15 @@ export class EditorApp extends App {
     private setScale(newScale: number) {
         this.scale = newScale
         this.app.stage.scale.set(this.scale)
+        this.matchGridLinesToStage()
+        this.resizeGridLines()
+    }
+
+    private matchGridLinesToStage = () => {
+        this.gridLineContainer.position.x = -this.app.stage.position.x * (1 / this.scale)
+        this.gridLineContainer.position.y = -this.app.stage.position.y * (1 / this.scale)
+        this.gridLines.tilePosition.x = this.app.stage.position.x * (1 / this.scale)
+        this.gridLines.tilePosition.y = this.app.stage.position.y * (1 / this.scale)
     }
 
     private handTool = () => {
@@ -124,13 +133,7 @@ export class EditorApp extends App {
         this.app.stage.position.x += diffX 
         this.app.stage.position.y += diffY 
 
-        // move the grid lines so they stay in front of camera at all times
-        this.gridLineContainer.position.x -= diffX
-        this.gridLineContainer.position.y -= diffY
-
-        // scroll the grid lines so they look like they are moving
-        this.gridLines.tilePosition.x += diffX 
-        this.gridLines.tilePosition.y += diffY 
+        this.matchGridLinesToStage()
     }
 
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {
