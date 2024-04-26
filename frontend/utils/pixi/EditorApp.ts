@@ -20,7 +20,7 @@ export class EditorApp extends App {
         this.drawGridLines()
 
         this.setUpUIListeners()
-        this.setUpMouseListeners()
+        this.setUpMouseListener()
 
         this.setUpInteraction()
     }
@@ -41,8 +41,8 @@ export class EditorApp extends App {
     }
 
     private resizeGridLines = () => {
-        this.gridLines.width = this.app.screen.width
-        this.gridLines.height = this.app.screen.height
+        this.gridLines.width = this.app.screen.width * (1 / this.scale)
+        this.gridLines.height = this.app.screen.height * (1 / this.scale)
     }
 
     private setUpUIListeners = () => {
@@ -81,6 +81,8 @@ export class EditorApp extends App {
         this.scale = newScale
         this.app.stage.scale.set(this.scale)
         this.resizeGridLines()
+        this.gridLineContainer.x = -this.app.stage.x * (1 / this.scale)
+        this.gridLineContainer.y = -this.app.stage.y * (1 / this.scale)
     }
 
     private handTool = () => {
@@ -106,16 +108,19 @@ export class EditorApp extends App {
     private onDragMove = (e: PIXI.FederatedPointerEvent) => {
         const diffX = e.getLocalPosition(this.app.stage).x - this.initialDragPosition.x
         const diffY = e.getLocalPosition(this.app.stage).y - this.initialDragPosition.y
-        this.app.stage.position.x += diffX
-        this.app.stage.position.y += diffY
+        this.app.stage.position.x += diffX 
+        this.app.stage.position.y += diffY 
 
         // move the grid lines so they stay in front of camera at all times
-        this.gridLineContainer.position.x -= diffX
-        this.gridLineContainer.position.y -= diffY
+        this.gridLineContainer.position.x = -this.app.stage.position.x * (1 / this.scale)
+        this.gridLineContainer.position.y = -this.app.stage.position.y * (1 / this.scale)
 
         // scroll the grid lines so they look like they are moving
-        this.gridLines.tilePosition.x += diffX
-        this.gridLines.tilePosition.y += diffY
+        this.gridLines.tilePosition.x += diffX * (1 / this.scale)
+        this.gridLines.tilePosition.y += diffY * (1 / this.scale)
+
+        console.log('Grid Lines Position: ', this.gridLineContainer.position.x, this.gridLineContainer.position.y)
+        console.log('App Position: ', this.app.stage.position.x, this.app.stage.position.y)
     }
 
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {
@@ -145,7 +150,7 @@ export class EditorApp extends App {
         this.isMouseInScreen = isOver
     }
 
-    private setUpMouseListeners = () => {
+    private setUpMouseListener = () => {
         signal.on('mouseOver', this.onMouseOver)
     }
 
