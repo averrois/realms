@@ -30,6 +30,7 @@ export class EditorApp extends App {
     private loadAssets = async () => {
         await PIXI.Assets.load('/sprites/tile-outline.png')
         await PIXI.Assets.load('/sprites/test-tile.png')
+        await PIXI.Assets.load('/sprites/city/FDR_City.png')
     }
 
     private drawGridLines = () => {
@@ -187,7 +188,7 @@ export class EditorApp extends App {
 
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
-        signal.off('mouseEnter', this.onMouseOver)
+        signal.off('mouseOver', this.onMouseOver)
 
         super.destroy()
     }
