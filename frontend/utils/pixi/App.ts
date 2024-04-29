@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js'
-import signal from '../signal'
+import { Sprites } from './spritesheet/spritesheet'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
+    protected sprites: Sprites = new Sprites()
 
     public async init() {
         const container = document.getElementById('app-container')
