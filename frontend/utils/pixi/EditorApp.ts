@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
 import { Tool } from './types'
+import { getSpriteSheetData } from './spritesheet/spritesheet'
+import { citySpriteSheetData } from './spritesheet/city'
 
 export class EditorApp extends App {
 
@@ -13,6 +15,7 @@ export class EditorApp extends App {
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
+    private citySpriteSheet: PIXI.Spritesheet | null = null
 
     public async init() {
         await super.init()
@@ -31,6 +34,12 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/tile-outline.png')
         await PIXI.Assets.load('/sprites/test-tile.png')
         await PIXI.Assets.load('/sprites/city/FDR_City.png')
+
+        this.citySpriteSheet = new PIXI.Spritesheet(
+            PIXI.Texture.from(citySpriteSheetData.url),
+            getSpriteSheetData(citySpriteSheetData)
+        )
+        await this.citySpriteSheet.parse()
     }
 
     private drawGridLines = () => {
@@ -72,7 +81,7 @@ export class EditorApp extends App {
                 const position = e.getLocalPosition(this.app.stage)
                 const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
                 
-                const tile = PIXI.Sprite.from('/sprites/test-tile.png')
+                const tile = PIXI.Sprite.from(this.citySpriteSheet?.textures['grass']!)
                 tile.x = convertedPosition.x * 32
                 tile.y = convertedPosition.y * 32
                 this.layer1Container.addChild(tile)
