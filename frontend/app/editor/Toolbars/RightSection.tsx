@@ -2,12 +2,13 @@ import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
 
 type RightSectionProps = {
-    
+    selectedTile: string
+    setSelectedTile: (tile: string) => void
 }
 
 type Tab = 'Tile' | 'Effects'
 
-const RightSection:React.FC<RightSectionProps> = () => {
+const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')
 
@@ -29,7 +30,7 @@ const RightSection:React.FC<RightSectionProps> = () => {
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
             <div className='p-2'>
-                {tab === 'Tile' && <TileMenu/>}
+                {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>}
                 {tab === 'Effects' && <div>Effects</div>}
             </div>
         </div>

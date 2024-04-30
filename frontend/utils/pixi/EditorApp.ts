@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
 import { Tool } from './types'
-import { sprites } from './spritesheet/spritesheet'
+import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
 
@@ -14,6 +14,9 @@ export class EditorApp extends App {
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
+
+    private selectedPalette: SheetName = 'city'
+    private selectedTile: string = ''   
 
     public async init() {
         await super.init()
@@ -54,6 +57,14 @@ export class EditorApp extends App {
 
     private setUpUIListeners = () => {
         signal.on('selectTool', this.onSelectTool)
+
+        signal.on('tileSelected', this.onSelectTile)
+    }
+
+    private onSelectTile = (tile: string) => {
+        this.selectedTile = tile
+        this.toolMode = 'Tile'
+        signal.emit('newTool', 'Tile')
     }
 
     private onSelectTool = (tool: Tool) => {
@@ -73,7 +84,7 @@ export class EditorApp extends App {
         const position = e.getLocalPosition(this.app.stage)
         const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
         
-        const tile = PIXI.Sprite.from(sprites.getSprite('city', 'detailed_grass'))
+        const tile = PIXI.Sprite.from(sprites.getSprite(this.selectedPalette, this.selectedTile))
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
         this.layer1Container.addChild(tile)
@@ -209,6 +220,7 @@ export class EditorApp extends App {
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
         signal.off('mouseOver', this.onMouseOver)
+        signal.off('tileSelected', this.onSelectTile)
 
         super.destroy()
     }

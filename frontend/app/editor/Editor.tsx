@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import TopBar from './Toolbars/TopBar'
 import LeftBar from './Toolbars/LeftBar'
 import RightSection from './Toolbars/RightSection'
@@ -15,6 +15,7 @@ type EditorProps = {
 const Editor:React.FC<EditorProps> = () => {
     
     const [tool, setTool] = useState<Tool>('None')
+    const [selectedTile, setSelectedTile] = useState<string>('')
     const [gameLoaded, setGameLoaded] = useState<boolean>(false)
 
     function selectTool(tool:Tool) {
@@ -22,8 +23,21 @@ const Editor:React.FC<EditorProps> = () => {
         if (gameLoaded === false) return
 
         setTool(tool)
+        setSelectedTile('')
         signal.emit('selectTool', tool)
     }
+
+    useEffect(() => {
+        const onNewTool = (tool:Tool) => {
+            setTool(tool)
+        }
+
+        signal.on('newTool', onNewTool)
+
+        return () => {
+            signal.off('newTool', onNewTool)
+        }
+    }, [])
 
     return (
         <div className='relative w-full h-screen flex flex-col'>
@@ -31,7 +45,7 @@ const Editor:React.FC<EditorProps> = () => {
             <div className='w-full grow flex flex-row'>
                 <LeftBar tool={tool} selectTool={selectTool}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded}/>
-                <RightSection />
+                <RightSection selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>
             </div>
             <Coords />
         </div>

@@ -23,10 +23,10 @@ type Sheets = {
 export type SheetName = 'city'
 
 class Sprites {
-    private spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
+    public spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
         city: citySpriteSheetData
     }
-    private sheets: Sheets = {}
+    public sheets: Sheets = {}
 
     public async load(sheetName: SheetName) {
         if (!this.spriteSheetDataSet[sheetName]) {
