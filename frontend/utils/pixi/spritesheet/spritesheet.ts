@@ -20,10 +20,10 @@ type Sheets = {
     [key in SheetName]?: PIXI.Spritesheet
 }
 
-type SheetName = 'City'
+type SheetName = 'city'
 
 const spriteSheetMap: { [key in SheetName]: SpriteSheetData } = {
-    City: citySpriteSheetData
+    city: citySpriteSheetData
 }
 
 export class Sprites {

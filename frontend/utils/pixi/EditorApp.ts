@@ -32,7 +32,7 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/test-tile.png')
         await PIXI.Assets.load('/sprites/city/FDR_City.png')
 
-        await this.sprites.load('City')
+        await this.sprites.load('city')
     }
 
     private drawGridLines = () => {
@@ -68,16 +68,33 @@ export class EditorApp extends App {
         this.sendCoordinates()
     }
 
+    private placeTile = (e: PIXI.FederatedPointerEvent) => {
+        const position = e.getLocalPosition(this.app.stage)
+        const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
+        
+        const tile = PIXI.Sprite.from(this.sprites.getSprite('city', 'detailed_grass'))
+        tile.x = convertedPosition.x * 32
+        tile.y = convertedPosition.y * 32
+        this.layer1Container.addChild(tile)
+    }
+
     private tileTool = () => {
+        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Tile') {
+                this.app.stage.off('pointermove', this.placeTile)
+            }
+        })
+
+        this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Tile') {
+                this.app.stage.off('pointermove', this.placeTile)
+            }
+        })
+
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                const position = e.getLocalPosition(this.app.stage)
-                const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
-                
-                const tile = PIXI.Sprite.from(this.sprites.getSprite('City', 'detailed_grass'))
-                tile.x = convertedPosition.x * 32
-                tile.y = convertedPosition.y * 32
-                this.layer1Container.addChild(tile)
+                this.placeTile(e)
+                this.app.stage.on('pointermove', this.placeTile)
             }
         })
     }
