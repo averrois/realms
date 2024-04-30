@@ -39,12 +39,16 @@ export class Sprites {
         await this.sheets[sheetName]!.parse()
     }
 
-    public getSheet(sheetName: SheetName) {
+    public getSprite(sheetName: SheetName, spriteName: string) {
         if (!this.sheets[sheetName]) {
             throw new Error(`Sheet ${sheetName} not found`)
         }
 
-        return this.sheets[sheetName]!
+        if (!this.sheets[sheetName]!.textures[spriteName]) {
+            throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
+        }
+
+        return this.sheets[sheetName]!.textures[spriteName]
     }
 
     private getSpriteSheetData(data: SpriteSheetData) {

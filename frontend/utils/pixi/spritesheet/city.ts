@@ -5,6 +5,7 @@ export const citySpriteSheetData: SpriteSheetData = {
     height: 1536,
     url: '/sprites/city/FDR_City.png',
     sprites: [
-        { name: 'grass', x: 32, y: 0, width: 32, height: 32 }
+        { name: 'solid_grass', x: 32, y: 0, width: 32, height: 32 },
+        { name: 'detailed_grass', x: 64, y: 0, width: 32, height: 32 },
     ]
 }

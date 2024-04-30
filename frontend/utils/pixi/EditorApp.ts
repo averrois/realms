@@ -74,7 +74,7 @@ export class EditorApp extends App {
                 const position = e.getLocalPosition(this.app.stage)
                 const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
                 
-                const tile = PIXI.Sprite.from(this.sprites.getSheet('City').textures['grass'])
+                const tile = PIXI.Sprite.from(this.sprites.getSprite('City', 'detailed_grass'))
                 tile.x = convertedPosition.x * 32
                 tile.y = convertedPosition.y * 32
                 this.layer1Container.addChild(tile)
