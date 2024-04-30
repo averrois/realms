@@ -1,7 +1,8 @@
 'use client'
 import React, { useState } from 'react'
-import PaletteDropdown from '../PaletteDropdown'
+import PaletteDropdown from './PaletteDropdown'
 import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
+import TileMenuGrid from './TileMenuGrid'
 
 type TileMenuProps = {
     
@@ -19,6 +20,7 @@ const TileMenu:React.FC<TileMenuProps> = () => {
                 Palette
                 <PaletteDropdown menuItems={menuItems} selectedItem={selectedPalette} setSelectedItem={setSelectedPalette}/>
             </div>
+            <TileMenuGrid selectedPalette={selectedPalette}/>
         </div>  
     )
 }

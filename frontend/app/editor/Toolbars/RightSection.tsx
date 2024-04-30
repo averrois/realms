@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import TileMenu from './TileMenu'
+import TileMenu from '../TileMenu'
 
 type RightSectionProps = {
     

@@ -33,6 +33,10 @@ class Sprites {
             throw new Error(`Sheet ${sheetName} not found`)
         }
 
+        if (this.sheets[sheetName]) {
+            return
+        }
+
         await PIXI.Assets.load(this.spriteSheetDataSet[sheetName].url)
         this.sheets[sheetName] = new PIXI.Spritesheet(PIXI.Texture.from(this.spriteSheetDataSet[sheetName].url), this.getSpriteSheetData(this.spriteSheetDataSet[sheetName]))
         await this.sheets[sheetName]!.parse()

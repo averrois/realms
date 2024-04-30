@@ -36,10 +36,7 @@ const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedIte
                 <Menu.Item>
                     {({ active }) => (
                         <div
-                            className={classNames(
-                                active ? 'bg-secondaryhoverdark' : '',
-                                'block px-4 text-sm capitalize cursor-pointer text-white'
-                            )}
+                            className={'block px-4 text-sm capitalize cursor-pointer text-white bg-secondaryhoverdark hover:bg-secondaryhover'}
                             onClick={() => setSelectedItem(item)}
                         >
                             {item}
