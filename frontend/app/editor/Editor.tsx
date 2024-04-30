@@ -28,14 +28,14 @@ const Editor:React.FC<EditorProps> = () => {
     }
 
     useEffect(() => {
-        const onNewTool = (tool:Tool) => {
-            setTool(tool)
+        const onTileSelected = () => {
+            setTool('Tile')
         }
 
-        signal.on('newTool', onNewTool)
+        signal.on('tileSelected', onTileSelected)
 
         return () => {
-            signal.off('newTool', onNewTool)
+            signal.off('newTool', onTileSelected)
         }
     }, [])
 

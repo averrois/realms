@@ -44,6 +44,7 @@ export class EditorApp extends App {
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
             width: this.app.screen.width,
             height: this.app.screen.height,
+            alpha: 0.5,
         })
 
         this.gridLineContainer.addChild(this.gridLines)
@@ -64,7 +65,6 @@ export class EditorApp extends App {
     private onSelectTile = (tile: string) => {
         this.selectedTile = tile
         this.toolMode = 'Tile'
-        signal.emit('newTool', 'Tile')
     }
 
     private onSelectTool = (tool: Tool) => {
