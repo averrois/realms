@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
 import { Tool } from './types'
+import { sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
 
@@ -32,7 +33,7 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/test-tile.png')
         await PIXI.Assets.load('/sprites/city/FDR_City.png')
 
-        await this.sprites.load('city')
+        await sprites.load('city')
     }
 
     private drawGridLines = () => {
@@ -72,7 +73,7 @@ export class EditorApp extends App {
         const position = e.getLocalPosition(this.app.stage)
         const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
         
-        const tile = PIXI.Sprite.from(this.sprites.getSprite('city', 'detailed_grass'))
+        const tile = PIXI.Sprite.from(sprites.getSprite('city', 'detailed_grass'))
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
         this.layer1Container.addChild(tile)

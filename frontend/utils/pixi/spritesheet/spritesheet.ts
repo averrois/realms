@@ -20,22 +20,21 @@ type Sheets = {
     [key in SheetName]?: PIXI.Spritesheet
 }
 
-type SheetName = 'city'
+export type SheetName = 'city'
 
-const spriteSheetMap: { [key in SheetName]: SpriteSheetData } = {
-    city: citySpriteSheetData
-}
-
-export class Sprites {
+class Sprites {
+    private spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
+        city: citySpriteSheetData
+    }
     private sheets: Sheets = {}
 
     public async load(sheetName: SheetName) {
-        if (!spriteSheetMap[sheetName]) {
+        if (!this.spriteSheetDataSet[sheetName]) {
             throw new Error(`Sheet ${sheetName} not found`)
         }
 
-        await PIXI.Assets.load(spriteSheetMap[sheetName].url)
-        this.sheets[sheetName] = new PIXI.Spritesheet(PIXI.Texture.from(spriteSheetMap[sheetName].url), this.getSpriteSheetData(spriteSheetMap[sheetName]))
+        await PIXI.Assets.load(this.spriteSheetDataSet[sheetName].url)
+        this.sheets[sheetName] = new PIXI.Spritesheet(PIXI.Texture.from(this.spriteSheetDataSet[sheetName].url), this.getSpriteSheetData(this.spriteSheetDataSet[sheetName]))
         await this.sheets[sheetName]!.parse()
     }
 
@@ -90,3 +89,7 @@ export class Sprites {
         return spriteSheetData
     }   
 }
+
+const sprites = new Sprites()
+
+export { sprites }
