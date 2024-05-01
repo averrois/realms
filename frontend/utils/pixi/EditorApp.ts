@@ -1,26 +1,51 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Tool } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
     private gridLineContainer: PIXI.Container = new PIXI.Container()
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-    private layer1Container: PIXI.Container = new PIXI.Container()  
     private toolMode: Tool = 'None'
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
 
+    private layers: { [key in Layer]: PIXI.Container } = {
+        layer1: new PIXI.Container(),
+        layer2: new PIXI.Container(),
+        layer3: new PIXI.Container(),
+        layer4: new PIXI.Container(),
+        layer5: new PIXI.Container(),
+        layer6: new PIXI.Container(),
+        layer7: new PIXI.Container(),
+        layer8: new PIXI.Container(),
+        layer9: new PIXI.Container(),
+        layer10: new PIXI.Container(),
+    }
+
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
+    private selectedLayer: Layer = 'layer1'
+    private tilemapSprites: TilemapSprites = {}
 
     public async init() {
         await super.init()
-        this.app.stage.addChild(this.layer1Container)
+        this.app.stage.addChild(this.layers.layer1)
+        this.app.stage.addChild(this.layers.layer2)
+        this.app.stage.addChild(this.layers.layer3)
+        this.app.stage.addChild(this.layers.layer4)
+        this.app.stage.addChild(this.layers.layer5)
+        this.app.stage.addChild(this.layers.layer6)
+        this.app.stage.addChild(this.layers.layer7)
+        this.app.stage.addChild(this.layers.layer8)
+        this.app.stage.addChild(this.layers.layer9)
+        this.app.stage.addChild(this.layers.layer10)
+
         this.app.stage.addChild(this.gridLineContainer)
+
         await this.loadAssets()
         this.drawGridLines()
 
@@ -86,7 +111,24 @@ export class EditorApp extends App {
         const tile = PIXI.Sprite.from(sprites.getSprite(this.selectedPalette, this.selectedTile))
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
-        this.layer1Container.addChild(tile)
+
+        const existingTile = this.getTileAtPosition(convertedPosition.x, convertedPosition.y, this.selectedLayer)
+        if (existingTile) {
+            this.layers[this.selectedLayer].removeChild(existingTile)
+        }
+
+        this.layers[this.selectedLayer].addChild(tile)
+
+        const key = `${convertedPosition.x}, ${convertedPosition.y}` as TilePoint
+        this.tilemapSprites[key] = {
+            ...this.tilemapSprites[key],
+            [this.selectedLayer]: tile
+        }
+    }
+
+    private getTileAtPosition = (x: number, y: number, layer: Layer) => {
+        const key = `${x}, ${y}` as TilePoint
+        return this.tilemapSprites[key]?.[layer]
     }
 
     private tileTool = () => {
