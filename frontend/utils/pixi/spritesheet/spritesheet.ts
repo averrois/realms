@@ -1,19 +1,20 @@
 import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
+import { Layer } from '../types'
 
 export interface SpriteSheetTile {
-    name: string,
     x: number,
     y: number,
     width: number,
     height: number
+    layer?: Layer
 }
 
 export interface SpriteSheetData {
     width: number,
     height: number,
     url: string,
-    sprites: SpriteSheetTile[],
+    sprites: { [key: string]: SpriteSheetTile },
 }
 
 type Sheets = {
@@ -54,6 +55,18 @@ class Sprites {
         return this.sheets[sheetName]!.textures[spriteName]
     }
 
+    public getSpriteLayer(sheetName: SheetName, spriteName: string) {
+        if (!this.spriteSheetDataSet[sheetName]) {
+            throw new Error(`Sheet ${sheetName} not found`)
+        }
+
+        if (!this.spriteSheetDataSet[sheetName].sprites[spriteName]) {
+            throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
+        }
+
+        return this.spriteSheetDataSet[sheetName].sprites[spriteName].layer || 'floor'
+    }
+
     private getSpriteSheetData(data: SpriteSheetData) {
         const spriteSheetData = {
             frames: {} as any,
@@ -69,23 +82,23 @@ class Sprites {
             animations: {}
         }
 
-        for (const sprite of data.sprites) {
-            spriteSheetData.frames[sprite.name] = {
+        for (const [name, spriteData] of Object.entries(data.sprites)) {
+            spriteSheetData.frames[name] = {
                 frame: {
-                    x: sprite.x,
-                    y: sprite.y,
-                    w: sprite.width,
-                    h: sprite.height
+                    x: spriteData.x,
+                    y: spriteData.y,
+                    w: spriteData.width,
+                    h: spriteData.height
                 },
                 spriteSourceSize: {
                     x: 0,
                     y: 0,
-                    w: sprite.width,
-                    h: sprite.height
+                    w: spriteData.width,
+                    h: spriteData.height
                 },
                 sourceSize: {
-                    w: sprite.width,
-                    h: sprite.height
+                    w: spriteData.width,
+                    h: spriteData.height
                 }
             }
         }

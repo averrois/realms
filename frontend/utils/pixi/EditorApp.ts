@@ -14,35 +14,20 @@ export class EditorApp extends App {
     protected isMouseInScreen: boolean = false
 
     private layers: { [key in Layer]: PIXI.Container } = {
-        layer1: new PIXI.Container(),
-        layer2: new PIXI.Container(),
-        layer3: new PIXI.Container(),
-        layer4: new PIXI.Container(),
-        layer5: new PIXI.Container(),
-        layer6: new PIXI.Container(),
-        layer7: new PIXI.Container(),
-        layer8: new PIXI.Container(),
-        layer9: new PIXI.Container(),
-        layer10: new PIXI.Container(),
+        floor: new PIXI.Container(),
+        transition: new PIXI.Container(),
+        object: new PIXI.Container(),
     }
 
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
-    private selectedLayer: Layer = 'layer1'
     private tilemapSprites: TilemapSprites = {}
 
     public async init() {
         await super.init()
-        this.app.stage.addChild(this.layers.layer1)
-        this.app.stage.addChild(this.layers.layer2)
-        this.app.stage.addChild(this.layers.layer3)
-        this.app.stage.addChild(this.layers.layer4)
-        this.app.stage.addChild(this.layers.layer5)
-        this.app.stage.addChild(this.layers.layer6)
-        this.app.stage.addChild(this.layers.layer7)
-        this.app.stage.addChild(this.layers.layer8)
-        this.app.stage.addChild(this.layers.layer9)
-        this.app.stage.addChild(this.layers.layer10)
+        this.app.stage.addChild(this.layers.floor)
+        this.app.stage.addChild(this.layers.transition)
+        this.app.stage.addChild(this.layers.object)
 
         this.app.stage.addChild(this.gridLineContainer)
 
@@ -112,7 +97,9 @@ export class EditorApp extends App {
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
 
-        this.setTileAtPosition(convertedPosition.x, convertedPosition.y, this.selectedLayer, tile)
+        const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
+
+        this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
@@ -121,9 +108,9 @@ export class EditorApp extends App {
     }
 
     private setTileAtPosition = (x: number, y: number, layer: Layer, tile: PIXI.Sprite) => {
-        const existingTile = this.getTileAtPosition(x, y, this.selectedLayer)
+        const existingTile = this.getTileAtPosition(x, y, layer)
         if (existingTile) {
-            this.layers[this.selectedLayer].removeChild(existingTile)
+            this.layers[layer].removeChild(existingTile)
         }
 
         this.layers[layer].addChild(tile)
@@ -131,6 +118,11 @@ export class EditorApp extends App {
         this.tilemapSprites[key] = {
             ...this.tilemapSprites[key],
             [layer]: tile
+        }
+
+        this.tilemapJSON[key] = {
+            ...this.tilemapJSON[key],
+            [layer]: this.selectedPalette + '-' + this.selectedTile
         }
     }
 
