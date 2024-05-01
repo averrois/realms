@@ -18,7 +18,6 @@ export class TileMenuApp {
         const sprite = new PIXI.Sprite(spriteTexture)
 
         // center the sprite in the app 
-        sprite.scale.set(1.5)
         sprite.x = (this.app.screen.width / 2) - (sprite.width / 2)
         sprite.y = (this.app.screen.height / 2) - (sprite.height / 2)
 

@@ -15,6 +15,12 @@ export const citySpriteSheetData: SpriteSheetData = {
         detailed_sand: { x: 256, y: 0, width: 32, height: 32 },
         light_concrete: { x: 288, y: 0, width: 32, height: 32 },
         dark_concrete: { x: 320, y: 0, width: 32, height: 32 },
-        sign: { x: 512, y: 0, width: 32, height: 32, layer: 'object' }
+        light_bricks_vert: { x: 384, y: 0, width: 32, height: 32 },
+        dark_bricks_vert: { x: 416, y: 0, width: 32, height: 32 },
+        light_bricks_horz: { x: 448, y: 0, width: 32, height: 32 },
+        dark_bricks_horz: { x: 480, y: 0, width: 32, height: 32 },
+        top_left_bricks: { x: 320, y: 32, width: 32, height: 32 },
+        top_bricks: { x: 352, y: 32, width: 32, height: 32 },
+        top_right_bricks: { x: 384, y: 32, width: 32, height: 32 },
     }
 }

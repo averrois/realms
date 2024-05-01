@@ -29,8 +29,8 @@ const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedIte
         <Menu.Items className="absolute right-0 z-10 w-64 origin-top-right bg-secondary shadow-lg focus:outline-none">
           <div>
             {menuItems.map((item) => (
-                <Menu.Item>
-                    {({ active }) => (
+                <Menu.Item key={item}>
+                    {() => (
                         <div
                             className={'block px-3 text-sm capitalize cursor-pointer text-white bg-secondaryhoverdark hover:bg-secondaryhover'}
                             onClick={() => setSelectedItem(item)}
