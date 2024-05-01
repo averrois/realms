@@ -112,23 +112,26 @@ export class EditorApp extends App {
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
 
-        const existingTile = this.getTileAtPosition(convertedPosition.x, convertedPosition.y, this.selectedLayer)
-        if (existingTile) {
-            this.layers[this.selectedLayer].removeChild(existingTile)
-        }
-
-        this.layers[this.selectedLayer].addChild(tile)
-
-        const key = `${convertedPosition.x}, ${convertedPosition.y}` as TilePoint
-        this.tilemapSprites[key] = {
-            ...this.tilemapSprites[key],
-            [this.selectedLayer]: tile
-        }
+        this.setTileAtPosition(convertedPosition.x, convertedPosition.y, this.selectedLayer, tile)
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
         const key = `${x}, ${y}` as TilePoint
         return this.tilemapSprites[key]?.[layer]
+    }
+
+    private setTileAtPosition = (x: number, y: number, layer: Layer, tile: PIXI.Sprite) => {
+        const existingTile = this.getTileAtPosition(x, y, this.selectedLayer)
+        if (existingTile) {
+            this.layers[this.selectedLayer].removeChild(existingTile)
+        }
+
+        this.layers[layer].addChild(tile)
+        const key = `${x}, ${y}` as TilePoint
+        this.tilemapSprites[key] = {
+            ...this.tilemapSprites[key],
+            [layer]: tile
+        }
     }
 
     private tileTool = () => {

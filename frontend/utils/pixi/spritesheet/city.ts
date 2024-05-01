@@ -15,5 +15,6 @@ export const citySpriteSheetData: SpriteSheetData = {
         { name: 'detailed_sand', x: 256, y: 0, width: 32, height: 32 },
         { name: 'light_concrete', x: 288, y: 0, width: 32, height: 32 },
         { name: 'dark_concrete', x: 320, y: 0, width: 32, height: 32 },
+        { name: 'sign', x: 512, y: 0, width: 32, height: 32 },
     ]
 }
