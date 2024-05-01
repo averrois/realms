@@ -5,7 +5,6 @@ import { Tool } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
-
     private gridLineContainer: PIXI.Container = new PIXI.Container()
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
     private layer1Container: PIXI.Container = new PIXI.Container()  
@@ -44,7 +43,7 @@ export class EditorApp extends App {
             texture: PIXI.Texture.from('/sprites/tile-outline.png'),
             width: this.app.screen.width,
             height: this.app.screen.height,
-            alpha: 0.5,
+            alpha: 0.1,
         })
 
         this.gridLineContainer.addChild(this.gridLines)

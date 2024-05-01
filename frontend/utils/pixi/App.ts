@@ -1,10 +1,18 @@
 import * as PIXI from 'pixi.js'
+import { TilemapJSON } from './types'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
+    protected tilemapJSON: TilemapJSON = {}
+
+    constructor(tilemapJSON?: TilemapJSON) {
+        if (tilemapJSON) {
+            this.tilemapJSON = tilemapJSON
+        }
+    }
 
     public async init() {
         const container = document.getElementById('app-container')

@@ -3,7 +3,7 @@ import React from 'react'
 import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool } from '@/utils/pixi/types'
-import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon, Square2StackIcon } from '@heroicons/react/24/solid'
+import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
 
 type LeftBarProps = {
     tool: Tool,
