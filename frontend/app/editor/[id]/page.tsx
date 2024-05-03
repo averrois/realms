@@ -21,7 +21,7 @@ export default async function RealmEditor({ params }: { params: { id: string } }
 
     return (
         <div>
-            <Editor />
+            <Editor realmData={realm.map_data}/>
         </div>
     )
 }

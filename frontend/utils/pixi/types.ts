@@ -8,10 +8,12 @@ export type RealmData = Room[]
 
 export interface Room {
     name: string,
-    [key: `${number}, ${number}`]: {
-        floor: string,
-        transition: string,
-        object: string,
+    tilemap: {
+        [key: `${number}, ${number}`]: {
+            floor: string,
+            transition: string,
+            object: string,
+        }
     }
 }
 

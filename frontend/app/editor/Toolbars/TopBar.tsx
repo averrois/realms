@@ -5,6 +5,11 @@ import React, { useEffect } from 'react'
 import BasicButton from '@/components/BasicButton'
 import signal from '@/utils/signal'
 import { useModal } from '@/app/hooks/useModal'
+import { RealmData } from '@/utils/pixi/types'
+import { createClient } from '@/utils/supabase/client'
+import { useParams } from 'next/navigation'
+import { toast } from 'react-toastify'
+import revalidate from '@/utils/revalidate'
 
 type TopBarProps = {
     
@@ -13,11 +18,38 @@ type TopBarProps = {
 const TopBar:React.FC<TopBarProps> = () => {
 
     const [modal, setModal] = useModal()
+    const { id } = useParams()
+
+    const supabase = createClient()
 
     function beginSave() {
         signal.emit('beginSave')
         setModal('Save')
     }
+
+    useEffect(() => {
+        const save = async (realmData: RealmData) => {
+            const { error } = await supabase
+                .from('realms')
+                .update({ map_data: realmData })
+                .eq('id', id)
+
+            if (error) {
+                toast.error(error.message)
+            } else {
+                toast.success('Saved!')
+            }
+
+            revalidate('/editor/[id]')
+            setModal('None')
+        }
+
+        signal.on('save', save)
+
+        return () => {
+            signal.off('save', save)
+        }
+    }, [])
 
     return (
         <div className='w-full h-[48px] bg-secondary flex flex-row items-center p-2 border-b-2 border-black gap-2'>

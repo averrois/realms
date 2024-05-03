@@ -43,6 +43,12 @@ class Sprites {
         await this.sheets[sheetName]!.parse()
     }
 
+    public async getSpriteForTileJSON(tilename: string) {
+        const [sheetName, spriteName] = tilename.split('-')
+        await this.load(sheetName as SheetName)
+        return this.getSprite(sheetName as SheetName, spriteName)
+    }
+
     public getSprite(sheetName: SheetName, spriteName: string) {
         if (!this.sheets[sheetName]) {
             throw new Error(`Sheet ${sheetName} not found`)
@@ -52,7 +58,8 @@ class Sprites {
             throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
         }
 
-        return this.sheets[sheetName]!.textures[spriteName]
+        const sprite = new PIXI.Sprite(this.sheets[sheetName]!.textures[spriteName])
+        return sprite
     }
 
     public getSpriteLayer(sheetName: SheetName, spriteName: string) {

@@ -5,14 +5,14 @@ import LeftBar from './Toolbars/LeftBar'
 import RightSection from './Toolbars/RightSection'
 import PixiEditor from './PixiEditor'
 import Coords from './Toolbars/Coords'
-import { Tool } from '@/utils/pixi/types'
+import { RealmData, Tool } from '@/utils/pixi/types'
 import signal from '@/utils/signal'
 
 type EditorProps = {
-    
+    realmData: RealmData
 }
 
-const Editor:React.FC<EditorProps> = () => {
+const Editor:React.FC<EditorProps> = ({ realmData }) => {
     
     const [tool, setTool] = useState<Tool>('None')
     const [selectedTile, setSelectedTile] = useState<string>('')
@@ -44,7 +44,7 @@ const Editor:React.FC<EditorProps> = () => {
             <TopBar />
             <div className='w-full grow flex flex-row'>
                 <LeftBar tool={tool} selectTool={selectTool}/>
-                <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded}/>
+                <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
                 <RightSection selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>
             </div>
             <Coords />

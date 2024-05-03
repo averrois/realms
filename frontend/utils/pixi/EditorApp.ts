@@ -12,7 +12,6 @@ export class EditorApp extends App {
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
-    private currentRoomIndex: number = 0    
 
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
@@ -28,16 +27,12 @@ export class EditorApp extends App {
 
         this.setUpUIListeners()
         this.setUpMouseListener()
-
+        this.setUpSaveListener()
         this.setUpInteraction()
     }
 
     private loadAssets = async () => {
         await PIXI.Assets.load('/sprites/tile-outline.png')
-        await PIXI.Assets.load('/sprites/test-tile.png')
-        await PIXI.Assets.load('/sprites/city/FDR_City.png')
-
-        await sprites.load('city')
     }
 
     private drawGridLines = () => {
@@ -85,7 +80,7 @@ export class EditorApp extends App {
         const position = e.getLocalPosition(this.app.stage)
         const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
         
-        const tile = PIXI.Sprite.from(sprites.getSprite(this.selectedPalette, this.selectedTile))
+        const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
 
@@ -112,12 +107,20 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
-        // Update realm data
+        // For database purposes
+        this.updateRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+    }
+
+    private updateRealmData = (x: number, y: number, layer: Layer, tile: string) => {
+        const key = `${x}, ${y}` as TilePoint
         this.realmData[this.currentRoomIndex] = {
             ...this.realmData[this.currentRoomIndex],
-            [key]: {
-                ...this.realmData[this.currentRoomIndex][key],
-                [layer]: this.selectedPalette + '-' + this.selectedTile
+            tilemap: {
+                ...this.realmData[this.currentRoomIndex].tilemap,
+                [key]: {
+                    ...this.realmData[this.currentRoomIndex].tilemap[key],
+                    [layer]: tile
+                }
             }
         }
     }
@@ -249,10 +252,19 @@ export class EditorApp extends App {
         signal.on('mouseOver', this.onMouseOver)
     }
 
+    private onBeginSave = () => {
+        signal.emit('save', this.realmData)
+    }
+
+    private setUpSaveListener = () => {
+        signal.on('beginSave', this.onBeginSave)
+    }
+
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
         signal.off('mouseOver', this.onMouseOver)
         signal.off('tileSelected', this.onSelectTile)
+        signal.off('beginSave', this.onBeginSave)
 
         super.destroy()
     }
