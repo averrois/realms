@@ -17,7 +17,7 @@ export class App {
 
     constructor(realmData?: RealmData) {
         if (realmData) {
-            this.realmData = realmData
+            this.realmData = JSON.parse(JSON.stringify(realmData))
         }
     }
 

@@ -14,7 +14,7 @@ export default async function RealmEditor({ params }: { params: { id: string } }
 
     const { data, error } = await supabase.from('realms').select('id, name, owner_id, map_data').eq('id', params.id)
     // Show not found page if we are not the owner or no data is returned
-    if (!data || user.id !== data[0].owner_id) {
+    if (!data || !data[0] || user.id !== data[0].owner_id) {
         return <NotFound />
     }
     const realm = data[0]
