@@ -121,6 +121,7 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
+        // Update realm data
         this.realmData[this.currentRoomIndex] = {
             ...this.realmData[this.currentRoomIndex],
             [key]: {

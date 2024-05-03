@@ -4,9 +4,10 @@ export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'
 
 export type TilePoint = `${number}, ${number}`
 
-export type RealmData = TilemapData[]
+export type RealmData = Room[]
 
-export interface TilemapData {
+export interface Room {
+    name: string,
     [key: `${number}, ${number}`]: {
         floor: string,
         transition: string,

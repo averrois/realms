@@ -6,7 +6,7 @@ PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
-    protected realmData: RealmData = [{}]
+    protected realmData: RealmData = [{name: 'Home'}]
 
     constructor(realmData?: RealmData) {
         if (realmData) {
