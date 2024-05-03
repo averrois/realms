@@ -3,6 +3,7 @@ import React from 'react'
 import { useModal } from '@/app/hooks/useModal'
 import CreateRealmModal from './CreateRealmModal'
 import AccountDropdown from './AccountDropdown'
+import Save from './Save'
 
 const ModalParent:React.FC = () => {
     const [modal] = useModal()
@@ -14,6 +15,9 @@ const ModalParent:React.FC = () => {
             )}
             {modal === 'Account Dropdown' && (
                 <AccountDropdown />
+            )}
+            {modal === 'Save' && (
+                <Save />
             )}
         </div>
     )

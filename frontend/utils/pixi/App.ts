@@ -1,11 +1,16 @@
 import * as PIXI from 'pixi.js'
-import { RealmData } from './types'
+import { Layer, RealmData } from './types'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
+    protected layers: { [key in Layer]: PIXI.Container } = {
+        floor: new PIXI.Container(),
+        transition: new PIXI.Container(),
+        object: new PIXI.Container(),
+    }
     protected realmData: RealmData = [{name: 'Home'}]
 
     constructor(realmData?: RealmData) {
@@ -25,6 +30,10 @@ export class App {
             backgroundColor: 0x0F0F0F,
         })
         this.initialized = true
+
+        this.app.stage.addChild(this.layers.floor)
+        this.app.stage.addChild(this.layers.transition)
+        this.app.stage.addChild(this.layers.object)
     }
 
     public getApp = () => {

@@ -14,21 +14,12 @@ export class EditorApp extends App {
     protected isMouseInScreen: boolean = false
     private currentRoomIndex: number = 0    
 
-    private layers: { [key in Layer]: PIXI.Container } = {
-        floor: new PIXI.Container(),
-        transition: new PIXI.Container(),
-        object: new PIXI.Container(),
-    }
-
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
     private tilemapSprites: TilemapSprites = {}
 
     public async init() {
         await super.init()
-        this.app.stage.addChild(this.layers.floor)
-        this.app.stage.addChild(this.layers.transition)
-        this.app.stage.addChild(this.layers.object)
 
         this.app.stage.addChild(this.gridLineContainer)
 
