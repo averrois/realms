@@ -22,5 +22,10 @@ export const citySpriteSheetData: SpriteSheetData = {
         top_left_bricks: { x: 320, y: 32, width: 32, height: 32 },
         top_bricks: { x: 352, y: 32, width: 32, height: 32 },
         top_right_bricks: { x: 384, y: 32, width: 32, height: 32 },
+        left_bricks: { x: 320, y: 64, width: 32, height: 32 },
+        right_bricks: { x: 384, y: 64, width: 32, height: 32 },
+        bottom_left_bricks: { x: 320, y: 96, width: 32, height: 32 },
+        bottom_bricks: { x: 352, y: 96, width: 32, height: 32 },
+        bottom_right_bricks: { x: 384, y: 96, width: 32, height: 32 },
     }
 }

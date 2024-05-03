@@ -1,6 +1,5 @@
 'use client'
 import React, { useEffect, useRef } from 'react'
-import { TileMenuApp } from '@/utils/pixi/TileMenuApp'
 import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
 import { sprites } from '@/utils/pixi/spritesheet/spritesheet'
 
@@ -23,7 +22,7 @@ const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected
     const scaleY = spriteHeight / height;
 
     return (
-        <div className={`w-full aspect-square hover:bg-secondaryhover cursor-pointer rounded-lg flex flex-col items-center justify-center gap-4 ${selected ? 'bg-secondaryhover' : ''}`} onClick={onClick}>
+        <div className={`w-full aspect-square hover:bg-secondaryhover cursor-pointer rounded-lg flex flex-col items-center justify-center ${selected ? 'bg-secondaryhover' : ''}`} onClick={onClick}>
             <div style={{
                 backgroundImage: `url(${src})`,
                 backgroundPosition: `-${x}px -${y}px`,

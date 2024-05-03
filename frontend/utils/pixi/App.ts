@@ -1,16 +1,16 @@
 import * as PIXI from 'pixi.js'
-import { TilemapJSON } from './types'
+import { RealmData } from './types'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
     protected initialized: boolean = false
-    protected tilemapJSON: TilemapJSON = {}
+    protected realmData: RealmData = [{}]
 
-    constructor(tilemapJSON?: TilemapJSON) {
-        if (tilemapJSON) {
-            this.tilemapJSON = tilemapJSON
+    constructor(realmData?: RealmData) {
+        if (realmData) {
+            this.realmData = realmData
         }
     }
 

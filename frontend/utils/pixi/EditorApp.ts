@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, RealmData } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -12,6 +12,7 @@ export class EditorApp extends App {
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
+    private currentRoomIndex: number = 0    
 
     private layers: { [key in Layer]: PIXI.Container } = {
         floor: new PIXI.Container(),
@@ -120,9 +121,12 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
-        this.tilemapJSON[key] = {
-            ...this.tilemapJSON[key],
-            [layer]: this.selectedPalette + '-' + this.selectedTile
+        this.realmData[this.currentRoomIndex] = {
+            ...this.realmData[this.currentRoomIndex],
+            [key]: {
+                ...this.realmData[this.currentRoomIndex][key],
+                [layer]: this.selectedPalette + '-' + this.selectedTile
+            }
         }
     }
 
