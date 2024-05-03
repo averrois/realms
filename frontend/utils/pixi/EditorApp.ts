@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, RealmData } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -12,10 +12,10 @@ export class EditorApp extends App {
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
     protected isMouseInScreen: boolean = false
-
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
     private tilemapSprites: TilemapSprites = {}
+    private needsToSave: boolean = false
 
     public async init() {
         await super.init()
@@ -25,9 +25,8 @@ export class EditorApp extends App {
         await this.loadAssets()
         this.drawGridLines()
 
-        this.setUpUIListeners()
-        this.setUpMouseListener()
-        this.setUpSaveListener()
+        this.setUpSignalListeners()
+        this.setUpBeforeUnload()
         this.setUpInteraction()
     }
 
@@ -52,10 +51,12 @@ export class EditorApp extends App {
         this.gridLines.height = this.app.screen.height * (1 / this.scale)
     }
 
-    private setUpUIListeners = () => {
+    private setUpSignalListeners = () => {
         signal.on('selectTool', this.onSelectTool)
-
         signal.on('tileSelected', this.onSelectTile)
+        signal.on('mouseOver', this.onMouseOver)
+        signal.on('beginSave', this.onBeginSave)
+        signal.on('saved', this.onSaved)
     }
 
     private onSelectTile = (tile: string) => {
@@ -123,6 +124,7 @@ export class EditorApp extends App {
                 }
             }
         }
+        this.needsToSave = true
     }
 
     private tileTool = () => {
@@ -248,16 +250,24 @@ export class EditorApp extends App {
         this.isMouseInScreen = isOver
     }
 
-    private setUpMouseListener = () => {
-        signal.on('mouseOver', this.onMouseOver)
-    }
-
     private onBeginSave = () => {
         signal.emit('save', this.realmData)
     }
 
-    private setUpSaveListener = () => {
-        signal.on('beginSave', this.onBeginSave)
+    private onBeforeUnload = (e: BeforeUnloadEvent) => {
+        if (this.needsToSave) {
+            const message = 'Your changes may not be saved.'
+            e.returnValue = message
+            return message
+        }
+    }
+
+    private setUpBeforeUnload = () => {
+        window.addEventListener('beforeunload', this.onBeforeUnload)
+    }
+
+    private onSaved = () => {
+        this.needsToSave = false
     }
 
     public destroy() {
@@ -265,6 +275,8 @@ export class EditorApp extends App {
         signal.off('mouseOver', this.onMouseOver)
         signal.off('tileSelected', this.onSelectTile)
         signal.off('beginSave', this.onBeginSave)
+        signal.off('saved', this.onSaved)
+        window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
     }

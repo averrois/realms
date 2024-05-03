@@ -42,6 +42,7 @@ const TopBar:React.FC<TopBarProps> = () => {
 
             revalidate('/editor/[id]')
             setModal('None')
+            signal.emit('saved')
         }
 
         signal.on('save', save)
