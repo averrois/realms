@@ -74,6 +74,8 @@ export class App {
                 this.layers.object.addChild(objectSprite)
             }
         }
+
+        this.sortObjectsByY()
     }
 
     public getApp = () => {
@@ -98,6 +100,12 @@ export class App {
             x: x * tileSize,
             y: y * tileSize,
         }
+    }
+
+    protected sortObjectsByY = () => {
+        this.layers.object.children.sort((a, b) => {
+            return a.y - b.y
+        })
     }
 
     public destroy() {

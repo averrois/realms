@@ -95,17 +95,21 @@ class Sprites {
                     x: spriteData.x,
                     y: spriteData.y,
                     w: spriteData.width,
-                    h: spriteData.height
+                    h: spriteData.height,
                 },
                 spriteSourceSize: {
                     x: 0,
                     y: 0,
                     w: spriteData.width,
-                    h: spriteData.height
+                    h: spriteData.height,
                 },
                 sourceSize: {
                     w: spriteData.width,
-                    h: spriteData.height
+                    h: spriteData.height,
+                },
+                anchor: {
+                    x: 0,
+                    y: 1 - (32 / spriteData.height),
                 }
             }
         }

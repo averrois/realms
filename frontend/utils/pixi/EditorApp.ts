@@ -88,6 +88,8 @@ export class EditorApp extends App {
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
         this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
+        // sort the children by y position
+        this.sortObjectsByY()
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
