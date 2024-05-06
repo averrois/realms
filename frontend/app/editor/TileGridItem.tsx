@@ -17,7 +17,8 @@ const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected
     const sheetWidth = sprites.spriteSheetDataSet[sheetName].width // Width of the whole sprite sheet
     const sheetHeight = sprites.spriteSheetDataSet[sheetName]. height // Height of the whole sprite sheet
 
-    const scale = 0.5
+    const higherDimension = Math.max(width, height)
+    const scale = 64 / higherDimension
 
     return (
         <div className={`w-full aspect-square hover:bg-secondaryhover cursor-pointer rounded-lg flex flex-col items-center justify-between ${selected ? 'bg-secondaryhover' : ''}`} onClick={onClick}>
@@ -28,6 +29,7 @@ const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected
                     backgroundSize: `${sheetWidth * scale}px ${sheetHeight * scale}px`,
                     width: `${width * scale}px`,
                     height: `${height * scale}px`,
+                    imageRendering: 'pixelated'
                 }}></div>
             </div>
             <p className='text-sm'>{sprite}</p>
