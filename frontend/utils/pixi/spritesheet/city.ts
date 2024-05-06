@@ -27,5 +27,6 @@ export const citySpriteSheetData: SpriteSheetData = {
         bl_bricks_v: { x: 320, y: 96, width: 32, height: 32 },
         b_bricks_v: { x: 352, y: 96, width: 32, height: 32 },
         br_bricks_v: { x: 384, y: 96, width: 32, height: 32 },
+        down_sign: { x: 512, y: 32, width: 32, height: 64 },
     }
 }

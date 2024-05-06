@@ -22,15 +22,16 @@ const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected
     const scaleY = spriteHeight / height;
 
     return (
-        <div className={`w-full aspect-square hover:bg-secondaryhover cursor-pointer rounded-lg flex flex-col items-center justify-center ${selected ? 'bg-secondaryhover' : ''}`} onClick={onClick}>
-            <div style={{
-                backgroundImage: `url(${src})`,
-                backgroundPosition: `-${x}px -${y}px`,
-                backgroundSize: `${scaleX * 100}% ${scaleY * 100}%`,
-                width: `${width}px`,
-                height: `${height}px`
-            }}></div>
-            
+        <div className={`w-full aspect-square hover:bg-secondaryhover cursor-pointer rounded-lg flex flex-col items-center justify-between ${selected ? 'bg-secondaryhover' : ''}`} onClick={onClick}>
+            <div className='w-full grow grid place-items-center'>
+                <div style={{
+                    backgroundImage: `url(${src})`,
+                    backgroundPosition: `-${x}px -${y}px`,
+                    backgroundSize: `${scaleX * 100}% ${scaleY * 100}%`,
+                    width: `${width}px`,
+                    height: `${height}px`
+                }}></div>
+            </div>
             <p className='text-sm'>{sprite}</p>
         </div>
     )
