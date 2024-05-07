@@ -109,6 +109,7 @@ export class EditorApp extends App {
         }
 
         this.layers[layer].addChild(tile)
+
         const key = `${x}, ${y}` as TilePoint
         this.tilemapSprites[key] = {
             ...this.tilemapSprites[key],
@@ -118,11 +119,7 @@ export class EditorApp extends App {
         // sort the children by y position
         this.sortObjectsByY()
 
-        return { x, y, layer }
-    }
-
-    private showTilePlaceholder = (e: PIXI.FederatedPointerEvent) => {
-        
+        return { x, y, layer, tile }
     }
 
     private updateRealmDataWithTile = (x: number, y: number, layer: Layer, tile: string) => {
@@ -157,12 +154,6 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.placeTileAndSave(e)
                 this.app.stage.on('pointermove', this.placeTileAndSave)
-            }
-        })
-
-        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Tile') {
-                this.showTilePlaceholder(e)
             }
         })
     }

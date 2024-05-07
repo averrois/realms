@@ -1,6 +1,6 @@
 import { Sprite } from 'pixi.js'
 
-export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'
+export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
 export type TilePoint = `${number}, ${number}`
 
@@ -25,4 +25,4 @@ export interface TilemapSprites {
     }
 }
 
-export type Layer = 'floor' | 'transition' | 'object' 
+export type Layer = 'floor' | 'transition' | 'object'

@@ -23,6 +23,9 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, selectTool }) => {
             <ToolButton selected={tool === 'ZoomOut'} onClick={() => selectTool('ZoomOut')}>
                 <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
+            <ToolButton selected={tool === 'Eraser'} onClick={() => selectTool('ZoomOut')}>
+                <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
+            </ToolButton>
         </div>
     )
 }
