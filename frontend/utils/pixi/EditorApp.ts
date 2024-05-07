@@ -77,7 +77,14 @@ export class EditorApp extends App {
         this.sendCoordinates()
     }
 
-    private placeTile = (e: PIXI.FederatedPointerEvent) => {
+    private placeTileAndSave = (e: PIXI.FederatedPointerEvent) => {
+        const { x, y, layer } =  this.placeTileOnMousePosition(e)
+
+        // For database purposes
+        this.updateRealmDataWithTile(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+    }
+
+    private placeTileOnMousePosition = (e: PIXI.FederatedPointerEvent) => {
         const position = e.getLocalPosition(this.app.stage)
         const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
         
@@ -87,9 +94,7 @@ export class EditorApp extends App {
 
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
-        this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
-        // sort the children by y position
-        this.sortObjectsByY()
+        return this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
@@ -110,11 +115,17 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
-        // For database purposes
-        this.updateRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+        // sort the children by y position
+        this.sortObjectsByY()
+
+        return { x, y, layer }
     }
 
-    private updateRealmData = (x: number, y: number, layer: Layer, tile: string) => {
+    private showTilePlaceholder = (e: PIXI.FederatedPointerEvent) => {
+        
+    }
+
+    private updateRealmDataWithTile = (x: number, y: number, layer: Layer, tile: string) => {
         const key = `${x}, ${y}` as TilePoint
         this.realmData[this.currentRoomIndex] = {
             ...this.realmData[this.currentRoomIndex],
@@ -132,20 +143,26 @@ export class EditorApp extends App {
     private tileTool = () => {
         this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.app.stage.off('pointermove', this.placeTile)
+                this.app.stage.off('pointermove', this.placeTileAndSave)
             }
         })
 
         this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.app.stage.off('pointermove', this.placeTile)
+                this.app.stage.off('pointermove', this.placeTileAndSave)
             }
         })
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.placeTile(e)
-                this.app.stage.on('pointermove', this.placeTile)
+                this.placeTileAndSave(e)
+                this.app.stage.on('pointermove', this.placeTileAndSave)
+            }
+        })
+
+        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Tile') {
+                this.showTilePlaceholder(e)
             }
         })
     }
