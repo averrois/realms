@@ -4,6 +4,7 @@ import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool } from '@/utils/pixi/types'
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
+import { Eraser } from '@phosphor-icons/react'
 
 type LeftBarProps = {
     tool: Tool,
@@ -23,8 +24,8 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, selectTool }) => {
             <ToolButton selected={tool === 'ZoomOut'} onClick={() => selectTool('ZoomOut')}>
                 <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
-            <ToolButton selected={tool === 'Eraser'} onClick={() => selectTool('ZoomOut')}>
-                <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
+            <ToolButton selected={tool === 'Eraser'} onClick={() => selectTool('Eraser')}>
+                <Eraser className='h-8 w-8'/>
             </ToolButton>
         </div>
     )
