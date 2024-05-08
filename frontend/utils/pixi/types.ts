@@ -10,18 +10,18 @@ export interface Room {
     name: string,
     tilemap: {
         [key: `${number}, ${number}`]: {
-            floor: string,
-            transition: string,
-            object: string,
+            floor?: string,
+            transition?: string,
+            object?: string,
         }
     }
 }
 
 export interface TilemapSprites {
     [key: `${number}, ${number}`]: {
-        floor: Sprite,
-        transition: Sprite,
-        object: Sprite,
+        floor?: Sprite,
+        transition?: Sprite,
+        object?: Sprite,
     }
 }
 

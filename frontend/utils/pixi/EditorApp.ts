@@ -30,6 +30,35 @@ export class EditorApp extends App {
         this.setUpInteraction()
     }
 
+    override async loadRoomSprites(index: number) {
+        await super.loadRoomSprites(index)
+
+        // iterate through all layers and update tilemapSprites
+        for (const tile of this.layers.floor.children) {
+            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
+            this.tilemapSprites[key] = {
+                ...this.tilemapSprites[key],
+                floor: tile as PIXI.Sprite
+            }
+        }
+
+        for (const tile of this.layers.transition.children) {
+            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
+            this.tilemapSprites[key] = {
+                ...this.tilemapSprites[key],
+                transition: tile as PIXI.Sprite
+            }
+        }
+
+        for (const tile of this.layers.object.children) {
+            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
+            this.tilemapSprites[key] = {
+                ...this.tilemapSprites[key],
+                object: tile as PIXI.Sprite
+            }
+        }
+    }
+
     private loadAssets = async () => {
         await PIXI.Assets.load('/sprites/tile-outline.png')
     }
@@ -43,6 +72,7 @@ export class EditorApp extends App {
         })
 
         this.gridLineContainer.addChild(this.gridLines)
+        this.gridLineContainer.eventMode = 'none'
         this.app.renderer.on('resize', this.resizeGridLines)
     }
 
@@ -69,11 +99,13 @@ export class EditorApp extends App {
     }
 
     private setUpInteraction = () => {
-        this.app.stage.interactive = true
+        this.app.stage.eventMode = 'static'
+        this.app.stage.hitArea = this.app.screen
         this.handTool()
         this.zoomInTool()
         this.zoomOutTool()
         this.tileTool()
+        this.eraserTool()
         this.sendCoordinates()
     }
 
@@ -81,7 +113,7 @@ export class EditorApp extends App {
         const { x, y, layer } =  this.placeTileOnMousePosition(e)
 
         // For database purposes
-        this.updateRealmDataWithTile(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+        this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
     }
 
     private placeTileOnMousePosition = (e: PIXI.FederatedPointerEvent) => {
@@ -91,6 +123,11 @@ export class EditorApp extends App {
         const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
+
+        tile.eventMode = 'static'
+        tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            console.log('nice')
+        })
 
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
@@ -122,7 +159,7 @@ export class EditorApp extends App {
         return { x, y, layer, tile }
     }
 
-    private updateRealmDataWithTile = (x: number, y: number, layer: Layer, tile: string) => {
+    private addTileToRealmData = (x: number, y: number, layer: Layer, tile: string) => {
         const key = `${x}, ${y}` as TilePoint
         this.realmData[this.currentRoomIndex] = {
             ...this.realmData[this.currentRoomIndex],
@@ -134,6 +171,12 @@ export class EditorApp extends App {
                 }
             }
         }
+        this.needsToSave = true
+    }
+
+    private removeTileFromRealmData = (x: number, y: number, layer: Layer) => {
+        const key = `${x}, ${y}` as TilePoint
+        delete this.realmData[this.currentRoomIndex].tilemap[key][layer]
         this.needsToSave = true
     }
 
@@ -154,6 +197,51 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.placeTileAndSave(e)
                 this.app.stage.on('pointermove', this.placeTileAndSave)
+            }
+        })
+    }
+
+    private eraseTile = (e: PIXI.FederatedPointerEvent) => {
+        const position = e.getLocalPosition(this.app.stage)
+        const { x, y } = this.convertToTileCoordinates(position.x, position.y)
+
+        const floorTile = this.getTileAtPosition(x, y, 'floor')
+        const transitionTile = this.getTileAtPosition(x, y, 'transition')
+        const objectTile = this.getTileAtPosition(x, y, 'object')
+        
+        if (objectTile) {
+            this.layers.object.removeChild(objectTile)
+            delete this.tilemapSprites[`${x}, ${y}`].object
+            this.removeTileFromRealmData(x, y, 'object')
+        } else if (transitionTile) {
+            this.layers.transition.removeChild(transitionTile)
+            delete this.tilemapSprites[`${x}, ${y}`].transition
+            this.removeTileFromRealmData(x, y, 'transition')
+        } else if (floorTile) {
+            this.layers.floor.removeChild(floorTile)
+            delete this.tilemapSprites[`${x}, ${y}`].floor
+            this.removeTileFromRealmData(x, y, 'floor')
+        }
+
+    }
+
+    private eraserTool = () => {
+        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser') {
+                this.app.stage.off('pointermove', this.eraseTile)
+            }
+        })
+
+        this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser') {
+                this.app.stage.off('pointermove', this.eraseTile)
+            }
+        })
+
+        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser') {
+                this.eraseTile(e)
+                this.app.stage.on('pointermove', this.eraseTile)
             }
         })
     }

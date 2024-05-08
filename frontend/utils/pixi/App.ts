@@ -40,7 +40,7 @@ export class App {
         await this.loadRoomSprites(this.currentRoomIndex)
     }
 
-    protected loadRoomSprites = async (index: number) => {
+    protected async loadRoomSprites(index: number) {
         // Clear the current room
         this.layers.floor.removeChildren()
         this.layers.transition.removeChildren()
