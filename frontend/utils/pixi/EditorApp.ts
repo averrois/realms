@@ -129,10 +129,17 @@ export class EditorApp extends App {
         tile.on('pointerenter', (e: PIXI.FederatedPointerEvent) => {
             // if mouse is clicked
             if (this.toolMode === 'Eraser') {
+                tile.tint = 0xababab
                 const holdingClick = e.buttons === 1
                 if (holdingClick) {
                     erase()
                 }
+            }
+        })
+
+        tile.on('pointerleave', () => {
+            if (this.toolMode === 'Eraser') {
+                tile.tint = 0xFFFFFF
             }
         })
 
