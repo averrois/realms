@@ -128,8 +128,11 @@ export class EditorApp extends App {
         tile.eventMode = 'static'
         tile.on('pointerenter', (e: PIXI.FederatedPointerEvent) => {
             // if mouse is clicked
-            if (this.toolMode === 'Eraser' && e.buttons === 1) {
-                erase()
+            if (this.toolMode === 'Eraser') {
+                const holdingClick = e.buttons === 1
+                if (holdingClick) {
+                    erase()
+                }
             }
         })
 
