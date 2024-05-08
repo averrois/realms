@@ -118,12 +118,24 @@ export class EditorApp extends App {
     }
 
     private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
+
+        const erase = () => {
+            this.layers[layer].removeChild(tile)
+            delete this.tilemapSprites[`${x}, ${y}`][layer]
+            this.removeTileFromRealmData(x, y, layer)
+        }
+
         tile.eventMode = 'static'
+        tile.on('pointerenter', (e: PIXI.FederatedPointerEvent) => {
+            // if mouse is clicked
+            if (this.toolMode === 'Eraser' && e.buttons === 1) {
+                erase()
+            }
+        })
+
         tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Eraser') {
-                this.layers[layer].removeChild(tile)
-                delete this.tilemapSprites[`${x}, ${y}`][layer]
-                this.removeTileFromRealmData(x, y, layer)
+                erase()
             }
         })
     }
