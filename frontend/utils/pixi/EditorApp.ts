@@ -37,13 +37,12 @@ export class EditorApp extends App {
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
         for (const tile of this.layers[layer].children) {
-            const key: TilePoint = `${tile.x / 32}, ${tile.y / 32}`
+            const convertedPosition = this.convertToTileCoordinates(tile.x, tile.y)
+
+            const key: TilePoint = `${convertedPosition.x}, ${convertedPosition.y}`
             this.tilemapSprites[key] = { ...this.tilemapSprites[key], [layer]: tile as PIXI.Sprite }
 
-            tile.eventMode = 'static'
-            tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-                this.eraseTileOnClick(layer, tile.x / 32, tile.y / 32)
-            })
+            this.setUpEraserTool(tile as PIXI.Sprite, convertedPosition.x, convertedPosition.y, layer)
         }
     }
 
@@ -113,25 +112,20 @@ export class EditorApp extends App {
 
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
-        tile.eventMode = 'static'
-        tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            this.eraseTileOnClick(layer, convertedPosition.x, convertedPosition.y)
-        })
+        this.setUpEraserTool(tile, convertedPosition.x, convertedPosition.y, layer)
 
         return this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
     }
 
-    private eraseTileOnClick = (layer: Layer, x: number, y: number) => {
-        if (this.toolMode === 'Eraser') {
-            // remove from parent
-            const tile = this.getTileAtPosition(x, y, layer)
-
-            if (tile) {
+    private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
+        tile.eventMode = 'static'
+        tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser') {
                 this.layers[layer].removeChild(tile)
                 delete this.tilemapSprites[`${x}, ${y}`][layer]
                 this.removeTileFromRealmData(x, y, layer)
             }
-        }
+        })
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
