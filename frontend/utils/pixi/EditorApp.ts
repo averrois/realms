@@ -5,7 +5,6 @@ import { Layer, TilemapSprites, Tool, TilePoint } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
-    private gridLineContainer: PIXI.Container = new PIXI.Container()
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
     private toolMode: Tool = 'None'
     private dragging: boolean = false
@@ -20,8 +19,6 @@ export class EditorApp extends App {
     public async init() {
         await super.init()
 
-        this.app.stage.addChild(this.gridLineContainer)
-
         await this.loadAssets()
         this.drawGridLines()
 
@@ -33,29 +30,20 @@ export class EditorApp extends App {
     override async loadRoomSprites(index: number) {
         await super.loadRoomSprites(index)
 
-        // iterate through all layers and update tilemapSprites
-        for (const tile of this.layers.floor.children) {
-            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
-            this.tilemapSprites[key] = {
-                ...this.tilemapSprites[key],
-                floor: tile as PIXI.Sprite
-            }
-        }
+        this.setUpInitialTilemapDataAndPointerEvents('floor')
+        this.setUpInitialTilemapDataAndPointerEvents('transition')
+        this.setUpInitialTilemapDataAndPointerEvents('object')
+    }
 
-        for (const tile of this.layers.transition.children) {
-            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
-            this.tilemapSprites[key] = {
-                ...this.tilemapSprites[key],
-                transition: tile as PIXI.Sprite
-            }
-        }
+    private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
+        for (const tile of this.layers[layer].children) {
+            const key: TilePoint = `${tile.x / 32}, ${tile.y / 32}`
+            this.tilemapSprites[key] = { ...this.tilemapSprites[key], [layer]: tile as PIXI.Sprite }
 
-        for (const tile of this.layers.object.children) {
-            const key = `${tile.x / 32}, ${tile.y / 32}` as TilePoint
-            this.tilemapSprites[key] = {
-                ...this.tilemapSprites[key],
-                object: tile as PIXI.Sprite
-            }
+            tile.eventMode = 'static'
+            tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+                this.eraseTileOnClick(layer, tile.x / 32, tile.y / 32)
+            })
         }
     }
 
@@ -71,8 +59,8 @@ export class EditorApp extends App {
             alpha: 0.1,
         })
 
-        this.gridLineContainer.addChild(this.gridLines)
-        this.gridLineContainer.eventMode = 'none'
+        this.gridLines.eventMode = 'none'
+        this.app.stage.addChild(this.gridLines)
         this.app.renderer.on('resize', this.resizeGridLines)
     }
 
@@ -105,7 +93,6 @@ export class EditorApp extends App {
         this.zoomInTool()
         this.zoomOutTool()
         this.tileTool()
-        this.eraserTool()
         this.sendCoordinates()
     }
 
@@ -124,14 +111,27 @@ export class EditorApp extends App {
         tile.x = convertedPosition.x * 32
         tile.y = convertedPosition.y * 32
 
-        tile.eventMode = 'static'
-        tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            console.log('nice')
-        })
-
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
+        tile.eventMode = 'static'
+        tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            this.eraseTileOnClick(layer, convertedPosition.x, convertedPosition.y)
+        })
+
         return this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
+    }
+
+    private eraseTileOnClick = (layer: Layer, x: number, y: number) => {
+        if (this.toolMode === 'Eraser') {
+            // remove from parent
+            const tile = this.getTileAtPosition(x, y, layer)
+
+            if (tile) {
+                this.layers[layer].removeChild(tile)
+                delete this.tilemapSprites[`${x}, ${y}`][layer]
+                this.removeTileFromRealmData(x, y, layer)
+            }
+        }
     }
 
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
@@ -201,51 +201,6 @@ export class EditorApp extends App {
         })
     }
 
-    private eraseTile = (e: PIXI.FederatedPointerEvent) => {
-        const position = e.getLocalPosition(this.app.stage)
-        const { x, y } = this.convertToTileCoordinates(position.x, position.y)
-
-        const floorTile = this.getTileAtPosition(x, y, 'floor')
-        const transitionTile = this.getTileAtPosition(x, y, 'transition')
-        const objectTile = this.getTileAtPosition(x, y, 'object')
-        
-        if (objectTile) {
-            this.layers.object.removeChild(objectTile)
-            delete this.tilemapSprites[`${x}, ${y}`].object
-            this.removeTileFromRealmData(x, y, 'object')
-        } else if (transitionTile) {
-            this.layers.transition.removeChild(transitionTile)
-            delete this.tilemapSprites[`${x}, ${y}`].transition
-            this.removeTileFromRealmData(x, y, 'transition')
-        } else if (floorTile) {
-            this.layers.floor.removeChild(floorTile)
-            delete this.tilemapSprites[`${x}, ${y}`].floor
-            this.removeTileFromRealmData(x, y, 'floor')
-        }
-
-    }
-
-    private eraserTool = () => {
-        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser') {
-                this.app.stage.off('pointermove', this.eraseTile)
-            }
-        })
-
-        this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser') {
-                this.app.stage.off('pointermove', this.eraseTile)
-            }
-        })
-
-        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser') {
-                this.eraseTile(e)
-                this.app.stage.on('pointermove', this.eraseTile)
-            }
-        })
-    }
-
     private zoomInTool = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'ZoomIn') {
@@ -286,8 +241,8 @@ export class EditorApp extends App {
     }
 
     private matchGridLinesToStage = () => {
-        this.gridLineContainer.position.x = -this.app.stage.position.x * (1 / this.scale)
-        this.gridLineContainer.position.y = -this.app.stage.position.y * (1 / this.scale)
+        this.gridLines.position.x = -this.app.stage.position.x * (1 / this.scale)
+        this.gridLines.position.y = -this.app.stage.position.y * (1 / this.scale)
         this.gridLines.tilePosition.x = this.app.stage.position.x * (1 / this.scale)
         this.gridLines.tilePosition.y = this.app.stage.position.y * (1 / this.scale)
     }
