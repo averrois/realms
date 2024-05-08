@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Bounds } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -15,6 +15,9 @@ export class EditorApp extends App {
     private selectedTile: string = ''   
     private tilemapSprites: TilemapSprites = {}
     private needsToSave: boolean = false
+    private currentCoordinates: Point = { x: 0, y: 0 }
+    private lastErasedCoordinates: Point = { x: 0, y: 0 }
+    private canErase: boolean = true
 
     public async init() {
         await super.init()
@@ -101,7 +104,7 @@ export class EditorApp extends App {
         this.zoomInTool()
         this.zoomOutTool()
         this.tileTool()
-        this.sendCoordinates()
+        this.updateCoordinates()
     }
 
     private placeTileAndSave = (e: PIXI.FederatedPointerEvent) => {
@@ -132,15 +135,17 @@ export class EditorApp extends App {
             this.layers[layer].removeChild(tile)
             delete this.tilemapSprites[`${x}, ${y}`][layer]
             this.removeTileFromRealmData(x, y, layer)
+            this.lastErasedCoordinates = this.currentCoordinates
+            this.canErase = false
         }
 
         tile.eventMode = 'static'
-        tile.on('pointerenter', (e: PIXI.FederatedPointerEvent) => {
+        tile.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             // if mouse is clicked
             if (this.toolMode === 'Eraser') {
                 tile.tint = 0xababab
                 const holdingClick = e.buttons === 1
-                if (holdingClick) {
+                if (holdingClick && this.canErase) {
                     erase()
                 }
             }
@@ -315,13 +320,19 @@ export class EditorApp extends App {
         }
     }
 
-    private sendCoordinates = () => {
+    private updateCoordinates = () => {
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
-            if (this.isMouseInScreen === false) return
-
             const position = e.getLocalPosition(this.app.stage)
             const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
-            signal.emit('coordinates', convertedPosition)
+            this.currentCoordinates = convertedPosition
+
+            if (this.currentCoordinates.x !== this.lastErasedCoordinates.x || this.currentCoordinates.y !== this.lastErasedCoordinates.y) {
+                this.canErase = true
+            }
+
+            if (this.isMouseInScreen === false) return
+
+            signal.emit('coordinates', this.currentCoordinates)
         })
     }
 
