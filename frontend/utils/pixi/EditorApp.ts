@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Bounds } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -60,12 +60,21 @@ export class EditorApp extends App {
 
         this.gridLines.eventMode = 'none'
         this.app.stage.addChild(this.gridLines)
-        this.app.renderer.on('resize', this.resizeGridLines)
+        this.app.renderer.on('resize', this.resizeEvent)
+    }
+
+    private resizeEvent = () => {
+        this.resizeGridLines()
+        this.matchHitAreaToGridLines()
     }
 
     private resizeGridLines = () => {
         this.gridLines.width = this.app.screen.width * (1 / this.scale)
         this.gridLines.height = this.app.screen.height * (1 / this.scale)
+    }
+
+    private matchHitAreaToGridLines = () => {
+        this.app.stage.hitArea = new PIXI.Rectangle(this.gridLines.position.x, this.gridLines.position.y, this.gridLines.width, this.gridLines.height)
     }
 
     private setUpSignalListeners = () => {
@@ -253,7 +262,7 @@ export class EditorApp extends App {
         this.scale = newScale
         this.app.stage.scale.set(this.scale)
         this.matchGridLinesToStage()
-        this.resizeGridLines()
+        this.resizeEvent()
     }
 
     private matchGridLinesToStage = () => {
@@ -290,6 +299,7 @@ export class EditorApp extends App {
         this.app.stage.position.y += diffY 
 
         this.matchGridLinesToStage()
+        this.matchHitAreaToGridLines()
     }
 
     private onDragStart = (e: PIXI.FederatedPointerEvent) => {

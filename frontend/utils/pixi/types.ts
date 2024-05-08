@@ -26,3 +26,10 @@ export interface TilemapSprites {
 }
 
 export type Layer = 'floor' | 'transition' | 'object'
+
+export type Bounds = {
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+}
