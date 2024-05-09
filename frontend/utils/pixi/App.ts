@@ -54,7 +54,7 @@ export class App {
             const object = tileData.object
 
             const [x, y] = tilePoint.split(',').map(Number)
-            const coordinates = this.convertToRealCoordinates(x, y)
+            const coordinates = this.convertTileToScreenCoordinates(x, y)
 
             if (floor) {
                 const floorSprite = await sprites.getSpriteForTileJSON(floor)
@@ -86,7 +86,7 @@ export class App {
         return this.app
     }
 
-    protected convertToTileCoordinates = (x: number, y: number) => {
+    protected convertScreenToTileCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: Math.floor(x / tileSize),
@@ -94,7 +94,7 @@ export class App {
         }
     }
 
-    protected convertToRealCoordinates = (x: number, y: number) => {
+    protected convertTileToScreenCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: x * tileSize,

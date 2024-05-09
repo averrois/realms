@@ -40,7 +40,7 @@ export class EditorApp extends App {
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
         for (const tile of this.layers[layer].children) {
-            const convertedPosition = this.convertToTileCoordinates(tile.x, tile.y)
+            const convertedPosition = this.convertScreenToTileCoordinates(tile.x, tile.y)
 
             const key: TilePoint = `${convertedPosition.x}, ${convertedPosition.y}`
             this.tilemapSprites[key] = { ...this.tilemapSprites[key], [layer]: tile as PIXI.Sprite }
@@ -116,7 +116,7 @@ export class EditorApp extends App {
 
     private placeTileOnMousePosition = (e: PIXI.FederatedPointerEvent) => {
         const position = e.getLocalPosition(this.app.stage)
-        const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
+        const convertedPosition = this.convertScreenToTileCoordinates(position.x, position.y)
         
         const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
         tile.x = convertedPosition.x * 32
@@ -323,7 +323,7 @@ export class EditorApp extends App {
     private updateCoordinates = () => {
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             const position = e.getLocalPosition(this.app.stage)
-            const convertedPosition = this.convertToTileCoordinates(position.x, position.y)
+            const convertedPosition = this.convertScreenToTileCoordinates(position.x, position.y)
             this.currentCoordinates = convertedPosition
 
             if (this.currentCoordinates.x !== this.lastErasedCoordinates.x || this.currentCoordinates.y !== this.lastErasedCoordinates.y) {
