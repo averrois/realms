@@ -87,6 +87,7 @@ export class EditorApp extends App {
         signal.on('createRoom', this.onCreateRoom)
         signal.on('changeRoom', this.changeRoom)
         signal.on('deleteRoom', this.onDeleteRoom)
+        signal.on('changeRoomName', this.onChangeRoomName)
     }
 
     private onSelectTile = (tile: string) => {
@@ -390,9 +391,18 @@ export class EditorApp extends App {
 
         if (this.currentRoomIndex === index) {
             await this.changeRoom(0)
+        } else if (this.currentRoomIndex > index) {
+            this.currentRoomIndex -= 1
         }
 
         signal.emit('roomDeleted', index)
+    }
+
+    private onChangeRoomName = ({ index, newName }: { index: number, newName: string }) => {
+        const newRealmData = this.realmData
+        newRealmData[index].name = newName
+        this.updateRealmData(newRealmData)
+        signal.emit('roomNameChanged', { index, newName })
     }
     
     private onSaved = () => {
@@ -407,6 +417,7 @@ export class EditorApp extends App {
         signal.off('createRoom', this.onCreateRoom)
         signal.off('changeRoom', this.changeRoom)
         signal.off('deleteRoom', this.onDeleteRoom)
+        signal.off('changeRoomName', this.onChangeRoomName)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
