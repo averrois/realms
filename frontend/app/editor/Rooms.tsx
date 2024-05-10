@@ -27,12 +27,12 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
         return () => {
             signal.off('newRoom', onNewRoom)
         }
-    }, [])
+    }, [rooms])
     
     return (
-        <div className='flex flex-col items-center px-4 grow'>
+        <div className='flex flex-col items-center px-4 grow gap-2'>
                 <h1>Rooms</h1>
-                <div className='flex flex-col items-center w-full grow overflow-y-scroll gap-1'>
+                <div className='flex flex-col items-center w-full overflow-y-scroll h-[200px] gap-1'>
                     {rooms.map((room, index) => (
                         <div className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark'} w-full p-1 px-2 rounded-md cursor-pointer`} key={room + index}>{room}</div>
                     ))}
