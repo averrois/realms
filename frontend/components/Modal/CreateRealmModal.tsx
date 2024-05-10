@@ -52,7 +52,7 @@ const CreateRealmModal:React.FC = () => {
             <div className='flex flex-col items-center p-2 w-[400px] gap-4'>
                 <h1 className='text-3xl'>Create a Realm</h1>
                 <BasicInput label={'Realm Name'} className='w-[280px]' value={realmName} onChange={(e) => setRealmName(e.target.value)}/>
-                <BasicButton disabled={realmName.length <= 0 || loading} onClick={createRealm}>
+                <BasicButton disabled={realmName.length <= 0 || loading} onClick={createRealm} className='text-xl'>
                     Create
                 </BasicButton>
             </div>

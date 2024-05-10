@@ -10,6 +10,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import revalidate from '@/utils/revalidate'
+import { FloppyDisk } from '@phosphor-icons/react'
 
 type TopBarProps = {
     
@@ -59,8 +60,9 @@ const TopBar:React.FC<TopBarProps> = () => {
                     <ArrowLeftEndOnRectangleIcon className='h-8 w-8 text-white'/>
                 </Link>
             </div>
-            <BasicButton onClick={beginSave}>
+            <BasicButton onClick={beginSave} className='flex flex-row gap-2 items-center text-xl'>
                 Save
+                <FloppyDisk className='h-6 w-6'/>
             </BasicButton>
         </div>
     )

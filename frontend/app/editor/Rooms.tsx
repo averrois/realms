@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { RealmData } from '@/utils/pixi/types'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import BasicButton from '@/components/BasicButton'
 
 type RoomsProps = {
     realmData: RealmData
@@ -18,6 +20,10 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
                         <div className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark'} w-full p-1 px-2 rounded-md cursor-pointer`}>{room}</div>
                     ))}
                 </div>
+                <BasicButton className='flex flex-row items-center gap-1 text-xl absolute bottom-4'>
+                    Create Room
+                    <PlusCircleIcon className='h-5'/>
+                </BasicButton>
         </div>
     )
 }

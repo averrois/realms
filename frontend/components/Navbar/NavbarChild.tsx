@@ -15,7 +15,7 @@ export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => 
     return (
         <div className='h-16'>
             <div className='w-full fixed bg-secondary flex flex-row items-center p-2 pl-4 justify-end sm:justify-between z-10'>
-                <BasicButton onClick={() => setModal('Create Realm')} className='hidden sm:flex flex-row items-center gap-2'>
+                <BasicButton onClick={() => setModal('Create Realm')} className='hidden sm:flex flex-row items-center gap-2 text-xl'>
                     Create Realm
                     <PlusCircleIcon className='h-5'/>
                 </BasicButton>
