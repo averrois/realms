@@ -28,6 +28,9 @@ export class EditorApp extends App {
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
         this.setUpInteraction()
+
+        // ? i think this has a possibility to run too early before the UI is mounted. most likely never though since the UI is mounted before the app is initialized. just a note.
+        this.setRoomsInUI()
     }
 
     override async loadRoomSprites(index: number) {
@@ -116,17 +119,17 @@ export class EditorApp extends App {
 
     private placeTileOnMousePosition = (e: PIXI.FederatedPointerEvent) => {
         const position = e.getLocalPosition(this.app.stage)
-        const convertedPosition = this.convertScreenToTileCoordinates(position.x, position.y)
+        const tileCoordinates = this.convertScreenToTileCoordinates(position.x, position.y)
         
         const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
-        tile.x = convertedPosition.x * 32
-        tile.y = convertedPosition.y * 32
+        tile.x = tileCoordinates.x * 32
+        tile.y = tileCoordinates.y * 32
 
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
-        this.setUpEraserTool(tile, convertedPosition.x, convertedPosition.y, layer)
+        this.setUpEraserTool(tile, tileCoordinates.x, tileCoordinates.y, layer)
 
-        return this.setTileAtPosition(convertedPosition.x, convertedPosition.y, layer, tile)
+        return this.setTileAtPosition(tileCoordinates.x, tileCoordinates.y, layer, tile)
     }
 
     private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
@@ -354,6 +357,10 @@ export class EditorApp extends App {
 
     private setUpBeforeUnload = () => {
         window.addEventListener('beforeunload', this.onBeforeUnload)
+    }
+
+    private setRoomsInUI = () => {
+        signal.emit('rooms', this.realmData.map(room => room.name))
     }
 
     private onSaved = () => {

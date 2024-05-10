@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
+import Rooms from '../Rooms'
 
 type RightSectionProps = {
     selectedTile: string
@@ -7,7 +8,7 @@ type RightSectionProps = {
 }
 
 type Tab = 'Tile' | 'Effects'
-
+3
 const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')
@@ -33,6 +34,7 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
                 {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>}
                 {tab === 'Effects' && <div>Effects</div>}
             </div>
+            <Rooms />
         </div>
     )
 }
