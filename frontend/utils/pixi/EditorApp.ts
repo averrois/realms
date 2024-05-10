@@ -28,9 +28,6 @@ export class EditorApp extends App {
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
         this.setUpInteraction()
-
-        // ? i think this has a possibility to run too early before the UI is mounted. most likely never though since the UI is mounted before the app is initialized. just a note.
-        this.setRoomsInUI()
     }
 
     override async loadRoomSprites(index: number) {
@@ -358,11 +355,7 @@ export class EditorApp extends App {
     private setUpBeforeUnload = () => {
         window.addEventListener('beforeunload', this.onBeforeUnload)
     }
-
-    private setRoomsInUI = () => {
-        signal.emit('rooms', this.realmData.map(room => room.name))
-    }
-
+    
     private onSaved = () => {
         this.needsToSave = false
     }

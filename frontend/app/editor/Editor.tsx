@@ -45,7 +45,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
             <div className='w-full grow flex flex-row'>
                 <LeftBar tool={tool} selectTool={selectTool}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
-                <RightSection selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>
+                <RightSection selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>
             </div>
             <Coords />
         </div>
