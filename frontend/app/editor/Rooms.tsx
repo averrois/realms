@@ -33,11 +33,11 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     }, [rooms])
 
     return (
-        <div className='flex flex-col items-center px-4 grow gap-2'>
-                <h1>Rooms</h1>
+        <div className='flex flex-col items-center px-3 grow gap-2'>
+                <h1 className='w-full'>Rooms</h1>
                 <div className='flex flex-col items-center w-full overflow-y-scroll h-[200px] gap-1' ref={roomsContainerRef}>
                     {rooms.map((room, index) => (
-                        <div className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark'} w-full p-1 px-2 rounded-md cursor-pointer`} key={room + index}>{room}</div>
+                        <div className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md cursor-pointer`} key={room + index}>{room}</div>
                     ))}
                 </div>
                 <BasicButton className='flex flex-row items-center gap-1 text-xl mb-4' onClick={onClickCreateRoom}>
