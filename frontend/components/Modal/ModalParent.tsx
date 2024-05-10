@@ -16,7 +16,7 @@ const ModalParent:React.FC = () => {
             {modal === 'Account Dropdown' && (
                 <AccountDropdown />
             )}
-            {modal === 'Save' && (
+            {modal === 'Loading' && (
                 <Save />
             )}
         </div>

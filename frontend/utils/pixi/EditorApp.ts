@@ -85,6 +85,7 @@ export class EditorApp extends App {
         signal.on('beginSave', this.onBeginSave)
         signal.on('saved', this.onSaved)
         signal.on('createRoom', this.onCreateRoom)
+        signal.on('changeRoom', this.changeRoom)
     }
 
     private onSelectTile = (tile: string) => {
@@ -365,6 +366,15 @@ export class EditorApp extends App {
         newRealmData.push(newRoom)
         this.updateRealmData(newRealmData)
         signal.emit('newRoom', newRoom.name)
+
+        this.changeRoom(this.realmData.length - 1)
+    }
+
+    private changeRoom = async (index: number) => {
+        signal.emit('loadingRoom')
+        this.currentRoomIndex = index
+        await this.loadRoomSprites(this.currentRoomIndex)
+        signal.emit('roomChanged', this.currentRoomIndex)
     }
     
     private onSaved = () => {
@@ -377,6 +387,7 @@ export class EditorApp extends App {
         signal.off('beginSave', this.onBeginSave)
         signal.off('saved', this.onSaved)
         signal.off('createRoom', this.onCreateRoom)
+        signal.off('changeRoom', this.changeRoom)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()

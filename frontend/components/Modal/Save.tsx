@@ -12,7 +12,7 @@ const Save:React.FC<SaveProps> = () => {
     const [modal, setModal] = useModal()
 
     return (
-        <Modal open={modal === 'Save'} className='bg-transparent'>
+        <Modal open={modal === 'Loading'} className='bg-transparent'>
             <LoadingSpinner />
         </Modal>
     )

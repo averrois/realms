@@ -25,7 +25,7 @@ const TopBar:React.FC<TopBarProps> = () => {
 
     function beginSave() {
         signal.emit('beginSave')
-        setModal('Save')
+        setModal('Loading')
     }
 
     useEffect(() => {

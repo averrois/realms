@@ -3,6 +3,7 @@ import { RealmData } from '@/utils/pixi/types'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import BasicButton from '@/components/BasicButton'
 import signal from '@/utils/signal'
+import { useModal } from '../hooks/useModal'
 
 type RoomsProps = {
     realmData: RealmData
@@ -13,6 +14,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
+    const [modal, setModal] = useModal()
 
     function onClickCreateRoom() {
         signal.emit('createRoom')
@@ -21,14 +23,28 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     useEffect(() => {
         // scroll when new room is created
         roomsContainerRef.current?.scrollTo(0, roomsContainerRef.current.scrollHeight)
+
         const onNewRoom = (newRoom: string) => {
             setRooms([...rooms, newRoom])
         }
 
+        const onLoadingRoom = () => {
+            setModal('Loading')
+        }
+
+        const onRoomChanged = (index: number) => {
+            setRoomIndex(index)
+            setModal('None')
+        }
+
         signal.on('newRoom', onNewRoom)
+        signal.on('loadingRoom', onLoadingRoom)
+        signal.on('roomChanged', onRoomChanged)
 
         return () => {
             signal.off('newRoom', onNewRoom)
+            signal.off('loadingRoom', onLoadingRoom)
+            signal.off('roomChanged', onRoomChanged)
         }
     }, [rooms])
 
