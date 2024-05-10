@@ -374,6 +374,8 @@ export class EditorApp extends App {
         signal.emit('loadingRoom')
         this.currentRoomIndex = index
         await this.loadRoomSprites(this.currentRoomIndex)
+        this.app.stage.position.set(0, 0)
+        this.setScale(1)
         signal.emit('roomChanged', this.currentRoomIndex)
     }
     
