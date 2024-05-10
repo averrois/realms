@@ -10,7 +10,7 @@ type RightSectionProps = {
 }
 
 type Tab = 'Tile' | 'Effects'
-3
+
 const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, realmData }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -191,22 +191,29 @@ export class EditorApp extends App {
 
     private addTileToRealmData = (x: number, y: number, layer: Layer, tile: string) => {
         const key = `${x}, ${y}` as TilePoint
-        this.realmData[this.currentRoomIndex] = {
-            ...this.realmData[this.currentRoomIndex],
+        const newRealmData = this.realmData
+        newRealmData[this.currentRoomIndex] = {
+            ...newRealmData[this.currentRoomIndex],
             tilemap: {
-                ...this.realmData[this.currentRoomIndex].tilemap,
+                ...newRealmData[this.currentRoomIndex].tilemap,
                 [key]: {
-                    ...this.realmData[this.currentRoomIndex].tilemap[key],
+                    ...newRealmData[this.currentRoomIndex].tilemap[key],
                     [layer]: tile
                 }
             }
         }
-        this.needsToSave = true
+        this.updateRealmData(newRealmData)
     }
 
     private removeTileFromRealmData = (x: number, y: number, layer: Layer) => {
         const key = `${x}, ${y}` as TilePoint
-        delete this.realmData[this.currentRoomIndex].tilemap[key][layer]
+        const newRealmData = this.realmData
+        delete newRealmData[this.currentRoomIndex].tilemap[key][layer]
+        this.updateRealmData(newRealmData)
+    }
+
+    private updateRealmData = (newRealmData: RealmData) => {
+        this.realmData = newRealmData
         this.needsToSave = true
     }
 
