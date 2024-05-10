@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -86,6 +86,7 @@ export class EditorApp extends App {
         signal.on('mouseOver', this.onMouseOver)
         signal.on('beginSave', this.onBeginSave)
         signal.on('saved', this.onSaved)
+        signal.on('createRoom', this.onCreateRoom)
     }
 
     private onSelectTile = (tile: string) => {
@@ -362,6 +363,17 @@ export class EditorApp extends App {
     private setUpBeforeUnload = () => {
         window.addEventListener('beforeunload', this.onBeforeUnload)
     }
+
+    private onCreateRoom = () => {
+        const newRoom: Room = {
+            name: 'Room ' + (this.realmData.length + 1),
+            tilemap: {}
+        }
+        const newRealmData = this.realmData
+        newRealmData.push(newRoom)
+        this.updateRealmData(newRealmData)
+        signal.emit('newRoom', newRoom.name)
+    }
     
     private onSaved = () => {
         this.needsToSave = false
@@ -373,6 +385,7 @@ export class EditorApp extends App {
         signal.off('tileSelected', this.onSelectTile)
         signal.off('beginSave', this.onBeginSave)
         signal.off('saved', this.onSaved)
+        signal.off('createRoom', this.onCreateRoom)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
