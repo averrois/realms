@@ -395,7 +395,7 @@ export class EditorApp extends App {
             this.currentRoomIndex -= 1
         }
 
-        signal.emit('roomDeleted', index)
+        signal.emit('roomDeleted', { deletedIndex: index, newIndex: this.currentRoomIndex })
     }
 
     private onChangeRoomName = ({ index, newName }: { index: number, newName: string }) => {

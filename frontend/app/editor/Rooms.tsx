@@ -11,7 +11,6 @@ type RoomsProps = {
 }
 
 const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
-
     const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
@@ -42,8 +41,11 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
             setModal('None')
         }
 
-        const onRoomDeleted = (index: number) => {
-            setRooms(rooms.filter((room, i) => i !== index))
+        const onRoomDeleted = ({ deletedIndex, newIndex }: { deletedIndex: number, newIndex: number }) => {
+            setRoomIndex(newIndex)
+            const newRooms = [...rooms]
+            newRooms.splice(deletedIndex, 1)
+            setRooms(newRooms)
         }
 
         const onRoomNameChanged = ({ index, newName }: { index: number, newName: string }) => {

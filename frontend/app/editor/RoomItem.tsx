@@ -16,7 +16,6 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
     const { setModal, setRoomToDelete } = useModal()
     const inputRef = useRef<HTMLInputElement>(null)
     const [inputDisabled, setInputDisabled] = useState<boolean>(true)
-    const [value, setValue] = useState<string>(rooms[roomIndex])
 
     const onRoomClick = () => {
         if (selectedRoomIndex === roomIndex) return
@@ -35,7 +34,7 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value
-        setValue(newValue)
+        signal.emit('changeRoomName', { index: roomIndex, newName: newValue })
     }
 
     const onPencilClick = (e: React.MouseEvent<SVGSVGElement>) => {
@@ -46,9 +45,8 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
     }
 
     useEffect(() => {
+        // add event listener for inputRef on blur 
         const onBlur = () => {
-            // save the new room name
-            signal.emit('changeRoomName', { index: roomIndex, newName: value })
             setInputDisabled(true)
         }
 
@@ -57,14 +55,14 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
         return () => {
             inputRef.current?.removeEventListener('blur', onBlur)
         }
-    }, [roomIndex, value, inputDisabled])
+    }, [])
 
     return (
         <div 
             onClick={onRoomClick} 
             className={`${selectedRoomIndex === roomIndex ? 'bg-secondaryhover' : 'bg-secondaryhoverdark cursor-pointer'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md flex flex-row items-center justify-between`} 
         >
-            <input type='text' value={value} className={`${inputDisabled ? 'pointer-events-none' : ''} bg-transparent outline-none`} ref={inputRef} onChange={onInputChange}/>
+            <input type='text' value={rooms[roomIndex]} className={`${inputDisabled ? 'pointer-events-none' : ''} bg-transparent outline-none`} ref={inputRef} onChange={onInputChange}/>
             <div className='flex flex-row items-center gap-1'>
                 <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]' onClick={onPencilClick}/>
                 <Trash className={`h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px] ${rooms.length <= 1 ? 'hidden' : ''}`} onClick={onTrashClick}/>
