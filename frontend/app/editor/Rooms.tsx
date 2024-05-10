@@ -46,7 +46,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
                         return (
                             <div 
                                 onClick={onClick} 
-                                className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md cursor-pointer`} 
+                                className={`${roomIndex === index ? 'bg-secondaryhover pointer-events-none' : 'bg-secondaryhoverdark'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md cursor-pointer`} 
                                 key={room + index}
                             >
                                 {room}

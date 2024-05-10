@@ -10,7 +10,6 @@ export class EditorApp extends App {
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
-    protected isMouseInScreen: boolean = false
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
     private tilemapSprites: TilemapSprites = {}
@@ -83,7 +82,6 @@ export class EditorApp extends App {
     private setUpSignalListeners = () => {
         signal.on('selectTool', this.onSelectTool)
         signal.on('tileSelected', this.onSelectTile)
-        signal.on('mouseOver', this.onMouseOver)
         signal.on('beginSave', this.onBeginSave)
         signal.on('saved', this.onSaved)
         signal.on('createRoom', this.onCreateRoom)
@@ -338,14 +336,8 @@ export class EditorApp extends App {
                 this.canErase = true
             }
 
-            if (this.isMouseInScreen === false) return
-
             signal.emit('coordinates', this.currentCoordinates)
         })
-    }
-
-    private onMouseOver = (isOver: boolean) => {
-        this.isMouseInScreen = isOver
     }
 
     private onBeginSave = () => {
@@ -381,7 +373,6 @@ export class EditorApp extends App {
 
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
-        signal.off('mouseOver', this.onMouseOver)
         signal.off('tileSelected', this.onSelectTile)
         signal.off('beginSave', this.onBeginSave)
         signal.off('saved', this.onSaved)

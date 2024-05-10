@@ -2,7 +2,6 @@
 import React, { useRef } from 'react'
 import { EditorApp } from '@/utils/pixi/EditorApp'
 import { useEffect } from 'react'
-import signal from '@/utils/signal'
 import { RealmData } from '@/utils/pixi/types'
 
 type PixiEditorProps = {
@@ -38,16 +37,8 @@ const PixiEditor:React.FC<PixiEditorProps> = ({ className, setGameLoaded, realmD
         }
     }, [])
 
-    const onMouseEnter = () => {
-        signal.emit('mouseOver', true)
-    }
-
-    const onMouseLeave = () => {
-        signal.emit('mouseOver', false)
-    }
-
     return (
-        <div id='app-container' className={`overflow-hidden ${className}`} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+        <div id='app-container' className={`overflow-hidden ${className}`}>
             
         </div>
     )
