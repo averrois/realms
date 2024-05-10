@@ -43,14 +43,20 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
             setModal('None')
         }
 
+        const onRoomDeleted = (index: number) => {
+            setRooms(rooms.filter((room, i) => i !== index))
+        }
+
         signal.on('newRoom', onNewRoom)
         signal.on('loadingRoom', onLoadingRoom)
         signal.on('roomChanged', onRoomChanged)
+        signal.on('roomDeleted', onRoomDeleted)
 
         return () => {
             signal.off('newRoom', onNewRoom)
             signal.off('loadingRoom', onLoadingRoom)
             signal.off('roomChanged', onRoomChanged)
+            signal.off('roomDeleted', onRoomDeleted)
         }
     }, [rooms])
 
@@ -83,7 +89,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
                                 {room}
                                 <div className='flex flex-row items-center gap-1'>
                                     <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]'/>
-                                    <Trash className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]' onClick={onTrashClick}/>
+                                    <Trash className={`h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px] ${rooms.length <= 1 ? 'hidden' : ''}`} onClick={onTrashClick}/>
                                 </div>
                             </div>
                         )
