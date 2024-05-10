@@ -11,7 +11,7 @@ import revalidate from '@/utils/revalidate'
 
 const CreateRealmModal:React.FC = () => {
     
-    const [modal, setModal] = useModal()
+    const { modal, setModal } = useModal()
     const [realmName, setRealmName] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
 

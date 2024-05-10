@@ -7,9 +7,9 @@ type SaveProps = {
     
 }
 
-const Save:React.FC<SaveProps> = () => {
+const LoadingModal:React.FC<SaveProps> = () => {
     
-    const [modal, setModal] = useModal()
+    const { modal, setModal}  = useModal()
 
     return (
         <Modal open={modal === 'Loading'} className='bg-transparent'>
@@ -18,4 +18,4 @@ const Save:React.FC<SaveProps> = () => {
     )
 }
 
-export default Save
+export default LoadingModal

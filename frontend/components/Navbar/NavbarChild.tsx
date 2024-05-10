@@ -10,7 +10,7 @@ type NavbarChildProps = {
 };
 
 export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => {
-    const [modal, setModal] = useModal()
+    const { modal, setModal } = useModal()
 
     return (
         <div className='h-16'>

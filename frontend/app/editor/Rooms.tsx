@@ -4,6 +4,8 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import BasicButton from '@/components/BasicButton'
 import signal from '@/utils/signal'
 import { useModal } from '../hooks/useModal'
+import { PencilSquareIcon } from '@heroicons/react/24/outline'
+import { Trash } from '@phosphor-icons/react'
 
 type RoomsProps = {
     realmData: RealmData
@@ -14,7 +16,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
-    const [modal, setModal] = useModal()
+    const { modal, setModal }= useModal()
     const firstRender = useRef(true)
 
     function onClickCreateRoom() {
@@ -57,26 +59,35 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
                 <h1 className='w-full'>Rooms</h1>
                 <div className='flex flex-col items-center w-full overflow-y-scroll max-h-[220px] gap-1' ref={roomsContainerRef}>
                     {rooms.map((room, index) => {
-                        const onClick = () => {
+                        const onRoomClick = () => {
                             if (roomIndex === index) return
 
                             signal.emit('changeRoom', index)
                         }
 
+                        const onTrashClick = (e: React.MouseEvent<SVGSVGElement>) => {
+                            e.stopPropagation()
+                            setModal('Delete Room')
+                        }
+
                         return (
                             <div 
-                                onClick={onClick} 
-                                className={`${roomIndex === index ? 'bg-secondaryhover pointer-events-none' : 'bg-secondaryhoverdark'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md cursor-pointer`} 
+                                onClick={onRoomClick} 
+                                className={`${roomIndex === index ? 'bg-secondaryhover' : 'bg-secondaryhoverdark cursor-pointer'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md flex flex-row items-center justify-between`} 
                                 key={room + index}
                             >
                                 {room}
+                                <div className='flex flex-row items-center gap-1'>
+                                    <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]'/>
+                                    <Trash className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]' onClick={onTrashClick}/>
+                                </div>
                             </div>
                         )
                     })}
                 </div>
                 <BasicButton className='flex flex-row items-center gap-1 text-xl mb-4 w-full justify-center' onClick={onClickCreateRoom}>
                     Create Room
-                    <PlusCircleIcon className='h-5'/>
+                    <PlusCircleIcon className='h-5 cursor-pointer hover:bg-secondaryhoverdark'/>
                 </BasicButton>
         </div>
     )

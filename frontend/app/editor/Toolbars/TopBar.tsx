@@ -18,7 +18,7 @@ type TopBarProps = {
 
 const TopBar:React.FC<TopBarProps> = () => {
 
-    const [modal, setModal] = useModal()
+    const { modal, setModal } = useModal()
     const { id } = useParams()
 
     const supabase = createClient()
