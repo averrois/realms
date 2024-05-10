@@ -8,12 +8,12 @@ type DeleteRoomModalProps = {
 
 const DeleteRoomModal:React.FC<DeleteRoomModalProps> = () => {
     
-    const { modal, setModal } = useModal()
+    const { modal, roomToDelete } = useModal()
 
     return (
         <Modal open={modal === 'Delete Room'} closeOnOutsideClick>
-            <div className='p2 flex flex-col items-center'>
-                <h1 className='text-center'>Are you sure you want to delete this room? It will be gone forever!</h1>
+            <div className='p-2 flex flex-col items-center'>
+                <h1 className='text-center'>Are you sure you want to delete <span className='text-red-500'>{roomToDelete.name}</span>? It will be gone forever!</h1>
             </div>
         </Modal>
     )

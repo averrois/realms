@@ -7,9 +7,10 @@ import BasicButton from '../BasicButton'
 type NavbarChildProps = {
     name: string,
     avatar_url: string
-};
+}
 
 export const NavbarChild:React.FC<NavbarChildProps> = ({ name, avatar_url }) => {
+
     const { modal, setModal } = useModal()
 
     return (

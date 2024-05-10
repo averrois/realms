@@ -16,7 +16,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
-    const { modal, setModal }= useModal()
+    const { setModal, setRoomToDelete }= useModal()
     const firstRender = useRef(true)
 
     function onClickCreateRoom() {
@@ -68,6 +68,10 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
                         const onTrashClick = (e: React.MouseEvent<SVGSVGElement>) => {
                             e.stopPropagation()
                             setModal('Delete Room')
+                            setRoomToDelete({
+                                name: room,
+                                index
+                            })
                         }
 
                         return (
