@@ -2,6 +2,8 @@ import { Sprite } from 'pixi.js'
 
 export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
+export type TileMode = 'Single' | 'Rectangle'
+
 export type TilePoint = `${number}, ${number}`
 
 export type RealmData = Room[]

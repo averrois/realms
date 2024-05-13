@@ -1,12 +1,13 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
     private toolMode: Tool = 'None'
+    private tileMode: TileMode = 'Single'
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
@@ -88,6 +89,7 @@ export class EditorApp extends App {
         signal.on('changeRoom', this.changeRoom)
         signal.on('deleteRoom', this.onDeleteRoom)
         signal.on('changeRoomName', this.onChangeRoomName)
+        signal.on('selectTileMode', this.onSelectTileMode)
     }
 
     private onSelectTile = (tile: string) => {
@@ -97,6 +99,10 @@ export class EditorApp extends App {
 
     private onSelectTool = (tool: Tool) => {
         this.toolMode = tool
+    }
+
+    private onSelectTileMode = (mode: TileMode) => {
+        this.tileMode = mode
     }
 
     private setUpInteraction = () => {
@@ -418,6 +424,7 @@ export class EditorApp extends App {
         signal.off('changeRoom', this.changeRoom)
         signal.off('deleteRoom', this.onDeleteRoom)
         signal.off('changeRoomName', this.onChangeRoomName)
+        signal.off('selectTileMode', this.onSelectTileMode)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
