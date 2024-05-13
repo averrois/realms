@@ -19,6 +19,8 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
+    private cursorTile: PIXI.Sprite = new PIXI.Sprite()
+
     public async init() {
         await super.init()
 
@@ -225,6 +227,28 @@ export class EditorApp extends App {
         this.needsToSave = true
     }
 
+    private placeCursorTile = (e: PIXI.FederatedPointerEvent) => {
+        const position = e.getLocalPosition(this.app.stage)
+        const tileCoordinates = this.convertScreenToTileCoordinates(position.x, position.y)
+
+        this.removeCursorTile()
+
+        const cursorSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
+        const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
+        cursorSprite.x = tileCoordinates.x * 32
+        cursorSprite.y = tileCoordinates.y * 32
+        this.cursorTile = cursorSprite
+        this.layers[layer].addChild(this.cursorTile)
+
+        this.sortObjectsByY()
+    }
+
+    private removeCursorTile = () => {  
+        if (this.cursorTile.parent) {
+            this.cursorTile.parent.removeChild(this.cursorTile)
+        }
+    }
+
     private tileTool = () => {
         this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
@@ -238,10 +262,22 @@ export class EditorApp extends App {
             }
         })
 
+        this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Tile') {
+                this.removeCursorTile()
+            }
+        })
+
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
                 this.placeTileAndSave(e)
                 this.app.stage.on('pointermove', this.placeTileAndSave)
+            }
+        })
+
+        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Tile') {
+                this.placeCursorTile(e)
             }
         })
     }
