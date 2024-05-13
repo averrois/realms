@@ -20,6 +20,7 @@ export class EditorApp extends App {
     private canErase: boolean = true
 
     private previewTiles: PIXI.Sprite[] = []
+    private hiddenTiles: PIXI.Sprite[] = []
 
     public async init() {
         await super.init()
@@ -231,6 +232,14 @@ export class EditorApp extends App {
     private placePreviewTileAtPosition = (x: number, y: number) => {
         const previewSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
+        const existingTile = this.getTileAtPosition(x, y, layer)
+
+        // hide tiles it covers
+        if (existingTile) {
+            existingTile.visible = false
+            this.hiddenTiles.push(existingTile)
+        }
+
         previewSprite.x = x * 32
         previewSprite.y = y * 32
         this.layers[layer].addChild(previewSprite)
@@ -244,6 +253,12 @@ export class EditorApp extends App {
                 previewTile.parent.removeChild(previewTile)
             }
         }
+        this.previewTiles = []
+
+        for (const hiddenTile of this.hiddenTiles) {
+            hiddenTile.visible = true
+        }
+        this.hiddenTiles = []
     }
 
     private tileTool = () => {
