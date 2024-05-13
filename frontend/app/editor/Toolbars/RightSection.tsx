@@ -33,10 +33,9 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
             <div className='p-2'>
-                {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>}
+                {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>}
                 {tab === 'Effects' && <div>Effects</div>}
             </div>
-            <Rooms realmData={realmData}/>
         </div>
     )
 }

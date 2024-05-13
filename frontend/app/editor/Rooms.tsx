@@ -70,7 +70,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     }, [rooms])
 
     return (
-        <div className='flex flex-col items-center px-3 grow gap-2'>
+        <div className='flex flex-col items-center px-3 grow gap-2 w-full'>
                 <h1 className='w-full'>Rooms</h1>
                 <div className='flex flex-col items-center w-full overflow-y-scroll max-h-[220px] gap-1' ref={roomsContainerRef}>
                     {rooms.map((room, index) => <RoomItem rooms={rooms} selectedRoomIndex={roomIndex} roomIndex={index} roomName={room} key={index}/>)}
