@@ -19,7 +19,7 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
-    private cursorTile: PIXI.Sprite = new PIXI.Sprite()
+    private previewTiles: PIXI.Sprite[] = []
 
     public async init() {
         await super.init()
@@ -221,25 +221,28 @@ export class EditorApp extends App {
         this.needsToSave = true
     }
 
-    private placeCursorTile = (e: PIXI.FederatedPointerEvent) => {
+    private placePreviewTileAtMouse = (e: PIXI.FederatedPointerEvent) => {
         const position = e.getLocalPosition(this.app.stage)
         const tileCoordinates = this.convertScreenToTileCoordinates(position.x, position.y)
 
-        this.removeCursorTile()
+        this.placePreviewTileAtPosition(tileCoordinates.x, tileCoordinates.y)
+    }
 
-        const cursorSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
+    private placePreviewTileAtPosition = (x: number, y: number) => {
+        const previewSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
-        cursorSprite.x = tileCoordinates.x * 32
-        cursorSprite.y = tileCoordinates.y * 32
-        this.cursorTile = cursorSprite
-        this.layers[layer].addChild(this.cursorTile)
-
+        previewSprite.x = x * 32
+        previewSprite.y = y * 32
+        this.layers[layer].addChild(previewSprite)
+        this.previewTiles.push(previewSprite)
         this.sortObjectsByY()
     }
 
-    private removeCursorTile = () => {  
-        if (this.cursorTile.parent) {
-            this.cursorTile.parent.removeChild(this.cursorTile)
+    private removePreviewTiles = () => {  
+        for (const previewTile of this.previewTiles) {
+            if (previewTile.parent) {
+                previewTile.parent.removeChild(previewTile)
+            }
         }
     }
 
@@ -260,7 +263,7 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.removeCursorTile()
+                this.removePreviewTiles()
             }
         })
 
@@ -278,7 +281,8 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.placeCursorTile(e)
+                this.removePreviewTiles()
+                this.placePreviewTileAtMouse(e)
             }
         })
     }
@@ -290,7 +294,12 @@ export class EditorApp extends App {
     }
 
     private onTileDragMove = (e: PIXI.FederatedPointerEvent) => {
+        const dragPosition = e.getLocalPosition(this.app.stage)
+        const squares = this.getTileCoordinatesInRectangle(this.initialDragPosition, dragPosition)
 
+        squares.forEach(square => {
+            this.placePreviewTileAtPosition(square.x, square.y)
+        })
     }
 
     private onTileDragEnd = (e: PIXI.FederatedPointerEvent) => {
@@ -302,6 +311,7 @@ export class EditorApp extends App {
             const dragEndPosition = e.getLocalPosition(this.app.stage)
             const squares = this.getTileCoordinatesInRectangle(this.initialDragPosition, dragEndPosition)
             
+            // place the tiles!
             squares.forEach(square => {
                 this.placeTileAtPosition(square.x, square.y)
             })
