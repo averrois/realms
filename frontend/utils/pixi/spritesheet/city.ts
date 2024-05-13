@@ -3,9 +3,17 @@ import { SpriteSheetData } from './spritesheet'
 export const citySpriteSheetData: SpriteSheetData = {
     width: 1024,
     height: 1536,
-    url: '/sprites/city/FDR_City.png',
+    url: '/sprites/city/city.png',
     sprites: {
+        tl_lgrass_trans: { x: 0, y: 32, width: 32, height: 32, layer: 'transition' },
+        t_lgrass_trans: { x: 32, y: 32, width: 32, height: 32, layer: 'transition' },
+        tr_lgrass_trans: { x: 64, y: 32, width: 32, height: 32, layer: 'transition' },
+        l_lgrass_trans: { x: 0, y: 64, width: 32, height: 32, layer: 'transition' },
         light_solid_grass: { x: 32, y: 0, width: 32, height: 32 },
+        r_lgrass_trans: { x: 64, y: 64, width: 32, height: 32, layer: 'transition' },
+        bl_lgrass_trans: { x: 0, y: 96, width: 32, height: 32, layer: 'transition' },
+        b_lgrass_trans: { x: 32, y: 96, width: 32, height: 32, layer: 'transition' },
+        br_lgrass_trans: { x: 64, y: 96, width: 32, height: 32, layer: 'transition' },
         light_detailed_grass: { x: 64, y: 0, width: 32, height: 32 },
         dark_solid_grass: { x: 96, y: 0, width: 32, height: 32 },
         dark_detailed_grass: { x: 128, y: 0, width: 32, height: 32 },
@@ -29,6 +37,6 @@ export const citySpriteSheetData: SpriteSheetData = {
         br_bricks_v: { x: 384, y: 96, width: 32, height: 32 },
         down_sign: { x: 512, y: 32, width: 32, height: 64, layer: 'object' },
         left_sign: { x: 544, y: 32, width: 32, height: 64, layer: 'object' },
-        red_car: { x: 480, y: 1024, width: 160, height: 96, layer: 'object' },
+        red_car: { x: 640, y: 0, width: 160, height: 80, layer: 'object' },
     }
 }
