@@ -117,26 +117,40 @@ export class EditorApp extends App {
         this.updateCoordinates()
     }
 
-    private placeTileAndSave = (e: PIXI.FederatedPointerEvent) => {
-        const { x, y, layer } =  this.placeTileOnMousePosition(e)
-
-        // For database purposes
-        this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
-    }
-
     private placeTileOnMousePosition = (e: PIXI.FederatedPointerEvent) => {
         const position = e.getLocalPosition(this.app.stage)
         const tileCoordinates = this.convertScreenToTileCoordinates(position.x, position.y)
-        
+
+        this.placeTileAtPosition(tileCoordinates.x, tileCoordinates.y)
+    }
+
+    private placeTileAtPosition = (x: number, y: number) => {
         const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
-        tile.x = tileCoordinates.x * 32
-        tile.y = tileCoordinates.y * 32
+        tile.x = x * 32
+        tile.y = y * 32
 
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
-        this.setUpEraserTool(tile, tileCoordinates.x, tileCoordinates.y, layer)
+        this.setUpEraserTool(tile, x, y, layer)
 
-        return this.setTileAtPosition(tileCoordinates.x, tileCoordinates.y, layer, tile)
+        const existingTile = this.getTileAtPosition(x, y, layer)
+        if (existingTile) {
+            this.layers[layer].removeChild(existingTile)
+        }
+
+        this.layers[layer].addChild(tile)
+
+        const key = `${x}, ${y}` as TilePoint
+        this.tilemapSprites[key] = {
+            ...this.tilemapSprites[key],
+            [layer]: tile
+        }
+
+        // sort the children by y position
+        this.sortObjectsByY()
+
+        // For database purposes
+        this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
     }
 
     private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
@@ -177,26 +191,6 @@ export class EditorApp extends App {
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
         const key = `${x}, ${y}` as TilePoint
         return this.tilemapSprites[key]?.[layer]
-    }
-
-    private setTileAtPosition = (x: number, y: number, layer: Layer, tile: PIXI.Sprite) => {
-        const existingTile = this.getTileAtPosition(x, y, layer)
-        if (existingTile) {
-            this.layers[layer].removeChild(existingTile)
-        }
-
-        this.layers[layer].addChild(tile)
-
-        const key = `${x}, ${y}` as TilePoint
-        this.tilemapSprites[key] = {
-            ...this.tilemapSprites[key],
-            [layer]: tile
-        }
-
-        // sort the children by y position
-        this.sortObjectsByY()
-
-        return { x, y, layer, tile }
     }
 
     private addTileToRealmData = (x: number, y: number, layer: Layer, tile: string) => {
@@ -252,14 +246,16 @@ export class EditorApp extends App {
     private tileTool = () => {
         this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.app.stage.off('pointermove', this.placeTileAndSave)
-            }
+                this.app.stage.off('pointermove', this.placeTileOnMousePosition)
+                this.onTileDragEnd(e)
+            } 
         })
 
         this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.app.stage.off('pointermove', this.placeTileAndSave)
-            }
+                this.app.stage.off('pointermove', this.placeTileOnMousePosition)
+                this.onTileDragEnd(e)
+            } 
         })
 
         this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
@@ -270,8 +266,13 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.placeTileAndSave(e)
-                this.app.stage.on('pointermove', this.placeTileAndSave)
+                if (this.tileMode === 'Single') {
+                    // if single mode, do this
+                    this.placeTileOnMousePosition(e)
+                    this.app.stage.on('pointermove', this.placeTileOnMousePosition)
+                } else if (this.tileMode === 'Rectangle') {
+                    this.onTileDragStart(e)
+                }
             }
         })
 
@@ -281,6 +282,51 @@ export class EditorApp extends App {
             }
         })
     }
+
+    private onTileDragStart = (e: PIXI.FederatedPointerEvent) => {
+        this.dragging = true
+        this.initialDragPosition.set(e.getLocalPosition(this.app.stage).x, e.getLocalPosition(this.app.stage).y)
+        this.app.stage.on('pointermove', this.onTileDragMove)
+    }
+
+    private onTileDragMove = (e: PIXI.FederatedPointerEvent) => {
+
+    }
+
+    private onTileDragEnd = (e: PIXI.FederatedPointerEvent) => {
+        if (this.dragging) {
+            this.app.stage.off('pointermove', this.onTileDragMove)
+            this.dragging = false
+
+            // get array of tile coordinates between initial and final position in rectangle
+            const dragEndPosition = e.getLocalPosition(this.app.stage)
+            const squares = this.getTileCoordinatesInRectangle(this.initialDragPosition, dragEndPosition)
+            
+            squares.forEach(square => {
+                this.placeTileAtPosition(square.x, square.y)
+            })
+        }
+    }
+
+    private getTileCoordinatesInRectangle = (start: Point, end: Point) => {
+        const rectangleStart = this.convertScreenToTileCoordinates(start.x, start.y)
+        const rectangleEnd = this.convertScreenToTileCoordinates(end.x, end.y)
+
+        const xStart = Math.min(rectangleStart.x, rectangleEnd.x)
+        const yStart = Math.min(rectangleStart.y, rectangleEnd.y)
+        const xEnd = Math.max(rectangleStart.x, rectangleEnd.x)
+        const yEnd = Math.max(rectangleStart.y, rectangleEnd.y)
+
+        const squares: Point[] = [];
+        for (let x = xStart; x <= xEnd; x++) {
+            for (let y = yStart; y <= yEnd; y++) {
+                squares.push({ x,y })
+            }
+        }
+
+        return squares
+    }
+
 
     private zoomInTool = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
@@ -331,24 +377,24 @@ export class EditorApp extends App {
     private handTool = () => {
         this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Hand') {
-                this.onDragEnd(e)
+                this.onHandDragEnd(e)
             }
         })
 
         this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Hand') {
-                this.onDragEnd(e)
+                this.onHandDragEnd(e)
             }
         })
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Hand') {
-                this.onDragStart(e)
+                this.onHandDragStart(e)
             }
         })
     }
 
-    private onDragMove = (e: PIXI.FederatedPointerEvent) => {
+    private onHandDragMove = (e: PIXI.FederatedPointerEvent) => {
         const diffX = e.getLocalPosition(this.app.stage).x - this.initialDragPosition.x
         const diffY = e.getLocalPosition(this.app.stage).y - this.initialDragPosition.y
         this.app.stage.position.x += diffX 
@@ -358,15 +404,15 @@ export class EditorApp extends App {
         this.matchHitAreaToGridLines()
     }
 
-    private onDragStart = (e: PIXI.FederatedPointerEvent) => {
+    private onHandDragStart = (e: PIXI.FederatedPointerEvent) => {
         this.dragging = true
         this.initialDragPosition.set(e.getLocalPosition(this.app.stage).x, e.getLocalPosition(this.app.stage).y)
-        this.app.stage.on('pointermove', this.onDragMove)
+        this.app.stage.on('pointermove', this.onHandDragMove)
     }
 
-    private onDragEnd = (e: PIXI.FederatedPointerEvent) => {
+    private onHandDragEnd = (e: PIXI.FederatedPointerEvent) => {
         if (this.dragging) {
-            this.app.stage.off('pointermove', this.onDragMove)
+            this.app.stage.off('pointermove', this.onHandDragMove)
             this.dragging = false
         }
     }
