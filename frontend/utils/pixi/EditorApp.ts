@@ -21,6 +21,7 @@ export class EditorApp extends App {
 
     private previewTiles: PIXI.Sprite[] = []
     private hiddenTiles: PIXI.Sprite[] = []
+    private eraserTiles: PIXI.Sprite[] = []
 
     public async init() {
         await super.init()
@@ -157,15 +158,102 @@ export class EditorApp extends App {
     }
 
     private rectangleEraserTool = () => {
+        this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+                // eraser drag end
+                this.onRectangleEraseDragEnd(e)
+                this.removeEraserTiles()
+            } 
+        })
 
+        this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+                // eraser drag end
+                this.onRectangleEraseDragEnd(e)
+                this.removeEraserTiles()
+            } 
+        })
+
+        this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+                // Remove eraser rectangle
+                this.removeEraserTiles()
+            }
+        })
+
+        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+                // eraser drag start
+                this.onRectangleEraseDragStart(e)
+            }
+        })
+    }
+
+    private onRectangleEraseDragStart = (e: PIXI.FederatedPointerEvent) => {
+        this.dragging = true
+        this.initialDragPosition.set(e.getLocalPosition(this.app.stage).x, e.getLocalPosition(this.app.stage).y)
+        this.app.stage.on('pointermove', this.onRectangleEraseDragMove)
+    }
+
+    private onRectangleEraseDragMove = (e: PIXI.FederatedPointerEvent) => {
+        this.removeEraserTiles()
+        const dragPosition = e.getLocalPosition(this.app.stage)
+        const squares = this.getTileCoordinatesInRectangle(this.initialDragPosition, dragPosition)
+
+        squares.forEach(square => {
+            // place eraser tile
+            const sprite = new PIXI.Sprite(PIXI.Texture.from('/sprites/erase-tile.png'))
+            sprite.x = square.x * 32
+            sprite.y = square.y * 32
+            this.eraserTiles.push(sprite)
+            this.app.stage.addChild(sprite)
+        })
+    }
+
+    private onRectangleEraseDragEnd = (e: PIXI.FederatedPointerEvent) => {
+        if (this.dragging) {
+            this.app.stage.off('pointermove', this.onRectangleEraseDragMove)
+            this.dragging = false
+
+            // get array of tile coordinates between initial and final position in rectangle
+            const dragEndPosition = e.getLocalPosition(this.app.stage)
+            const squares = this.getTileCoordinatesInRectangle(this.initialDragPosition, dragEndPosition)
+            
+            // erase the tiles!
+            this.eraseTilesInRectangle(squares)
+        }
+    }
+
+    private removeEraserTiles = () => {
+        for (const eraserTile of this.eraserTiles) {
+            if (eraserTile.parent) {
+                eraserTile.parent.removeChild(eraserTile)
+            }
+        }
+        this.eraserTiles = []
+    }
+
+    private eraseTilesInRectangle = (squares: Point[]) => {
+        squares.forEach(square => {
+            this.eraseTileAtPosition(square.x, square.y, 'floor')
+            this.eraseTileAtPosition(square.x, square.y, 'transition')
+            this.eraseTileAtPosition(square.x, square.y, 'object')
+        })
+    }
+
+    private eraseTileAtPosition = (x: number, y: number, layer: Layer) => {
+        const tile = this.getTileAtPosition(x, y, layer)
+        if (tile) {
+            this.layers[layer].removeChild(tile)
+            delete this.tilemapSprites[`${x}, ${y}`][layer]
+            this.removeTileFromRealmData(x, y, layer)
+        }
     }
 
     private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
 
         const erase = () => {
-            this.layers[layer].removeChild(tile)
-            delete this.tilemapSprites[`${x}, ${y}`][layer]
-            this.removeTileFromRealmData(x, y, layer)
+            this.eraseTileAtPosition(x, y, layer)
             this.lastErasedCoordinates = this.currentCoordinates
             this.canErase = false
         }
@@ -272,6 +360,7 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                this.removePreviewTiles()
             } 
         })
 
@@ -279,6 +368,7 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                this.removePreviewTiles()
             } 
         })
 
