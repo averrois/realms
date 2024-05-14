@@ -54,6 +54,7 @@ export class EditorApp extends App {
 
     private loadAssets = async () => {
         await PIXI.Assets.load('/sprites/tile-outline.png')
+        await PIXI.Assets.load('/sprites/erase-tile.png')
     }
 
     private drawGridLines = () => {
@@ -115,6 +116,7 @@ export class EditorApp extends App {
         this.zoomInTool()
         this.zoomOutTool()
         this.tileTool()
+        this.rectangleEraserTool()
         this.updateCoordinates()
     }
 
@@ -154,6 +156,10 @@ export class EditorApp extends App {
         this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
     }
 
+    private rectangleEraserTool = () => {
+
+    }
+
     private setUpEraserTool = (tile: PIXI.Sprite, x: number, y: number, layer: Layer) => {
 
         const erase = () => {
@@ -167,7 +173,7 @@ export class EditorApp extends App {
         tile.eventMode = 'static'
         tile.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             // if mouse is clicked
-            if (this.toolMode === 'Eraser') {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
                 tile.tint = 0xababab
                 const holdingClick = e.buttons === 1
                 if (holdingClick && this.canErase) {
@@ -177,13 +183,13 @@ export class EditorApp extends App {
         })
 
         tile.on('pointerleave', () => {
-            if (this.toolMode === 'Eraser') {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
                 tile.tint = 0xFFFFFF
             }
         })
 
         tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser') {
+            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
                 erase()
             }
         })
