@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
-import Rooms from '../Rooms'
 import { RealmData } from '@/utils/pixi/types'
 
 type RightSectionProps = {
