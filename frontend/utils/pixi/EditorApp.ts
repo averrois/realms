@@ -31,6 +31,7 @@ export class EditorApp extends App {
         await super.init()
 
         this.tileGizmoContainer.eventMode ='none'
+        this.tileGizmoContainer.visible = false
         this.app.stage.addChild(this.tileGizmoContainer)
 
         this.drawGridLines()
@@ -428,6 +429,7 @@ export class EditorApp extends App {
         if (spriteData.colliders) {
             if (this.collidersConflict(spriteData.colliders, previewSprite)) {
                 colliderConflict = true
+                previewSprite.tint = 0xff0008
             }
         }
 
@@ -459,7 +461,6 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
-                this.removePreviewTiles()
             } 
         })
 
@@ -467,7 +468,6 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
-                this.removePreviewTiles()
             } 
         })
 
