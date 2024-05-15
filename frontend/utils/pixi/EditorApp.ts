@@ -14,6 +14,7 @@ export class EditorApp extends App {
     private scale: number = 1
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
+    private selectedTileLayer: Layer | null = null
     private tilemapSprites: TilemapSprites = {}
     private needsToSave: boolean = false
     private currentCoordinates: Point = { x: 0, y: 0 }
@@ -126,6 +127,9 @@ export class EditorApp extends App {
     private onSelectTile = (tile: string) => {
         this.selectedTile = tile
         this.toolMode = 'Tile'
+
+        const spriteLayer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile)
+        this.selectedTileLayer = spriteLayer
     }
 
     private onSelectTool = (tool: Tool) => {
@@ -194,7 +198,7 @@ export class EditorApp extends App {
     private addTileCollider = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
         if (this.tileColliderMap[key] === true) return
-         
+
         this.tileColliderMap[key] = true
         this.placeColliderTile(x, y)
     }
@@ -212,7 +216,7 @@ export class EditorApp extends App {
 
     private rectangleEraserTool = () => {
         this.app.stage.on('pointerup', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Rectangle') {
                 // eraser drag end
                 this.onRectangleEraseDragEnd(e)
                 this.removeEraserTiles()
@@ -220,7 +224,7 @@ export class EditorApp extends App {
         })
 
         this.app.stage.on('pointerupoutside', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Rectangle') {
                 // eraser drag end
                 this.onRectangleEraseDragEnd(e)
                 this.removeEraserTiles()
@@ -228,14 +232,14 @@ export class EditorApp extends App {
         })
 
         this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Rectangle') {
                 // Remove eraser rectangle
                 this.removeEraserTiles()
             }
         })
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Rectangle') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Rectangle') {
                 // eraser drag start
                 this.onRectangleEraseDragStart(e)
             }
@@ -323,7 +327,7 @@ export class EditorApp extends App {
         tile.eventMode = 'static'
         tile.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             // if mouse is clicked
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Single') {
                 tile.tint = 0xababab
                 const holdingClick = e.buttons === 1
                 if (holdingClick && this.canErase) {
@@ -333,13 +337,13 @@ export class EditorApp extends App {
         })
 
         tile.on('pointerleave', () => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Single') {
                 tile.tint = 0xFFFFFF
             }
         })
 
         tile.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            if (this.toolMode === 'Eraser' && this.tileMode === 'Single') {
+            if (this.toolMode === 'Eraser' && this.getCurrentTileMode() === 'Single') {
                 erase()
             }
         })
@@ -446,7 +450,7 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                if (this.tileMode === 'Single') {
+                if (this.getCurrentTileMode() === 'Single') {
                     this.removePreviewTiles()
                 } else {
                     if (this.dragging === false) {
@@ -458,11 +462,11 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                if (this.tileMode === 'Single') {
+                if (this.getCurrentTileMode() === 'Single') {
                     // if single mode, do this
                     this.placeTileOnMousePosition(e)
                     this.app.stage.on('pointermove', this.placeTileOnMousePosition)
-                } else if (this.tileMode === 'Rectangle') {
+                } else if (this.getCurrentTileMode() === 'Rectangle') {
                     this.onTileDragStart(e)
                 }
             }
@@ -690,6 +694,15 @@ export class EditorApp extends App {
         newRealmData[index].name = newName
         this.updateRealmData(newRealmData)
         signal.emit('roomNameChanged', { index, newName })
+    }
+
+    private getCurrentTileMode = (): TileMode => {
+        // rectangle mode does nothing for object layer
+        if (this.selectedTileLayer === 'object' && this.toolMode === 'Tile') {
+            return 'Single'
+        }
+
+        return this.tileMode
     }
     
     private onSaved = () => {
