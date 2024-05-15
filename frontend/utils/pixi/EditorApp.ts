@@ -6,6 +6,7 @@ import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
+    private tileGizmoContainer: PIXI.Container = new PIXI.Container()
     private toolMode: Tool = 'None'
     private tileMode: TileMode = 'Single'
     private dragging: boolean = false
@@ -27,19 +28,29 @@ export class EditorApp extends App {
         await super.init()
 
         await this.loadAssets()
+        this.app.stage.addChild(this.tileGizmoContainer)
+        this.drawColliders()
         this.drawGridLines()
-
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
         this.setUpInteraction()
     }
 
-    override async loadRoomSprites(index: number) {
-        await super.loadRoomSprites(index)
+    override async loadRoom(index: number) {
+        await super.loadRoom(index)
 
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('transition')
         this.setUpInitialTilemapDataAndPointerEvents('object')
+    }
+
+    private drawColliders = () => {
+        for (const [key, value] of Object.entries(this.tileColliderMap)) {
+            if (value) {
+                const [x, y] = key.split(',').map(Number)
+                this.placeColliderTile(x, y)
+            }
+        }
     }
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
@@ -56,6 +67,14 @@ export class EditorApp extends App {
     private loadAssets = async () => {
         await PIXI.Assets.load('/sprites/tile-outline.png')
         await PIXI.Assets.load('/sprites/erase-tile.png')
+        await PIXI.Assets.load('/sprites/collider-tile.png')
+    }
+
+    private placeColliderTile = (x: number, y: number) => {
+        const sprite = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
+        sprite.x = x * 32
+        sprite.y = y * 32
+        this.tileGizmoContainer.addChild(sprite)
     }
 
     private drawGridLines = () => {
@@ -374,8 +393,14 @@ export class EditorApp extends App {
 
         this.app.stage.on('pointerleave', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
-                this.removePreviewTiles()
-            }
+                if (this.tileMode === 'Single') {
+                    this.removePreviewTiles()
+                } else {
+                    if (this.dragging === false) {
+                        this.removePreviewTiles()
+                    }
+                }
+            } 
         })
 
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
@@ -584,7 +609,7 @@ export class EditorApp extends App {
     private changeRoom = async (index: number) => {
         signal.emit('loadingRoom')
         this.currentRoomIndex = index
-        await this.loadRoomSprites(this.currentRoomIndex)
+        await this.loadRoom(this.currentRoomIndex)
         this.app.stage.position.set(0, 0)
         this.setScale(1)
         signal.emit('roomChanged', this.currentRoomIndex)

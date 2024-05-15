@@ -14,7 +14,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
-    const { setModal, setRoomToDelete }= useModal()
+    const { setModal }= useModal()
     const firstRender = useRef(true)
 
     function onClickCreateRoom() {

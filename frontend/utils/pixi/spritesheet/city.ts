@@ -35,8 +35,11 @@ export const citySpriteSheetData: SpriteSheetData = {
         bl_bricks_v: { x: 320, y: 96, width: 32, height: 32 },
         b_bricks_v: { x: 352, y: 96, width: 32, height: 32 },
         br_bricks_v: { x: 384, y: 96, width: 32, height: 32 },
-        down_sign: { x: 512, y: 32, width: 32, height: 64, layer: 'object' },
-        left_sign: { x: 544, y: 32, width: 32, height: 64, layer: 'object' },
-        red_car: { x: 640, y: 0, width: 160, height: 80, layer: 'object' },
+        down_sign: { x: 512, y: 32, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+        left_sign: { x: 544, y: 32, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+        red_car: { x: 640, y: 0, width: 160, height: 96, layer: 'object', colliders: [
+            { x: 0, y: 2 }, { x: 1, y: 2 }, { x: 2, y: 2 }, { x: 3, y: 2 }, { x: 4, y: 2 }, 
+            { x: 0, y: 1 }, { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }, { x: 4, y: 1 }
+        ] },
     }
 }

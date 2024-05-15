@@ -1,5 +1,7 @@
 import { Sprite } from 'pixi.js'
 
+export const defaultMapData = [{name: 'Home', tilemap: {}}]
+
 export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
 export type TileMode = 'Single' | 'Rectangle'
@@ -17,6 +19,10 @@ export interface Room {
             object?: string,
         }
     }
+}
+
+export interface TileColliderMap {
+    [key: `${number}, ${number}`]: boolean
 }
 
 export interface TilemapSprites {

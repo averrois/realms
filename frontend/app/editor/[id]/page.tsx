@@ -2,6 +2,7 @@ import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Editor from '../Editor'
+import { defaultMapData } from '@/utils/pixi/types'
 
 export default async function RealmEditor({ params }: { params: { id: string } }) {
 
@@ -17,11 +18,12 @@ export default async function RealmEditor({ params }: { params: { id: string } }
     if (!data || !data[0] || user.id !== data[0].owner_id) {
         return <NotFound />
     }
-    const realm = data[0]
+    const realm = data[0] 
+    const map_data = realm.map_data || defaultMapData
 
     return (
         <div>
-            <Editor realmData={realm.map_data}/>
+            <Editor realmData={map_data}/>
         </div>
     )
 }

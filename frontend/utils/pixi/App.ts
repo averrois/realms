@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
-import { Layer, RealmData } from './types'
-import { sprites } from './spritesheet/spritesheet'
+import { Layer, RealmData, TileColliderMap, TilePoint } from './types'
+import { sprites, Collider } from './spritesheet/spritesheet'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
@@ -13,9 +13,10 @@ export class App {
         object: new PIXI.Container(),
     }
     protected currentRoomIndex: number = 0    
-    protected realmData: RealmData = [{name: 'Home', tilemap: {}}]
+    protected realmData: RealmData = []
+    protected tileColliderMap: TileColliderMap = {}
 
-    constructor(realmData?: RealmData) {
+    constructor(realmData: RealmData) {
         if (realmData) {
             this.realmData = JSON.parse(JSON.stringify(realmData))
         }
@@ -37,10 +38,10 @@ export class App {
         this.app.stage.addChild(this.layers.transition)
         this.app.stage.addChild(this.layers.object)
 
-        await this.loadRoomSprites(this.currentRoomIndex)
+        await this.loadRoom(this.currentRoomIndex)
     }
 
-    protected async loadRoomSprites(index: number) {
+    protected async loadRoom(index: number) {
         // Clear the current room
         this.layers.floor.removeChildren()
         this.layers.transition.removeChildren()
@@ -54,28 +55,50 @@ export class App {
             const object = tileData.object
 
             const [x, y] = tilePoint.split(',').map(Number)
-            const coordinates = this.convertTileToScreenCoordinates(x, y)
 
             if (floor) {
-                const floorSprite = await sprites.getSpriteForTileJSON(floor)
-                floorSprite.position.set(coordinates.x, coordinates.y)
-                this.layers.floor.addChild(floorSprite)
+                await this.placeTileFromJson(x, y, 'floor', floor)
             }
 
             if (transition) {
-                const transitionSprite = await sprites.getSpriteForTileJSON(transition)
-                transitionSprite.position.set(coordinates.x, coordinates.y)
-                this.layers.transition.addChild(transitionSprite)
+                await this.placeTileFromJson(x, y, 'transition', transition)
             }
 
             if (object) {
-                const objectSprite = await sprites.getSpriteForTileJSON(object)
-                objectSprite.position.set(coordinates.x, coordinates.y)
-                this.layers.object.addChild(objectSprite)
+                await this.placeTileFromJson(x, y, 'object', object)
             }
         }
 
         this.sortObjectsByY()
+    }
+
+    private placeTileFromJson = async (x: number, y: number, layer: Layer, tileName: string) => {
+        const screenCoordinates = this.convertTileToScreenCoordinates(x, y)
+        const { sprite, data } = await sprites.getSpriteForTileJSON(tileName)
+        sprite.position.set(screenCoordinates.x, screenCoordinates.y)
+        this.layers[layer].addChild(sprite)
+
+        // set up default tile colliders 
+        if (data.colliders) {
+            data.colliders.forEach((collider) => {
+                const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, sprite)
+
+                const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
+                this.tileColliderMap[key] = true
+            })
+        }
+    }
+
+    protected getTileCoordinatesOfCollider = (collider: Collider, sprite: PIXI.Sprite) => {
+        const topLeftX = sprite.x - sprite.width * sprite.anchor.x
+        const topLeftY = sprite.y - sprite.height * sprite.anchor.y
+
+        const gridCoordinates = this.convertScreenToTileCoordinates(topLeftX, topLeftY)
+
+        return {
+            x: gridCoordinates.x + collider.x,
+            y: gridCoordinates.y + collider.y,
+        }
     }
 
     public getApp = () => {

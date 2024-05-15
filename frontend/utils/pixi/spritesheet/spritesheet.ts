@@ -2,12 +2,18 @@ import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
 import { Layer } from '../types'
 
-export interface SpriteSheetTile {
+export type Collider = {
     x: number,
     y: number,
-    width: number,
+}
+
+export interface SpriteSheetTile {
+    x: number
+    y: number
+    width: number
     height: number
     layer?: Layer
+    colliders?: Collider[]
 }
 
 export interface SpriteSheetData {
@@ -46,7 +52,10 @@ class Sprites {
     public async getSpriteForTileJSON(tilename: string) {
         const [sheetName, spriteName] = tilename.split('-')
         await this.load(sheetName as SheetName)
-        return this.getSprite(sheetName as SheetName, spriteName)
+        return {
+            sprite: this.getSprite(sheetName as SheetName, spriteName),
+            data: this.getSpriteData(sheetName as SheetName, spriteName),
+        }
     }
 
     public getSprite(sheetName: SheetName, spriteName: string) {
@@ -72,6 +81,18 @@ class Sprites {
         }
 
         return this.spriteSheetDataSet[sheetName].sprites[spriteName].layer || 'floor'
+    }
+
+    public getSpriteData(sheetName: SheetName, spriteName: string) {
+        if (!this.spriteSheetDataSet[sheetName]) {
+            throw new Error(`Sheet ${sheetName} not found`)
+        }
+
+        if (!this.spriteSheetDataSet[sheetName].sprites[spriteName]) {
+            throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
+        }
+
+        return this.spriteSheetDataSet[sheetName].sprites[spriteName]
     }
 
     private getSpriteSheetData(data: SpriteSheetData) {
