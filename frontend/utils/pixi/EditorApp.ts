@@ -123,6 +123,7 @@ export class EditorApp extends App {
         signal.on('deleteRoom', this.onDeleteRoom)
         signal.on('changeRoomName', this.onChangeRoomName)
         signal.on('selectTileMode', this.onSelectTileMode)
+        signal.on('showColliders', this.onShowColliders)
     }
 
     private onSelectTile = (tile: string) => {
@@ -732,6 +733,10 @@ export class EditorApp extends App {
         this.needsToSave = false
     }
 
+    private onShowColliders = (show: boolean) => {
+        this.tileGizmoContainer.visible = show
+    }
+
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
         signal.off('tileSelected', this.onSelectTile)
@@ -742,6 +747,7 @@ export class EditorApp extends App {
         signal.off('deleteRoom', this.onDeleteRoom)
         signal.off('changeRoomName', this.onChangeRoomName)
         signal.off('selectTileMode', this.onSelectTileMode)
+        signal.off('showColliders', this.onShowColliders)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
