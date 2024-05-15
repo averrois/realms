@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, TileColliderSpriteMap } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -20,6 +20,7 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
+    private colliderSprites: TileColliderSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
     private hiddenTiles: PIXI.Sprite[] = []
     private eraserTiles: PIXI.Sprite[] = []
@@ -28,7 +29,9 @@ export class EditorApp extends App {
         await this.loadAssets()
         await super.init()
 
+        this.tileGizmoContainer.eventMode ='none'
         this.app.stage.addChild(this.tileGizmoContainer)
+
         this.drawGridLines()
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
@@ -76,6 +79,9 @@ export class EditorApp extends App {
         sprite.x = x * 32
         sprite.y = y * 32
         this.tileGizmoContainer.addChild(sprite)
+
+        const key = `${x}, ${y}` as TilePoint
+        this.colliderSprites[key] = sprite
     }
 
     private drawGridLines = () => {
@@ -153,6 +159,7 @@ export class EditorApp extends App {
         tile.x = x * 32
         tile.y = y * 32
 
+        const spriteData = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -170,11 +177,37 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
+        if (spriteData.colliders) {
+            spriteData.colliders.forEach((collider) => {
+                const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
+                this.addTileCollider(colliderCoordinates.x, colliderCoordinates.y)
+            })
+        }
+
         // sort the children by y position
         this.sortObjectsByY()
 
         // For database purposes
         this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+    }
+
+    private addTileCollider = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        if (this.tileColliderMap[key] === true) return
+         
+        this.tileColliderMap[key] = true
+        this.placeColliderTile(x, y)
+    }
+
+    private removeTileCollider = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        this.tileColliderMap[key] = false
+        const colliderSprite = this.colliderSprites[key]
+        if (colliderSprite) {
+            this.tileGizmoContainer.removeChild(colliderSprite)
+        }
+        // delete the key 
+        delete this.colliderSprites[key]
     }
 
     private rectangleEraserTool = () => {
@@ -263,10 +296,19 @@ export class EditorApp extends App {
 
     private eraseTileAtPosition = (x: number, y: number, layer: Layer) => {
         const tile = this.getTileAtPosition(x, y, layer)
+        const tileData = this.getTileDataAtPosition(x, y, layer)
         if (tile) {
             this.layers[layer].removeChild(tile)
             delete this.tilemapSprites[`${x}, ${y}`][layer]
             this.removeTileFromRealmData(x, y, layer)
+
+            if (tileData && tileData.colliders) {
+                // remove the collider and the sprite
+                tileData.colliders.forEach((collider) => {
+                    const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
+                    this.removeTileCollider(colliderCoordinates.x, colliderCoordinates.y)
+                })
+            }
         }
     }
 
@@ -306,6 +348,16 @@ export class EditorApp extends App {
     private getTileAtPosition = (x: number, y: number, layer: Layer) => {
         const key = `${x}, ${y}` as TilePoint
         return this.tilemapSprites[key]?.[layer]
+    }
+
+    private getTileDataAtPosition = (x: number, y: number, layer: Layer) => {
+        const key = `${x}, ${y}` as TilePoint
+        const tileName = this.realmData[this.currentRoomIndex].tilemap[key]?.[layer]
+        if (tileName) {
+            const [sheetName, spriteName] = tileName.split('-') as [SheetName, string]
+
+            return sprites.getSpriteData(sheetName, spriteName)
+        }
     }
 
     private addTileToRealmData = (x: number, y: number, layer: Layer, tile: string) => {

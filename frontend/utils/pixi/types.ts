@@ -25,6 +25,10 @@ export interface TileColliderMap {
     [key: `${number}, ${number}`]: boolean
 }
 
+export interface TileColliderSpriteMap {
+    [key: `${number}, ${number}`]: Sprite
+}
+
 export interface TilemapSprites {
     [key: `${number}, ${number}`]: {
         floor?: Sprite,
