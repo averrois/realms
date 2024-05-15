@@ -416,18 +416,26 @@ export class EditorApp extends App {
 
     private placePreviewTileAtPosition = (x: number, y: number) => {
         const previewSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
+        const spriteData = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
         const existingTile = this.getTileAtPosition(x, y, layer)
-
-        // hide tiles it covers
-        if (existingTile) {
-            existingTile.visible = false
-            this.hiddenTiles.push(existingTile)
-        }
 
         previewSprite.x = x * 32
         previewSprite.y = y * 32
         this.layers[layer].addChild(previewSprite)
+
+        let colliderConflict = false
+        if (spriteData.colliders) {
+            if (this.collidersConflict(spriteData.colliders, previewSprite)) {
+                colliderConflict = true
+            }
+        }
+
+        // hide tiles it covers
+        if (existingTile && !colliderConflict) {
+            existingTile.visible = false
+            this.hiddenTiles.push(existingTile)
+        }
         this.previewTiles.push(previewSprite)
         this.sortObjectsByY()
     }
