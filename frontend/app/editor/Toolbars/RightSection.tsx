@@ -1,19 +1,21 @@
 import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
+import { RealmData } from '@/utils/pixi/types'
 
 type RightSectionProps = {
     selectedTile: string
     setSelectedTile: (tile: string) => void
+    realmData: RealmData
 }
 
 type Tab = 'Tile' | 'Effects'
 
-const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile }) => {
+const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, realmData }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')
 
     return (
-        <div className='min-w-[370px] bg-secondary'>
+        <div className='min-w-[370px] bg-secondary flex flex-col select-none'>
             <div className='flex flex-row h-10 px-2 pt-[4px]'>
                 <div 
                     className={`grow bg-secondary hover:bg-secondaryhoverdark rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-secondaryhover' : ''}`}
@@ -30,7 +32,7 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
             <div className='p-2'>
-                {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile}/>}
+                {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>}
                 {tab === 'Effects' && <div>Effects</div>}
             </div>
         </div>

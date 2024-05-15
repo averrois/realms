@@ -29,11 +29,11 @@ const TileMenuGrid:React.FC<TileMenuGridProps> = ({ selectedPalette, selectedTil
     }
 
     return (
-        <div className='w-full'>
+        <div className='w-full h-[400px] overflow-y-scroll border-b-2 border-primary pb-2'>
             {!loading && (
                 <div className='grid grid-cols-3 w-full gap-2 pt-2'>
-                    {sprites.spriteSheetDataSet[selectedPalette].sprites.map((sprite) => {
-                        return <TileGridItem sheetName={selectedPalette} sprite={sprite.name} selected={selectedTile === sprite.name} onClick={() => handleSelectTile(sprite.name)}/>
+                    {Object.entries(sprites.spriteSheetDataSet[selectedPalette].sprites).map(([spriteName, spriteData], index) => {
+                        return <TileGridItem sheetName={selectedPalette} sprite={spriteName} selected={selectedTile === spriteName} onClick={() => handleSelectTile(spriteName)} key={index}/>
                     })}
                 </div>
             )}

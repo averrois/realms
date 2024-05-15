@@ -1,19 +1,26 @@
 import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
+import { Layer } from '../types'
 
-export interface SpriteSheetTile {
-    name: string,
+export type Collider = {
     x: number,
     y: number,
-    width: number,
+}
+
+export interface SpriteSheetTile {
+    x: number
+    y: number
+    width: number
     height: number
+    layer?: Layer
+    colliders?: Collider[]
 }
 
 export interface SpriteSheetData {
     width: number,
     height: number,
     url: string,
-    sprites: SpriteSheetTile[],
+    sprites: { [key: string]: SpriteSheetTile },
 }
 
 type Sheets = {
@@ -42,6 +49,15 @@ class Sprites {
         await this.sheets[sheetName]!.parse()
     }
 
+    public async getSpriteForTileJSON(tilename: string) {
+        const [sheetName, spriteName] = tilename.split('-')
+        await this.load(sheetName as SheetName)
+        return {
+            sprite: this.getSprite(sheetName as SheetName, spriteName),
+            data: this.getSpriteData(sheetName as SheetName, spriteName),
+        }
+    }
+
     public getSprite(sheetName: SheetName, spriteName: string) {
         if (!this.sheets[sheetName]) {
             throw new Error(`Sheet ${sheetName} not found`)
@@ -51,7 +67,32 @@ class Sprites {
             throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
         }
 
-        return this.sheets[sheetName]!.textures[spriteName]
+        const sprite = new PIXI.Sprite(this.sheets[sheetName]!.textures[spriteName])
+        return sprite
+    }
+
+    public getSpriteLayer(sheetName: SheetName, spriteName: string) {
+        if (!this.spriteSheetDataSet[sheetName]) {
+            throw new Error(`Sheet ${sheetName} not found`)
+        }
+
+        if (!this.spriteSheetDataSet[sheetName].sprites[spriteName]) {
+            throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
+        }
+
+        return this.spriteSheetDataSet[sheetName].sprites[spriteName].layer || 'floor'
+    }
+
+    public getSpriteData(sheetName: SheetName, spriteName: string) {
+        if (!this.spriteSheetDataSet[sheetName]) {
+            throw new Error(`Sheet ${sheetName} not found`)
+        }
+
+        if (!this.spriteSheetDataSet[sheetName].sprites[spriteName]) {
+            throw new Error(`Sprite ${spriteName} not found in sheet ${sheetName}`)
+        }
+
+        return this.spriteSheetDataSet[sheetName].sprites[spriteName]
     }
 
     private getSpriteSheetData(data: SpriteSheetData) {
@@ -69,23 +110,27 @@ class Sprites {
             animations: {}
         }
 
-        for (const sprite of data.sprites) {
-            spriteSheetData.frames[sprite.name] = {
+        for (const [name, spriteData] of Object.entries(data.sprites)) {
+            spriteSheetData.frames[name] = {
                 frame: {
-                    x: sprite.x,
-                    y: sprite.y,
-                    w: sprite.width,
-                    h: sprite.height
+                    x: spriteData.x,
+                    y: spriteData.y,
+                    w: spriteData.width,
+                    h: spriteData.height,
                 },
                 spriteSourceSize: {
                     x: 0,
                     y: 0,
-                    w: sprite.width,
-                    h: sprite.height
+                    w: spriteData.width,
+                    h: spriteData.height,
                 },
                 sourceSize: {
-                    w: sprite.width,
-                    h: sprite.height
+                    w: spriteData.width,
+                    h: spriteData.height,
+                },
+                anchor: {
+                    x: 0,
+                    y: 1 - (32 / spriteData.height),
                 }
             }
         }

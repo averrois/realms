@@ -12,7 +12,7 @@ type ModalProps = {
 
 const Modal: React.FC<ModalProps> = ({ children, className, open, closeOnOutsideClick }) => {
 
-    const [modal, setModal] = useModal()
+    const { modal, setModal } = useModal()
 
   return (
     <Transition.Root show={open} as={Fragment}>

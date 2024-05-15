@@ -1,26 +1,42 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC } from 'react';
 
-type Modal = 'None' | 'Create Realm' | 'Account Dropdown'
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room'
 
-type ModalContextType = [
-    modalValue: Modal,
-    setModalValue: (value: Modal) => void,
-]
+type RoomToDelete = {
+    name: string,
+    index: number
+}
 
-const ModalContext = createContext<ModalContextType>([
-    'None',
-    () => {}
-])
+type ModalContextType = {
+    modal: Modal,
+    setModal: (value: Modal) => void,
+    roomToDelete: RoomToDelete,
+    setRoomToDelete: (value: RoomToDelete) => void,
+}
+
+const ModalContext = createContext<ModalContextType>({
+    modal: 'None',
+    setModal: () => {},
+    roomToDelete: {
+        name: '',
+        index: 0
+    },
+    setRoomToDelete: () => {},
+})
 
 type ModalProviderProps = {
     children: ReactNode
 }
 
 export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
-    const [modalValue, setModalValue] = useState<Modal>('None')
+    const [modal, setModal] = useState<Modal>('None')
+    const [roomToDelete, setRoomToDelete] = useState<RoomToDelete>({
+        name: '',
+        index: 0
+    })
 
-    const value: ModalContextType = [modalValue, setModalValue]
+    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete }
 
     return (
         <ModalContext.Provider value={value}>

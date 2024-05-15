@@ -6,7 +6,7 @@ import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 
 const AccountDropdown:React.FC = () => {
-    const [modal, setModal] = useModal()
+    const { modal, setModal } = useModal()
     const router = useRouter()
 
     async function handleSignOut() {
