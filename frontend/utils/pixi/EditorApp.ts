@@ -25,11 +25,10 @@ export class EditorApp extends App {
     private eraserTiles: PIXI.Sprite[] = []
 
     public async init() {
+        await this.loadAssets()
         await super.init()
 
-        await this.loadAssets()
         this.app.stage.addChild(this.tileGizmoContainer)
-        this.drawColliders()
         this.drawGridLines()
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
@@ -42,6 +41,8 @@ export class EditorApp extends App {
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('transition')
         this.setUpInitialTilemapDataAndPointerEvents('object')
+
+        this.drawColliders()
     }
 
     private drawColliders = () => {
