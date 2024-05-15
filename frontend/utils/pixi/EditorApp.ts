@@ -164,6 +164,10 @@ export class EditorApp extends App {
         tile.y = y * 32
 
         const spriteData = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
+        if (spriteData.colliders) {
+            if (this.collidersConflict(spriteData.colliders, tile)) return
+        }
+
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -193,6 +197,17 @@ export class EditorApp extends App {
 
         // For database purposes
         this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+    }
+
+    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
+        for (const collider of colliders) {
+            const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
+                const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
+
+                // cannot place a tile with collider on top of another collider
+                if (this.tileColliderMap[key] === true) return true
+        }
+        return false
     }
 
     private addTileCollider = (x: number, y: number) => {
