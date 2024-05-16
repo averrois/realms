@@ -8,7 +8,7 @@ type RightSectionProps = {
     realmData: RealmData
 }
 
-type Tab = 'Tile' | 'Effects'
+type Tab = 'Tile' | 'Special Tiles'
 
 const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, realmData }) => {
     
@@ -24,16 +24,16 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
                     Tiles
                 </div>
                 <div 
-                    className={`grow bg-secondary hover:bg-secondaryhoverdark rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Effects' ? 'pointer-events-none bg-secondaryhover' : ''}`}
-                    onClick={() => setTab('Effects')}
+                    className={`grow bg-secondary hover:bg-secondaryhoverdark rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Special Tiles' ? 'pointer-events-none bg-secondaryhover' : ''}`}
+                    onClick={() => setTab('Special Tiles')}
                 >
-                    Effects
+                    Special Tiles
                 </div>
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
             <div className='p-2'>
                 {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>}
-                {tab === 'Effects' && <div>Effects</div>}
+                {tab === 'Special Tiles' && <div>Special Tiles</div>}
             </div>
         </div>
     )
