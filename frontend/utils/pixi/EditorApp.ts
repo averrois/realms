@@ -441,7 +441,10 @@ export class EditorApp extends App {
             this.hiddenTiles.push(existingTile)
         }
         this.previewTiles.push(previewSprite)
-        this.sortObjectsByY()
+
+        if (!colliderConflict) {
+            this.sortObjectsByY()
+        }
     }
 
     private removePreviewTiles = () => {  
