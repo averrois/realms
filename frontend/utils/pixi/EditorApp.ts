@@ -6,7 +6,7 @@ import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-    private tileGizmoContainer: PIXI.Container = new PIXI.Container()
+    private colliderTileContainer: PIXI.Container = new PIXI.Container()
     private toolMode: Tool = 'None'
     private tileMode: TileMode = 'Single'
     private dragging: boolean = false
@@ -30,9 +30,9 @@ export class EditorApp extends App {
         await this.loadAssets()
         await super.init()
 
-        this.tileGizmoContainer.eventMode ='none'
-        this.tileGizmoContainer.visible = false
-        this.app.stage.addChild(this.tileGizmoContainer)
+        this.colliderTileContainer.eventMode ='none'
+        this.colliderTileContainer.visible = false
+        this.app.stage.addChild(this.colliderTileContainer)
 
         this.drawGridLines()
         this.setUpSignalListeners()
@@ -51,6 +51,7 @@ export class EditorApp extends App {
     }
 
     private drawColliders = () => {
+        this.colliderTileContainer.removeChildren()
         for (const [key, value] of Object.entries(this.tileColliderMap)) {
             if (value) {
                 const [x, y] = key.split(',').map(Number)
@@ -80,7 +81,7 @@ export class EditorApp extends App {
         const sprite = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
         sprite.y = y * 32
-        this.tileGizmoContainer.addChild(sprite)
+        this.colliderTileContainer.addChild(sprite)
 
         const key = `${x}, ${y}` as TilePoint
         this.colliderSprites[key] = sprite
@@ -225,7 +226,7 @@ export class EditorApp extends App {
         this.tileColliderMap[key] = false
         const colliderSprite = this.colliderSprites[key]
         if (colliderSprite) {
-            this.tileGizmoContainer.removeChild(colliderSprite)
+            this.colliderTileContainer.removeChild(colliderSprite)
         }
         // delete the key 
         delete this.colliderSprites[key]
@@ -734,7 +735,7 @@ export class EditorApp extends App {
     }
 
     private onShowColliders = (show: boolean) => {
-        this.tileGizmoContainer.visible = show
+        this.colliderTileContainer.visible = show
     }
 
     public destroy() {

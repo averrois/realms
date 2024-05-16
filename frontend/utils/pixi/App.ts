@@ -46,6 +46,7 @@ export class App {
         this.layers.floor.removeChildren()
         this.layers.transition.removeChildren()
         this.layers.object.removeChildren()
+        this.tileColliderMap = {}
 
         const room = this.realmData[index]
 
