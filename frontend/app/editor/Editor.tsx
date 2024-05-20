@@ -40,7 +40,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         if (gameLoaded === false) return
 
         setSpecialTile(specialTile)
-        setSelectedTile('')
+        setTool('Tile')
         signal.emit('selectSpecialTile', specialTile)
     }
 
@@ -48,19 +48,23 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         if (gameLoaded === false) return
 
         setSelectedTile(tile)
-        setSpecialTile('None')
         signal.emit('tileSelected', tile)
     }
 
     useEffect(() => {
+        const onResetSpecialTileMode = () => {
+            setSpecialTile('None')
+        }
         const onTileSelected = () => {
             setTool('Tile')
         }
 
         signal.on('tileSelected', onTileSelected)
+        signal.on('resetSpecialTileMode', onResetSpecialTileMode)
 
         return () => {
-            signal.off('newTool', onTileSelected)
+            signal.off('resetSpecialTileMode', onResetSpecialTileMode)
+            signal.off('resetSpecialTileMode', onResetSpecialTileMode)
         }
     }, [])
 
@@ -68,7 +72,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         <div className='relative w-full h-screen flex flex-col'>
             <TopBar />
             <div className='w-full grow flex flex-row'>
-                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode}/>
+                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode} specialTile={specialTile}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
                 <RightSection selectedTile={selectedTile} setSelectedTile={selectTile} realmData={realmData} specialTile={specialTile} selectSpecialTile={selectSpecialTile}/>
             </div>

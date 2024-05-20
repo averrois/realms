@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
-import { Tool, TileMode } from '@/utils/pixi/types'
+import { Tool, TileMode, SpecialTile } from '@/utils/pixi/types'
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
 import { Eraser } from '@phosphor-icons/react'
 import { GridFour, Square, Eye, EyeSlash } from '@phosphor-icons/react'
@@ -13,9 +13,10 @@ type LeftBarProps = {
     tileMode: TileMode,
     selectTool: (tool:Tool) => void
     selectTileMode: (mode: TileMode) => void
+    specialTile: SpecialTile
 }
 
-const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTileMode }) => {
+const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTileMode, specialTile }) => {
 
     const [showGizmos, setShowGizmos] = useState<boolean>(false)
 
@@ -60,7 +61,7 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
                 <GridFour className='h-8 w-8'/>
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
-            <ToolButton selected={false} onClick={toggleShowGizmos}>
+            <ToolButton selected={false} onClick={toggleShowGizmos} className={specialTile !== 'None' ? 'pointer-events-none text-gray-700' : ''}>
                 {showGizmos ? <EyeSlash className='h-8 w-8'/> : <Eye className='h-8 w-8'/>}
             </ToolButton>
         </div>

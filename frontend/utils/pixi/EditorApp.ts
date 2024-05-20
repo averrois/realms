@@ -132,23 +132,26 @@ export class EditorApp extends App {
     private onSelectTile = (tile: string) => {
         this.selectedTile = tile
         this.toolMode = 'Tile'
-        this.specialTileMode = 'None'
-
         const spriteLayer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile)
         this.selectedTileLayer = spriteLayer
+        this.setSpecialTileToNone()
     }
 
     private onSelectSpecialTile = (specialTile: SpecialTile) => {
         this.specialTileMode = specialTile
-        this.selectedTile = ''
         this.toolMode = 'Tile'
-        this.selectedTileLayer = null
         this.gizmoContainer.visible = true
         signal.emit('gizmosVisible')
     }
 
+    private setSpecialTileToNone = () => {
+        this.specialTileMode = 'None'
+        signal.emit('resetSpecialTileMode')
+    }
+
     private onSelectTool = (tool: Tool) => {
         this.toolMode = tool
+        this.setSpecialTileToNone()
     }
 
     private onSelectTileMode = (mode: TileMode) => {
