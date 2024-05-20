@@ -19,7 +19,7 @@ const TileMenu:React.FC<TileMenuProps> = ({ selectedTile, setSelectedTile, realm
     const [selectedPalette, setSelectedPalette] = useState<SheetName>('city')
     
     return (
-        <div className='flex flex-col items-center gap-2'>
+        <div className='flex flex-col items-center gap-2 p-2'>
             <div className='flex flex-row items-center justify-between w-full'>
                 Palette
                 <PaletteDropdown menuItems={menuItems} selectedItem={selectedPalette} setSelectedItem={setSelectedPalette}/>

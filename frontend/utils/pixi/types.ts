@@ -4,6 +4,8 @@ export const defaultMapData = [{name: 'Home', tilemap: {}}]
 
 export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
+export type SpecialTile = 'None' | 'Impassable' | 'Teleport' | 'Spawn'
+
 export type TileMode = 'Single' | 'Rectangle'
 
 export type TilePoint = `${number}, ${number}`

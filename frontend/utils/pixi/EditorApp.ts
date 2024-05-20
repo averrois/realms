@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, TileColliderSpriteMap } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, TileColliderSpriteMap, SpecialTile } from './types'
 import { SheetName, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -15,6 +15,7 @@ export class EditorApp extends App {
     private selectedPalette: SheetName = 'city'
     private selectedTile: string = ''   
     private selectedTileLayer: Layer | null = null
+    private specialTileMode: SpecialTile = 'None'
     private tilemapSprites: TilemapSprites = {}
     private needsToSave: boolean = false
     private currentCoordinates: Point = { x: 0, y: 0 }
@@ -125,14 +126,23 @@ export class EditorApp extends App {
         signal.on('changeRoomName', this.onChangeRoomName)
         signal.on('selectTileMode', this.onSelectTileMode)
         signal.on('showColliders', this.onShowColliders)
+        signal.on('selectSpecialTile', this.onSelectSpecialTile)
     }
 
     private onSelectTile = (tile: string) => {
         this.selectedTile = tile
         this.toolMode = 'Tile'
+        this.specialTileMode = 'None'
 
         const spriteLayer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile)
         this.selectedTileLayer = spriteLayer
+    }
+
+    private onSelectSpecialTile = (specialTile: SpecialTile) => {
+        this.specialTileMode = specialTile
+        this.selectedTile = ''
+        this.toolMode = 'Tile'
+        this.selectedTileLayer = null
     }
 
     private onSelectTool = (tool: Tool) => {
@@ -558,7 +568,6 @@ export class EditorApp extends App {
         return squares
     }
 
-
     private zoomInTool = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'ZoomIn') {
@@ -752,6 +761,7 @@ export class EditorApp extends App {
         signal.off('changeRoomName', this.onChangeRoomName)
         signal.off('selectTileMode', this.onSelectTileMode)
         signal.off('showColliders', this.onShowColliders)
+        signal.off('selectSpecialTile', this.onSelectSpecialTile)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()

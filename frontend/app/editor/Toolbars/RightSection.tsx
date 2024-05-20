@@ -1,19 +1,19 @@
 import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
-import { RealmData, Tool } from '@/utils/pixi/types'
+import { RealmData, SpecialTile, Tool } from '@/utils/pixi/types'
 import SpecialTiles from '../SpecialTiles'
 
 type RightSectionProps = {
     selectedTile: string
     setSelectedTile: (tile: string) => void
+    selectSpecialTile: (specialTile: SpecialTile) => void
+    specialTile: SpecialTile
     realmData: RealmData
-    tool: Tool
-    selectTool: (tool: Tool) => void
 }
 
 type Tab = 'Tile' | 'Special Tiles'
 
-const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, realmData, tool, selectTool }) => {
+const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, realmData, specialTile, selectSpecialTile }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')
 
@@ -34,9 +34,9 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
                 </div>
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
-            <div className='p-2'>
+            <div>
                 {tab === 'Tile' && <TileMenu selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>}
-                {tab === 'Special Tiles' && <SpecialTiles selectTool={selectTool} tool={tool}/>}
+                {tab === 'Special Tiles' && <SpecialTiles specialTile={specialTile} selectSpecialTile={selectSpecialTile}/>}
             </div>
         </div>
     )
