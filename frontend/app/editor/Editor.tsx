@@ -5,7 +5,7 @@ import LeftBar from './Toolbars/LeftBar'
 import RightSection from './Toolbars/RightSection'
 import PixiEditor from './PixiEditor'
 import Coords from './Toolbars/Coords'
-import { RealmData, Tool, TileMode, SpecialTile } from '@/utils/pixi/types'
+import { RealmData, Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import signal from '@/utils/signal'
 
 type EditorProps = {
@@ -19,6 +19,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
     const [selectedTile, setSelectedTile] = useState<string>('')
     const [gameLoaded, setGameLoaded] = useState<boolean>(false)
     const [specialTile, setSpecialTile] = useState<SpecialTile>('None')
+    const [eraserLayer, setEraserLayer] = useState<Layer | 'gizmo'>('floor')
 
     function selectTool(tool:Tool) {
         // do not allow tool selection if game not loaded
@@ -51,6 +52,13 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         signal.emit('tileSelected', tile)
     }
 
+    function selectEraserLayer(layer: Layer | 'gizmo') {
+        if (gameLoaded === false) return
+
+        setEraserLayer(layer)
+        signal.emit('selectEraserLayer', layer)
+    }
+
     useEffect(() => {
         const onResetSpecialTileMode = () => {
             setSpecialTile('None')
@@ -72,7 +80,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         <div className='relative w-full h-screen flex flex-col'>
             <TopBar />
             <div className='w-full grow flex flex-row'>
-                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode} specialTile={specialTile}/>
+                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode} specialTile={specialTile} eraserLayer={eraserLayer} selectEraserLayer={selectEraserLayer}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
                 <RightSection selectedTile={selectedTile} setSelectedTile={selectTile} realmData={realmData} specialTile={specialTile} selectSpecialTile={selectSpecialTile}/>
             </div>

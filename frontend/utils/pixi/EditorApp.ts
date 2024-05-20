@@ -16,6 +16,7 @@ export class EditorApp extends App {
     private selectedTile: string = ''   
     private selectedTileLayer: Layer | null = null
     private specialTileMode: SpecialTile = 'None'
+    private eraserLayer: Layer | 'gizmo' = 'floor'
     private tilemapSprites: TilemapSprites = {}
     private needsToSave: boolean = false
     private currentCoordinates: Point = { x: 0, y: 0 }
@@ -142,6 +143,7 @@ export class EditorApp extends App {
         signal.on('selectTileMode', this.onSelectTileMode)
         signal.on('showGizmos', this.onShowGizmos)
         signal.on('selectSpecialTile', this.onSelectSpecialTile)
+        signal.on('selectEraserLayer', this.onSelectEraserLayer)
     }
 
     private onSelectTile = (tile: string) => {
@@ -171,6 +173,25 @@ export class EditorApp extends App {
 
     private onSelectTileMode = (mode: TileMode) => {
         this.tileMode = mode
+    }
+
+    private onSelectEraserLayer = (layer: Layer | 'gizmo') => {
+        this.eraserLayer = layer
+
+        this.layers.floor.eventMode = 'none'
+        this.layers.transition.eventMode = 'none'
+        this.layers.object.eventMode = 'none'
+        this.gizmoContainer.eventMode = 'none'
+
+        if (layer === 'floor') {
+            this.layers.floor.eventMode = 'static'
+        } else if (layer === 'transition') {
+            this.layers.transition.eventMode = 'static'
+        } else if (layer === 'object') {
+            this.layers.object.eventMode = 'static'
+        } else if (layer === 'gizmo') {
+            this.gizmoContainer.eventMode = 'static'
+        }
     }
 
     private setUpInteraction = () => {
@@ -335,19 +356,17 @@ export class EditorApp extends App {
 
     private eraseTilesInRectangle = (squares: Point[]) => {
         squares.forEach(square => {
-            this.eraseTileAtPosition(square.x, square.y, 'floor')
-            this.eraseTileAtPosition(square.x, square.y, 'transition')
-            this.eraseTileAtPosition(square.x, square.y, 'object')
+            this.eraseTileAtPosition(square.x, square.y, this.eraserLayer)
         })
     }
 
-    private eraseTileAtPosition = (x: number, y: number, layer: Layer) => {
-        const tile = this.getTileAtPosition(x, y, layer)
-        const tileData = this.getTileDataAtPosition(x, y, layer)
+    private eraseTileAtPosition = (x: number, y: number, layer: Layer | 'gizmo') => {
+        const tile = this.getTileAtPosition(x, y, layer as Layer)
+        const tileData = this.getTileDataAtPosition(x, y, layer as Layer)
         if (tile) {
-            this.layers[layer].removeChild(tile)
-            delete this.tilemapSprites[`${x}, ${y}`][layer]
-            this.removeTileFromRealmData(x, y, layer)
+            this.layers[layer as Layer].removeChild(tile)
+            delete this.tilemapSprites[`${x}, ${y}`][layer as Layer]
+            this.removeTileFromRealmData(x, y, layer as Layer)
 
             if (tileData && tileData.colliders) {
                 // remove the collider and the sprite
@@ -806,6 +825,7 @@ export class EditorApp extends App {
         signal.off('selectTileMode', this.onSelectTileMode)
         signal.off('showGizmos', this.onShowGizmos)
         signal.off('selectSpecialTile', this.onSelectSpecialTile)
+        signal.off('selectEraserLayer', this.onSelectEraserLayer)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()

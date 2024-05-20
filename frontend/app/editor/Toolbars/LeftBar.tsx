@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react'
 import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
-import { Tool, TileMode, SpecialTile } from '@/utils/pixi/types'
+import { Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
 import { Eraser } from '@phosphor-icons/react'
 import { GridFour, Square, Eye, EyeSlash } from '@phosphor-icons/react'
 import signal from '@/utils/signal'
+import { NumberSquareOne, NumberSquareTwo, NumberSquareThree, Atom } from '@phosphor-icons/react'
 
 type LeftBarProps = {
     tool: Tool,
@@ -14,9 +15,11 @@ type LeftBarProps = {
     selectTool: (tool:Tool) => void
     selectTileMode: (mode: TileMode) => void
     specialTile: SpecialTile
+    selectEraserLayer: (layer: Layer | 'gizmo') => void
+    eraserLayer: Layer | 'gizmo'
 }
 
-const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTileMode, specialTile }) => {
+const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTileMode, specialTile, selectEraserLayer, eraserLayer }) => {
 
     const [showGizmos, setShowGizmos] = useState<boolean>(false)
 
@@ -64,6 +67,23 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
             <ToolButton selected={false} onClick={toggleShowGizmos} className={specialTile !== 'None' ? 'pointer-events-none text-gray-700' : ''}>
                 {showGizmos ? <EyeSlash className='h-8 w-8'/> : <Eye className='h-8 w-8'/>}
             </ToolButton>
+            <div className='w-full h-[2px] bg-black'/>
+            {tool === 'Eraser' && (
+                <div className='flex flex-col gap-2'>
+                    <ToolButton selected={eraserLayer === 'floor'} onClick={() => selectEraserLayer('floor')}>
+                        <NumberSquareOne className='h-8 w-8'/>
+                    </ToolButton>
+                    <ToolButton selected={eraserLayer === 'transition'} onClick={() => selectEraserLayer('transition')}>
+                        <NumberSquareTwo className='h-8 w-8'/>
+                    </ToolButton>
+                    <ToolButton selected={eraserLayer === 'object'} onClick={() => selectEraserLayer('object')}>
+                        <NumberSquareThree className='h-8 w-8'/>
+                    </ToolButton>
+                    <ToolButton selected={eraserLayer === 'gizmo'} onClick={() => selectEraserLayer('gizmo')}>
+                        <Atom className='h-8 w-8'/>
+                    </ToolButton>
+                </div>
+            )}
         </div>
     )
 }
