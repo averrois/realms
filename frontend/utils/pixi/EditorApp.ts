@@ -777,7 +777,7 @@ export class EditorApp extends App {
 
     private getCurrentTileMode = (): TileMode => {
         // rectangle mode does nothing for object layer
-        if (this.selectedTileLayer === 'object' && this.toolMode === 'Tile') {
+        if (this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') {
             return 'Single'
         }
 
