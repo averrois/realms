@@ -504,6 +504,7 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                this.removePreviewTiles()
             } 
         })
 
@@ -511,6 +512,7 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                this.removePreviewTiles()
             } 
         })
 
