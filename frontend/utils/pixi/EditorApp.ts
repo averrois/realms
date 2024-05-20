@@ -45,11 +45,12 @@ export class EditorApp extends App {
     override async loadRoom(index: number) {
         await super.loadRoom(index)
 
+        this.drawColliders()
+
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('transition')
         this.setUpInitialTilemapDataAndPointerEvents('object')
-
-        this.drawColliders()
+        this.setUpInitialTilemapDataAndPointerEvents('gizmo')
     }
 
     private drawColliders = () => {
@@ -69,8 +70,10 @@ export class EditorApp extends App {
         }
     }
 
-    private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
-        for (const tile of this.layers[layer].children) {
+    private setUpInitialTilemapDataAndPointerEvents = (layer: Layer | 'gizmo') => {
+        const tiles = layer === 'gizmo' ? this.gizmoContainer.children : this.layers[layer].children
+
+        for (const tile of tiles) {
             const convertedPosition = this.convertScreenToTileCoordinates(tile.x, tile.y)
 
             const key: TilePoint = `${convertedPosition.x}, ${convertedPosition.y}`
@@ -207,6 +210,8 @@ export class EditorApp extends App {
             this.layers.object.eventMode = 'static'
         } else if (layer === 'gizmo') {
             this.gizmoContainer.eventMode = 'static'
+            this.gizmoContainer.visible = true
+            signal.emit('gizmosVisible')    
         }
     }
 
