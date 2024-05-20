@@ -19,6 +19,7 @@ export interface Room {
             floor?: string,
             transition?: string,
             object?: string,
+            impassable?: boolean
         }
     }
 }

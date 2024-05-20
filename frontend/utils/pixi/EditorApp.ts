@@ -59,6 +59,13 @@ export class EditorApp extends App {
                 this.placeColliderTile(x, y)
             }
         }
+
+        for (const [key, value] of Object.entries(this.realmData[this.currentRoomIndex].tilemap)) {
+            if (value.impassable) {
+                const [x, y] = key.split(',').map(Number)
+                this.placeColliderTile(x, y)
+            }
+        }
     }
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
@@ -78,7 +85,7 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/collider-tile.png')
     }
 
-    private placeColliderTile = (x: number, y: number) => {
+    private placeColliderTile = (x: number, y: number, save?: boolean) => {
         const key = `${x}, ${y}` as TilePoint
         if (this.tileColliderMap[key] === true) return
 
@@ -90,6 +97,10 @@ export class EditorApp extends App {
         this.gizmoContainer.addChild(sprite)
 
         this.colliderSprites[key] = sprite
+
+        if (save) {
+            this.addColliderToRealmData(x, y)
+        }
     }
 
     private drawGridLines = () => {
@@ -191,7 +202,7 @@ export class EditorApp extends App {
         }
 
         if (layer === 'gizmo') {
-            this.placeColliderTile(x, y)
+            this.placeColliderTile(x, y, true)
             return
         }
 
@@ -408,6 +419,16 @@ export class EditorApp extends App {
                     [layer]: tile
                 }
             }
+        }
+        this.updateRealmData(newRealmData)
+    }
+
+    private addColliderToRealmData = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        const newRealmData = this.realmData
+        newRealmData[this.currentRoomIndex].tilemap[key] = {
+            ...newRealmData[this.currentRoomIndex].tilemap[key],
+            impassable: true
         }
         this.updateRealmData(newRealmData)
     }
