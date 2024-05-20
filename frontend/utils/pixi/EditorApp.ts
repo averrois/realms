@@ -79,12 +79,16 @@ export class EditorApp extends App {
     }
 
     private placeColliderTile = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        if (this.tileColliderMap[key] === true) return
+
+        this.tileColliderMap[key] = true
+
         const sprite = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
         sprite.y = y * 32
         this.gizmoContainer.addChild(sprite)
 
-        const key = `${x}, ${y}` as TilePoint
         this.colliderSprites[key] = sprite
     }
 
@@ -187,7 +191,7 @@ export class EditorApp extends App {
         }
 
         if (layer === 'gizmo') {
-            this.gizmoContainer.addChild(tile)
+            this.placeColliderTile(x, y)
             return
         }
 
@@ -209,7 +213,7 @@ export class EditorApp extends App {
         if (data.colliders) {
             data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                this.addTileCollider(colliderCoordinates.x, colliderCoordinates.y)
+                this.placeColliderTile(colliderCoordinates.x, colliderCoordinates.y)
             })
         }
 
@@ -229,14 +233,6 @@ export class EditorApp extends App {
                 if (this.tileColliderMap[key] === true) return true
         }
         return false
-    }
-
-    private addTileCollider = (x: number, y: number) => {
-        const key = `${x}, ${y}` as TilePoint
-        if (this.tileColliderMap[key] === true) return
-
-        this.tileColliderMap[key] = true
-        this.placeColliderTile(x, y)
     }
 
     private removeTileCollider = (x: number, y: number) => {
