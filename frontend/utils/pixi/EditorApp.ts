@@ -22,7 +22,7 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
-    private colliderSprites: TileColliderSpriteMap = {}
+    private gizmoSprites: TileColliderSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
     private hiddenTiles: PIXI.Sprite[] = []
     private eraserTiles: PIXI.Sprite[] = []
@@ -96,7 +96,7 @@ export class EditorApp extends App {
         sprite.y = y * 32
         this.gizmoContainer.addChild(sprite)
 
-        this.colliderSprites[key] = sprite
+        this.gizmoSprites[key] = sprite
 
         if (save) {
             this.addColliderToRealmData(x, y)
@@ -246,15 +246,15 @@ export class EditorApp extends App {
         return false
     }
 
-    private removeTileCollider = (x: number, y: number) => {
+    private removeGizmoSprite = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
         this.tileColliderMap[key] = false
-        const colliderSprite = this.colliderSprites[key]
-        if (colliderSprite) {
-            this.gizmoContainer.removeChild(colliderSprite)
+        const gizmoSprite = this.gizmoSprites[key]
+        if (gizmoSprite) {
+            this.gizmoContainer.removeChild(gizmoSprite)
         }
         // delete the key 
-        delete this.colliderSprites[key]
+        delete this.gizmoSprites[key]
     }
 
     private rectangleEraserTool = () => {
@@ -353,7 +353,7 @@ export class EditorApp extends App {
                 // remove the collider and the sprite
                 tileData.colliders.forEach((collider) => {
                     const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                    this.removeTileCollider(colliderCoordinates.x, colliderCoordinates.y)
+                    this.removeGizmoSprite(colliderCoordinates.x, colliderCoordinates.y)
                 })
             }
         }
