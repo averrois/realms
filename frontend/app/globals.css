@@ -6,3 +6,16 @@ html {
     background: #0F0F0F;
     color: white;
 }
+
+.transparent-scrollbar::-webkit-scrollbar {
+    width: 12px;
+}
+
+.transparent-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+.transparent-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}

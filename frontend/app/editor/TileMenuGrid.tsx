@@ -29,7 +29,7 @@ const TileMenuGrid:React.FC<TileMenuGridProps> = ({ selectedPalette, selectedTil
     }
 
     return (
-        <div className='w-full h-[400px] overflow-y-scroll border-b-2 border-primary pb-2'>
+        <div className='w-full h-[400px] overflow-y-scroll border-b-2 border-primary pb-2 transparent-scrollbar'>
             {!loading && (
                 <div className='grid grid-cols-3 w-full gap-2 pt-2'>
                     {Object.entries(sprites.spriteSheetDataSet[selectedPalette].sprites).map(([spriteName, spriteData], index) => {

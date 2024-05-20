@@ -72,7 +72,7 @@ const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
     return (
         <div className='flex flex-col items-center px-3 grow gap-2 w-full'>
                 <h1 className='w-full'>Rooms</h1>
-                <div className='flex flex-col items-center w-full overflow-y-scroll max-h-[220px] gap-1' ref={roomsContainerRef}>
+                <div className='flex flex-col items-center w-full overflow-y-auto max-h-[200px] gap-1 transparent-scrollbar' ref={roomsContainerRef}>
                     {rooms.map((room, index) => <RoomItem rooms={rooms} selectedRoomIndex={roomIndex} roomIndex={index} roomName={room} key={index}/>)}
                 </div>
                 <BasicButton className='flex flex-row items-center gap-1 text-xl mb-4 w-full justify-center' onClick={onClickCreateRoom}>
