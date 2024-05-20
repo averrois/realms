@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, TileColliderSpriteMap, SpecialTile } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile, ColliderMap } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -23,10 +23,14 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
-    private gizmoSprites: TileColliderSpriteMap = {}
+    private gizmoSprites: GizmoSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
     private hiddenTiles: PIXI.Sprite[] = []
     private eraserTiles: PIXI.Sprite[] = []
+
+    private collidersFromImpassable: ColliderMap = {}
+
+    // TODO: Work on erasing again. i reworked it kind of. rethink collidersFromImpassable and maybe just use the gizmo sprite thing to determine if a cell is available
 
     public async init() {
         await this.loadAssets()
@@ -40,6 +44,7 @@ export class EditorApp extends App {
         this.setUpSignalListeners()
         this.setUpBeforeUnload()
         this.setUpInteraction()
+        this.onSelectEraserLayer(this.eraserLayer)
     }
 
     override async loadRoom(index: number) {
@@ -55,17 +60,17 @@ export class EditorApp extends App {
 
     private drawColliders = () => {
         this.gizmoContainer.removeChildren()
-        for (const [key, value] of Object.entries(this.tileColliderMap)) {
+        for (const [key, value] of Object.entries(this.collidersFromSpritesMap)) {
             if (value) {
                 const [x, y] = key.split(',').map(Number)
-                this.placeColliderTile(x, y, false)
+                this.placeColliderSprite(x, y)
             }
         }
 
         for (const [key, value] of Object.entries(this.realmData[this.currentRoomIndex].tilemap)) {
             if (value.impassable) {
                 const [x, y] = key.split(',').map(Number)
-                this.placeColliderTile(x, y, false)
+                this.placeImpassableCollider(x, y, false)
             }
         }
     }
@@ -89,29 +94,38 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/collider-tile.png')
     }
 
-    private placeColliderTile = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
+    private placeColliderSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
-        if (this.tileColliderMap[key] === true) return
-
-        this.tileColliderMap[key] = true
+        if (this.gizmoSprites[key]) return
 
         const sprite = tile || new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
         sprite.y = y * 32
         this.gizmoContainer.addChild(sprite)
-
         this.gizmoSprites[key] = sprite
+    } 
+
+    private placeImpassableCollider = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
+        const key = `${x}, ${y}` as TilePoint
+        this.collidersFromImpassable[key] = true
+        this.placeColliderSprite(x, y, tile)
 
         if (save) {
             this.addColliderToRealmData(x, y)
         }
     }
 
+    private placeColliderFromSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
+        const key = `${x}, ${y}` as TilePoint
+        this.placeColliderSprite(x, y, tile)
+        this.collidersFromSpritesMap[key] = true
+    }
+
     private removeGizmoAtPosition = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
-        if (this.tileColliderMap[key] === false) return
+        if (this.collidersFromSpritesMap[key] === false) return
 
-        this.tileColliderMap[key] = false
+        this.collidersFromSpritesMap[key] = false
 
         const sprite = this.gizmoSprites[key]
         if (sprite) {
@@ -246,7 +260,7 @@ export class EditorApp extends App {
         this.setUpEraserTool(tile, x, y, layer)
 
         if (layer === 'gizmo') {
-            this.placeColliderTile(x, y, true, tile)
+            this.placeImpassableCollider(x, y, true, tile)
             return
         }
 
@@ -266,7 +280,7 @@ export class EditorApp extends App {
         if (data.colliders) {
             data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                this.placeColliderTile(colliderCoordinates.x, colliderCoordinates.y, false)
+                this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
             })
         }
 
@@ -283,7 +297,7 @@ export class EditorApp extends App {
                 const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
 
                 // cannot place a tile with collider on top of another collider
-                if (this.tileColliderMap[key] === true) return true
+                if (this.collidersFromSpritesMap[key] === true) return true
         }
         return false
     }

@@ -24,11 +24,11 @@ export interface Room {
     }
 }
 
-export interface TileColliderMap {
+export interface ColliderMap {
     [key: `${number}, ${number}`]: boolean
 }
 
-export interface TileColliderSpriteMap {
+export interface GizmoSpriteMap {
     [key: `${number}, ${number}`]: Sprite
 }
 
