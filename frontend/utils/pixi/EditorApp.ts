@@ -2,11 +2,11 @@ import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
 import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, TileColliderSpriteMap, SpecialTile } from './types'
-import { SheetName, sprites } from './spritesheet/spritesheet'
+import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
-    private colliderTileContainer: PIXI.Container = new PIXI.Container()
+    private gizmoContainer: PIXI.Container = new PIXI.Container()
     private toolMode: Tool = 'None'
     private tileMode: TileMode = 'Single'
     private dragging: boolean = false
@@ -31,9 +31,9 @@ export class EditorApp extends App {
         await this.loadAssets()
         await super.init()
 
-        this.colliderTileContainer.eventMode ='none'
-        this.colliderTileContainer.visible = false
-        this.app.stage.addChild(this.colliderTileContainer)
+        this.gizmoContainer.eventMode ='none'
+        this.gizmoContainer.visible = false
+        this.app.stage.addChild(this.gizmoContainer)
 
         this.drawGridLines()
         this.setUpSignalListeners()
@@ -52,7 +52,7 @@ export class EditorApp extends App {
     }
 
     private drawColliders = () => {
-        this.colliderTileContainer.removeChildren()
+        this.gizmoContainer.removeChildren()
         for (const [key, value] of Object.entries(this.tileColliderMap)) {
             if (value) {
                 const [x, y] = key.split(',').map(Number)
@@ -82,7 +82,7 @@ export class EditorApp extends App {
         const sprite = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
         sprite.y = y * 32
-        this.colliderTileContainer.addChild(sprite)
+        this.gizmoContainer.addChild(sprite)
 
         const key = `${x}, ${y}` as TilePoint
         this.colliderSprites[key] = sprite
@@ -125,7 +125,7 @@ export class EditorApp extends App {
         signal.on('deleteRoom', this.onDeleteRoom)
         signal.on('changeRoomName', this.onChangeRoomName)
         signal.on('selectTileMode', this.onSelectTileMode)
-        signal.on('showColliders', this.onShowColliders)
+        signal.on('showGizmos', this.onShowGizmos)
         signal.on('selectSpecialTile', this.onSelectSpecialTile)
     }
 
@@ -143,6 +143,8 @@ export class EditorApp extends App {
         this.selectedTile = ''
         this.toolMode = 'Tile'
         this.selectedTileLayer = null
+        this.gizmoContainer.visible = true
+        signal.emit('gizmosVisible')
     }
 
     private onSelectTool = (tool: Tool) => {
@@ -172,25 +174,28 @@ export class EditorApp extends App {
     }
 
     private placeTileAtPosition = (x: number, y: number) => {
-        const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
+        const { tile, data, layer } = this.getCurrentSpriteInfo()
+
         tile.x = x * 32
         tile.y = y * 32
 
-        const spriteData = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
-        if (spriteData.colliders) {
-            if (this.collidersConflict(spriteData.colliders, tile)) return
+        if (data.colliders) {
+            if (this.collidersConflict(data.colliders, tile)) return
         }
 
-        const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
+        if (layer === 'gizmo') {
+            this.gizmoContainer.addChild(tile)
+            return
+        }
 
-        this.setUpEraserTool(tile, x, y, layer)
+        this.layers[layer as Layer].addChild(tile)
 
-        const existingTile = this.getTileAtPosition(x, y, layer)
+        this.setUpEraserTool(tile, x, y, layer as Layer)
+
+        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
         if (existingTile) {
-            this.layers[layer].removeChild(existingTile)
+            this.layers[layer as Layer].removeChild(existingTile)
         }
-
-        this.layers[layer].addChild(tile)
 
         const key = `${x}, ${y}` as TilePoint
         this.tilemapSprites[key] = {
@@ -198,8 +203,8 @@ export class EditorApp extends App {
             [layer]: tile
         }
 
-        if (spriteData.colliders) {
-            spriteData.colliders.forEach((collider) => {
+        if (data.colliders) {
+            data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
                 this.addTileCollider(colliderCoordinates.x, colliderCoordinates.y)
             })
@@ -209,7 +214,7 @@ export class EditorApp extends App {
         this.sortObjectsByY()
 
         // For database purposes
-        this.addTileToRealmData(x, y, layer, this.selectedPalette + '-' + this.selectedTile)
+        this.addTileToRealmData(x, y, layer as Layer, this.selectedPalette + '-' + this.selectedTile)
     }
 
     private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
@@ -236,7 +241,7 @@ export class EditorApp extends App {
         this.tileColliderMap[key] = false
         const colliderSprite = this.colliderSprites[key]
         if (colliderSprite) {
-            this.colliderTileContainer.removeChild(colliderSprite)
+            this.gizmoContainer.removeChild(colliderSprite)
         }
         // delete the key 
         delete this.colliderSprites[key]
@@ -428,29 +433,32 @@ export class EditorApp extends App {
     }
 
     private placePreviewTileAtPosition = (x: number, y: number) => {
-        const previewSprite = sprites.getSprite(this.selectedPalette, this.selectedTile)
-        const spriteData = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
-        const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
-        const existingTile = this.getTileAtPosition(x, y, layer)
+        const { tile, data, layer } = this.getCurrentSpriteInfo()
 
-        previewSprite.x = x * 32
-        previewSprite.y = y * 32
-        this.layers[layer].addChild(previewSprite)
+        tile.x = x * 32
+        tile.y = y * 32
+        this.previewTiles.push(tile)
+        if (layer === 'gizmo') {
+            this.gizmoContainer.addChild(tile)
+            return
+        }
+
+        this.layers[layer as Layer].addChild(tile)
 
         let colliderConflict = false
-        if (spriteData.colliders) {
-            if (this.collidersConflict(spriteData.colliders, previewSprite)) {
+        if (data.colliders) {
+            if (this.collidersConflict(data.colliders, tile)) {
                 colliderConflict = true
-                previewSprite.tint = 0xff0008
+                tile.tint = 0xff0008
             }
         }
 
+        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
         // hide tiles it covers
         if (existingTile && !colliderConflict) {
             existingTile.visible = false
             this.hiddenTiles.push(existingTile)
         }
-        this.previewTiles.push(previewSprite)
 
         if (!colliderConflict) {
             this.sortObjectsByY()
@@ -516,6 +524,20 @@ export class EditorApp extends App {
                 this.placePreviewTileAtMouse(e)
             }
         })
+    }
+
+    private getCurrentSpriteInfo = () => {
+        if (this.specialTileMode === 'Impassable') {
+            const colliderTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
+            const layer = 'gizmo'
+            return { data: {} as SpriteSheetTile, layer, tile: colliderTile }
+        }
+
+        const data = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
+        const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
+        const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
+
+        return { data, layer, tile }
     }
 
     private onTileDragStart = (e: PIXI.FederatedPointerEvent) => {
@@ -746,8 +768,8 @@ export class EditorApp extends App {
         this.needsToSave = false
     }
 
-    private onShowColliders = (show: boolean) => {
-        this.colliderTileContainer.visible = show
+    private onShowGizmos = (show: boolean) => {
+        this.gizmoContainer.visible = show
     }
 
     public destroy() {
@@ -760,7 +782,7 @@ export class EditorApp extends App {
         signal.off('deleteRoom', this.onDeleteRoom)
         signal.off('changeRoomName', this.onChangeRoomName)
         signal.off('selectTileMode', this.onSelectTileMode)
-        signal.off('showColliders', this.onShowColliders)
+        signal.off('showGizmos', this.onShowGizmos)
         signal.off('selectSpecialTile', this.onSelectSpecialTile)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
