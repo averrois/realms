@@ -77,7 +77,9 @@ export class EditorApp extends App {
                 const sprite = this.placeImpassableCollider(x, y, false)
 
                 // set up erase
-                this.setUpEraserTool(sprite!, x, y, 'gizmo')
+                if (sprite) {
+                    this.setUpEraserTool(sprite, x, y, 'gizmo')
+                }
             }
         }
     }
