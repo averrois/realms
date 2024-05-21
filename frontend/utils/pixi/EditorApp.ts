@@ -117,6 +117,8 @@ export class EditorApp extends App {
 
     private placeImpassableCollider = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
+        if (this.collidersFromSpritesMap[key] === true) return
+
         this.collidersFromImpassable[key] = true
 
         if (save) {
@@ -132,10 +134,10 @@ export class EditorApp extends App {
         this.collidersFromSpritesMap[key] = true
     }
 
-    private removeGizmoAtPosition = (x: number, y: number) => {
+    private removeGizmoAtPosition = (x: number, y: number, eraseSpriteCollider?: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        if (this.collidersFromSpritesMap[key] === false) return
-
+        if (!eraseSpriteCollider && this.collidersFromSpritesMap[key]) return
+        this.collidersFromImpassable[key] = false
         this.collidersFromSpritesMap[key] = false
 
         const sprite = this.gizmoSprites[key]
@@ -259,7 +261,7 @@ export class EditorApp extends App {
     }
 
     private placeTileAtPosition = (x: number, y: number) => {
-        const { tile, data, layer } = this.getCurrentSpriteInfo()
+        const { tile, data, layer, type } = this.getCurrentSpriteInfo()
 
         tile.x = x * 32
         tile.y = y * 32
@@ -270,7 +272,7 @@ export class EditorApp extends App {
 
         this.setUpEraserTool(tile, x, y, layer)
 
-        if (layer === 'gizmo') {
+        if (type === 'Impassable') {
             this.placeImpassableCollider(x, y, true, tile)
             return
         }
@@ -412,7 +414,7 @@ export class EditorApp extends App {
                 // remove the collider and the sprite
                 tileData.colliders.forEach((collider) => {
                     const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                    this.removeGizmoAtPosition(colliderCoordinates.x, colliderCoordinates.y)
+                    this.removeGizmoAtPosition(colliderCoordinates.x, colliderCoordinates.y, true)
                 })
             }
         }
@@ -621,18 +623,18 @@ export class EditorApp extends App {
         })
     }
 
-    private getCurrentSpriteInfo = (): { data: SpriteSheetTile, layer: Layer | 'gizmo', tile: PIXI.Sprite } => {
+    private getCurrentSpriteInfo = (): { data: SpriteSheetTile, layer: Layer | 'gizmo', tile: PIXI.Sprite, type: string } => {
         if (this.specialTileMode === 'Impassable') {
             const colliderTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
             const layer = 'gizmo'
-            return { data: {} as SpriteSheetTile, layer, tile: colliderTile }
+            return { data: {} as SpriteSheetTile, layer, tile: colliderTile, type: 'Impassable' }
         }
 
         const data = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
         const layer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile) as Layer
         const tile = sprites.getSprite(this.selectedPalette, this.selectedTile)
 
-        return { data, layer, tile }
+        return { data, layer, tile, type: 'Tile' }
     }
 
     private onTileDragStart = (e: PIXI.FederatedPointerEvent) => {
