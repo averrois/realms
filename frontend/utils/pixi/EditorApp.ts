@@ -134,7 +134,7 @@ export class EditorApp extends App {
 
         delete this.gizmoSprites[key]
 
-        this.removeColliderFromRealmData(x, y)
+        this.removeGizmoFromRealmData(x, y)
     }
 
     private drawGridLines = () => {
@@ -485,12 +485,13 @@ export class EditorApp extends App {
         this.updateRealmData(newRealmData)
     }
 
-    private removeColliderFromRealmData = (x: number, y: number) => {
+    private removeGizmoFromRealmData = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
         const newRealmData = this.realmData
         newRealmData[this.currentRoomIndex].tilemap[key] = {
             ...newRealmData[this.currentRoomIndex].tilemap[key],
             impassable: false
+            // TODO: remove all other kinds of gizmos
         }
         this.updateRealmData(newRealmData)
     }
