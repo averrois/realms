@@ -48,6 +48,11 @@ export class EditorApp extends App {
     }
 
     override async loadRoom(index: number) {
+        this.tilemapSprites = {}
+        this.collidersFromSpritesMap = {}
+        this.collidersFromImpassable = {}
+        this.gizmoSprites = {}
+
         await super.loadRoom(index)
 
         this.drawColliders()
