@@ -60,7 +60,6 @@ export class EditorApp extends App {
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('transition')
         this.setUpInitialTilemapDataAndPointerEvents('object')
-        this.setUpInitialTilemapDataAndPointerEvents('gizmo')
     }
 
     private drawColliders = () => {
@@ -75,18 +74,22 @@ export class EditorApp extends App {
         for (const [key, value] of Object.entries(this.realmData[this.currentRoomIndex].tilemap)) {
             if (value.impassable) {
                 const [x, y] = key.split(',').map(Number)
-                this.placeImpassableCollider(x, y, false)
+                const sprite = this.placeImpassableCollider(x, y, false)
+
+                // set up erase
+                this.setUpEraserTool(sprite!, x, y, 'gizmo')
             }
         }
     }
 
-    private setUpInitialTilemapDataAndPointerEvents = (layer: Layer | 'gizmo') => {
-        const tiles = layer === 'gizmo' ? this.gizmoContainer.children : this.layers[layer].children
+    private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
+        const tiles = this.layers[layer].children
 
         for (const tile of tiles) {
             const convertedPosition = this.convertScreenToTileCoordinates(tile.x, tile.y)
 
             const key: TilePoint = `${convertedPosition.x}, ${convertedPosition.y}`
+
             this.tilemapSprites[key] = { ...this.tilemapSprites[key], [layer]: tile as PIXI.Sprite }
 
             this.setUpEraserTool(tile as PIXI.Sprite, convertedPosition.x, convertedPosition.y, layer)
@@ -108,16 +111,19 @@ export class EditorApp extends App {
         sprite.y = y * 32
         this.gizmoContainer.addChild(sprite)
         this.gizmoSprites[key] = sprite
+
+        return sprite
     } 
 
     private placeImpassableCollider = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
         this.collidersFromImpassable[key] = true
-        this.placeColliderSprite(x, y, tile)
 
         if (save) {
             this.addColliderToRealmData(x, y)
         }
+
+        return this.placeColliderSprite(x, y, tile)
     }
 
     private placeColliderFromSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
