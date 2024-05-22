@@ -28,10 +28,6 @@ export class EditorApp extends App {
     private hiddenTiles: PIXI.Sprite[] = []
     private eraserTiles: PIXI.Sprite[] = []
 
-    private collidersFromImpassable: ColliderMap = {}
-
-    // TODO: Work on erasing again. i reworked it kind of. rethink collidersFromImpassable and maybe just use the gizmo sprite thing to determine if a cell is available
-
     public async init() {
         await this.loadAssets()
         await super.init()
@@ -50,7 +46,6 @@ export class EditorApp extends App {
     override async loadRoom(index: number) {
         this.tilemapSprites = {}
         this.collidersFromSpritesMap = {}
-        this.collidersFromImpassable = {}
         this.gizmoSprites = {}
 
         await super.loadRoom(index)
@@ -121,8 +116,6 @@ export class EditorApp extends App {
         const key = `${x}, ${y}` as TilePoint
         if (this.collidersFromSpritesMap[key] === true) return
 
-        this.collidersFromImpassable[key] = true
-
         if (save) {
             this.addColliderToRealmData(x, y)
         }
@@ -139,7 +132,6 @@ export class EditorApp extends App {
     private removeGizmoAtPosition = (x: number, y: number, eraseSpriteCollider?: boolean) => {
         const key = `${x}, ${y}` as TilePoint
         if (!eraseSpriteCollider && this.collidersFromSpritesMap[key]) return
-        this.collidersFromImpassable[key] = false
         this.collidersFromSpritesMap[key] = false
 
         const sprite = this.gizmoSprites[key]
