@@ -528,12 +528,6 @@ export class EditorApp extends App {
         tile.x = x * 32
         tile.y = y * 32
         this.previewTiles.push(tile)
-        if (layer === 'gizmo') {
-            this.gizmoContainer.addChild(tile)
-            return
-        }
-
-        this.layers[layer as Layer].addChild(tile)
 
         let colliderConflict = false
         if (data.colliders) {
@@ -549,6 +543,13 @@ export class EditorApp extends App {
             existingTile.visible = false
             this.hiddenTiles.push(existingTile)
         }
+
+        if (layer === 'gizmo') {
+            this.gizmoContainer.addChild(tile)
+        } else {
+            this.layers[layer as Layer].addChild(tile)
+        }
+
 
         if (!colliderConflict) {
             this.sortObjectsByY()
