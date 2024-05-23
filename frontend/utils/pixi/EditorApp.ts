@@ -613,7 +613,9 @@ export class EditorApp extends App {
         this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
                 this.removePreviewTiles()
-                this.placePreviewTileAtMouse(e)
+                if (this.dragging === false) {
+                    this.placePreviewTileAtMouse(e)
+                }
             }
         })
     }
