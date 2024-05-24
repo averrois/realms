@@ -62,13 +62,17 @@ export class EditorApp extends App {
         for (const [key, value] of Object.entries(this.collidersFromSpritesMap)) {
             if (value) {
                 const [x, y] = key.split(',').map(Number)
-                this.placeColliderSprite(x, y)
+
+                if (this.isImpassableColliderAtPosition(x, y) === false) {
+                    this.placeColliderSprite(x, y) 
+                }
             }
         }
 
         for (const [key, value] of Object.entries(this.realmData[this.currentRoomIndex].tilemap)) {
             if (value.impassable) {
                 const [x, y] = key.split(',').map(Number)
+
                 const sprite = this.placeColliderSprite(x, y)
 
                 // set up erase
@@ -102,7 +106,6 @@ export class EditorApp extends App {
 
     private placeColliderSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
-
         const sprite = tile || new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
         sprite.y = y * 32
@@ -120,7 +123,9 @@ export class EditorApp extends App {
 
     private placeColliderFromSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
-        this.placeColliderSprite(x, y, tile)
+        if (!this.isColliderAtPosition(x, y)) {
+            this.placeColliderSprite(x, y, tile)
+        }
         this.collidersFromSpritesMap[key] = true
     }
 
@@ -129,19 +134,31 @@ export class EditorApp extends App {
         return this.collidersFromSpritesMap[key] || this.realmData[this.currentRoomIndex].tilemap[key]?.impassable === true
     }
 
-    private removeGizmoAtPosition = (x: number, y: number, eraseSpriteCollider?: boolean) => {
+    private isImpassableColliderAtPosition = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
-        if (!eraseSpriteCollider && this.collidersFromSpritesMap[key]) return
+        return this.realmData[this.currentRoomIndex].tilemap[key]?.impassable === true
+    }
+
+    private removeGizmoAtPosition = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+
         this.collidersFromSpritesMap[key] = false
 
+        if (this.collidersFromSpritesMap[key] === false) {
+            this.removeGizmoSpriteAtPosition(x, y)
+        }
+
+        this.removeGizmoFromRealmData(x, y)
+    }
+
+    private removeGizmoSpriteAtPosition = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
         const sprite = this.gizmoSprites[key]
         if (sprite) {
             this.gizmoContainer.removeChild(sprite)
         }
 
         delete this.gizmoSprites[key]
-
-        this.removeGizmoFromRealmData(x, y)
     }
 
     private drawGridLines = () => {
@@ -289,10 +306,7 @@ export class EditorApp extends App {
         if (data.colliders) {
             data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                // do not place the sprite if there is already a collider there. doing this would just double up the sprites.
-                if (this.isColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y) === false) {   
-                    this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
-                }
+                this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
             })
         }
 
@@ -413,7 +427,10 @@ export class EditorApp extends App {
                 // remove the collider and the sprite
                 tileData.colliders.forEach((collider) => {
                     const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                    this.removeGizmoAtPosition(colliderCoordinates.x, colliderCoordinates.y, true)
+                    this.collidersFromSpritesMap[`${colliderCoordinates.x}, ${colliderCoordinates.y}`] = false
+                    if (!this.isImpassableColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y)) {
+                        this.removeGizmoSpriteAtPosition(colliderCoordinates.x, colliderCoordinates.y)
+                    }
                 })
             }
         }
