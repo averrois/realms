@@ -291,7 +291,9 @@ export class EditorApp extends App {
         if (data.colliders) {
             data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
+                if (this.isColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y) === false) {   
+                    this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
+                }
             })
         }
 
