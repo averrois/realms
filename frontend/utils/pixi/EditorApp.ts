@@ -102,7 +102,6 @@ export class EditorApp extends App {
 
     private placeColliderSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
         const key = `${x}, ${y}` as TilePoint
-        if (this.gizmoSprites[key]) return
 
         const sprite = tile || new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
         sprite.x = x * 32
@@ -114,9 +113,6 @@ export class EditorApp extends App {
     } 
 
     private placeImpassableCollider = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
-        const key = `${x}, ${y}` as TilePoint
-        if (this.collidersFromSpritesMap[key] === true) return
-
         if (save) {
             this.addColliderToRealmData(x, y)
         }
@@ -128,6 +124,11 @@ export class EditorApp extends App {
         const key = `${x}, ${y}` as TilePoint
         this.placeColliderSprite(x, y, tile)
         this.collidersFromSpritesMap[key] = true
+    }
+
+    private isColliderAtPosition = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        return this.collidersFromSpritesMap[key] || this.realmData[this.currentRoomIndex].tilemap[key]?.impassable === true
     }
 
     private removeGizmoAtPosition = (x: number, y: number, eraseSpriteCollider?: boolean) => {
@@ -268,7 +269,9 @@ export class EditorApp extends App {
         this.setUpEraserTool(tile, x, y, layer)
 
         if (type === 'Impassable') {
-            this.placeImpassableCollider(x, y, true, tile)
+            if (this.isColliderAtPosition(x, y) === false) {
+                this.placeImpassableCollider(x, y, true, tile)
+            }
             return
         }
 
@@ -602,7 +605,7 @@ export class EditorApp extends App {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
                 if (this.getCurrentTileMode() === 'Single') {
-                    // if single mode, do this
+                    this.removePreviewTiles()
                     this.placeTileOnMousePosition(e)
                     this.app.stage.on('pointermove', this.placeTileOnMousePosition)
                 } else if (this.getCurrentTileMode() === 'Rectangle') {
@@ -855,7 +858,7 @@ export class EditorApp extends App {
     }
 
     private getCurrentTileMode = (): TileMode => {
-        // rectangle mode does nothing for object layer
+        // rectangle mode does nothing for object layer or teleport
         if ((this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') || this.specialTileMode === 'Teleport') {
             return 'Single'
         }
