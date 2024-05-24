@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js'
 import { App } from './App'
 import signal from '../signal'
-import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile, ColliderMap } from './types'
+import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 
 export class EditorApp extends App {
@@ -97,6 +97,7 @@ export class EditorApp extends App {
         await PIXI.Assets.load('/sprites/tile-outline.png')
         await PIXI.Assets.load('/sprites/erase-tile.png')
         await PIXI.Assets.load('/sprites/collider-tile.png')
+        await PIXI.Assets.load('/sprites/teleport-tile.png')
     }
 
     private placeColliderSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
@@ -625,6 +626,10 @@ export class EditorApp extends App {
             const colliderTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/collider-tile.png'))
             const layer = 'gizmo'
             return { data: {} as SpriteSheetTile, layer, tile: colliderTile, type: 'Impassable' }
+        } else if (this.specialTileMode === 'Teleport') {
+            const teleportTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/teleport-tile.png'))
+            const layer = 'gizmo'
+            return { data: {} as SpriteSheetTile, layer, tile: teleportTile, type: 'Teleport' }
         }
 
         const data = sprites.getSpriteData(this.selectedPalette, this.selectedTile)
@@ -851,7 +856,7 @@ export class EditorApp extends App {
 
     private getCurrentTileMode = (): TileMode => {
         // rectangle mode does nothing for object layer
-        if (this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') {
+        if ((this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') || this.specialTileMode === 'Teleport') {
             return 'Single'
         }
 
