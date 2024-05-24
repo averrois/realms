@@ -69,7 +69,7 @@ export class EditorApp extends App {
         for (const [key, value] of Object.entries(this.realmData[this.currentRoomIndex].tilemap)) {
             if (value.impassable) {
                 const [x, y] = key.split(',').map(Number)
-                const sprite = this.placeImpassableCollider(x, y, false)
+                const sprite = this.placeColliderSprite(x, y)
 
                 // set up erase
                 if (sprite) {
@@ -112,10 +112,8 @@ export class EditorApp extends App {
         return sprite
     } 
 
-    private placeImpassableCollider = (x: number, y: number, save: boolean, tile?: PIXI.Sprite) => {
-        if (save) {
-            this.addColliderToRealmData(x, y)
-        }
+    private placeImpassableCollider = (x: number, y: number, tile: PIXI.Sprite) => {
+        this.addColliderToRealmData(x, y)
 
         return this.placeColliderSprite(x, y, tile)
     }
@@ -270,7 +268,7 @@ export class EditorApp extends App {
 
         if (type === 'Impassable') {
             if (this.isColliderAtPosition(x, y) === false) {
-                this.placeImpassableCollider(x, y, true, tile)
+                this.placeImpassableCollider(x, y, tile)
             }
             return
         }
@@ -291,6 +289,7 @@ export class EditorApp extends App {
         if (data.colliders) {
             data.colliders.forEach((collider) => {
                 const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
+                // do not place the sprite if there is already a collider there. doing this would just double up the sprites.
                 if (this.isColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y) === false) {   
                     this.placeColliderFromSprite(colliderCoordinates.x, colliderCoordinates.y)
                 }
@@ -815,7 +814,7 @@ export class EditorApp extends App {
 
     private onCreateRoom = () => {
         const newRoom: Room = {
-            name: 'Room ' + (this.realmData.length + 1),
+            name: 'New Room',
             tilemap: {}
         }
         const newRealmData = this.realmData
