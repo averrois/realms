@@ -11,7 +11,7 @@ type RoomsProps = {
 }
 
 const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
-    const [rooms, setRooms] = useState<string[]>(realmData.map(room => room.name))
+    const [rooms, setRooms] = useState<string[]>(realmData.rooms.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
     const roomsContainerRef = useRef<HTMLDivElement>(null)
     const { setModal }= useModal()

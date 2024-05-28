@@ -1,6 +1,13 @@
 import { Sprite } from 'pixi.js'
 
-export const defaultMapData = [{name: 'Home', tilemap: {}}]
+export const defaultMapData: RealmData = {
+    spawnpoint: {
+        roomIndex: 0,
+        x: 0,
+        y: 0,
+    },
+    rooms: [{name: 'Home', tilemap: {}}]
+}
 
 export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
@@ -10,7 +17,14 @@ export type TileMode = 'Single' | 'Rectangle'
 
 export type TilePoint = `${number}, ${number}`
 
-export type RealmData = Room[]
+export type RealmData = {
+    spawnpoint: {
+        roomIndex: number,
+        x: number,
+        y: number,
+    },
+    rooms: Room[],
+}
 
 export interface Room {
     name: string,

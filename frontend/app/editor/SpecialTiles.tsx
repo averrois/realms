@@ -1,7 +1,7 @@
 import React from 'react'
 import SpecialTileItem from './SpecialTileItem'
 import { SpecialTile } from '@/utils/pixi/types'
-import { Placeholder, FlyingSaucer } from '@phosphor-icons/react'
+import { Placeholder, FlyingSaucer, Tree } from '@phosphor-icons/react'
 
 type SpecialTilesProps = {
     specialTile: SpecialTile
@@ -24,10 +24,18 @@ const SpecialTiles:React.FC<SpecialTilesProps> = ({ specialTile, selectSpecialTi
             <SpecialTileItem 
                 iconColor='blue' 
                 title='Teleport' 
-                description='Set up a one-way teleporter between tiles.' 
+                description='Set up a one-way teleporter between tiles and rooms.' 
                 selected={specialTile === 'Teleport'} 
                 onClick={() => selectSpecialTile('Teleport')}>
                 <FlyingSaucer className='w-12 h-12'/>
+            </SpecialTileItem>
+            <SpecialTileItem 
+                iconColor='green' 
+                title='Spawn Point' 
+                description='Create a starting point for all players in your Realm.' 
+                selected={specialTile === 'Spawn'} 
+                onClick={() => selectSpecialTile('Spawn')}>
+                <Tree className='w-12 h-12'/>
             </SpecialTileItem>
         </div>
     )
