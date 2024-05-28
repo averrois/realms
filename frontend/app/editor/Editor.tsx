@@ -5,8 +5,9 @@ import LeftBar from './Toolbars/LeftBar'
 import RightSection from './Toolbars/RightSection'
 import PixiEditor from './PixiEditor'
 import Coords from './Toolbars/Coords'
-import { RealmData, Tool, TileMode } from '@/utils/pixi/types'
+import { RealmData, Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import signal from '@/utils/signal'
+import { useModal } from '../hooks/useModal'
 
 type EditorProps = {
     realmData: RealmData
@@ -18,6 +19,11 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
     const [tileMode, setTileMode] = useState<TileMode>('Single')
     const [selectedTile, setSelectedTile] = useState<string>('')
     const [gameLoaded, setGameLoaded] = useState<boolean>(false)
+    const [specialTile, setSpecialTile] = useState<SpecialTile>('None')
+    const [eraserLayer, setEraserLayer] = useState<Layer | 'gizmo'>('floor')
+    const { setModal, setRoomList } = useModal()
+    const [rooms, setRooms] = useState<string[]>(realmData.rooms.map(room => room.name))
+    const [roomIndex, setRoomIndex] = useState<number>(0)
 
     function selectTool(tool:Tool) {
         // do not allow tool selection if game not loaded
@@ -35,25 +41,72 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         signal.emit('selectTileMode', mode)
     }
 
+    function selectSpecialTile(specialTile: SpecialTile) {
+        if (gameLoaded === false) return
+
+        setSpecialTile(specialTile)
+        setTool('Tile')
+        signal.emit('selectSpecialTile', specialTile)
+    }
+
+    function selectTile(tile: string) {
+        if (gameLoaded === false) return
+
+        setSelectedTile(tile)
+        signal.emit('tileSelected', tile)
+    }
+
+    function selectEraserLayer(layer: Layer | 'gizmo') {
+        if (gameLoaded === false) return
+
+        setEraserLayer(layer)
+        signal.emit('selectEraserLayer', layer)
+    }
+
+    function onPlaceTeleporter(newRoomList: string[]) {
+        if (gameLoaded === false) return
+
+        setModal('Teleport')
+        setRoomList(newRoomList)
+    }
+
+    function onResetSpecialTileMode() {
+        setSpecialTile('None')
+    }
+
+    function onTileSelected() {
+        setTool('Tile')
+    }
+
     useEffect(() => {
-        const onTileSelected = () => {
-            setTool('Tile')
-        }
 
         signal.on('tileSelected', onTileSelected)
+        signal.on('resetSpecialTileMode', onResetSpecialTileMode)
+        signal.on('placeTeleporter', onPlaceTeleporter)
 
         return () => {
-            signal.off('newTool', onTileSelected)
+            signal.off('resetSpecialTileMode', onResetSpecialTileMode)
+            signal.off('resetSpecialTileMode', onResetSpecialTileMode)
+            signal.off('placeTeleporter', onPlaceTeleporter)
         }
-    }, [])
+    }, [gameLoaded])
 
     return (
         <div className='relative w-full h-screen flex flex-col'>
             <TopBar />
             <div className='w-full grow flex flex-row'>
-                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode}/>
+                <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode} specialTile={specialTile} eraserLayer={eraserLayer} selectEraserLayer={selectEraserLayer}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
-                <RightSection selectedTile={selectedTile} setSelectedTile={setSelectedTile} realmData={realmData}/>
+                <RightSection 
+                    selectedTile={selectedTile} 
+                    setSelectedTile={selectTile} 
+                    specialTile={specialTile} 
+                    selectSpecialTile={selectSpecialTile}
+                    rooms={rooms}
+                    setRooms={setRooms}
+                    roomIndex={roomIndex}
+                    setRoomIndex={setRoomIndex}
+                />
             </div>
             <Coords />
         </div>

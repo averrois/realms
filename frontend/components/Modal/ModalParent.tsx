@@ -5,24 +5,16 @@ import CreateRealmModal from './CreateRealmModal'
 import AccountDropdown from './AccountDropdown'
 import LoadingModal from './LoadingModal'
 import DeleteRoomModal from './DeleteRoomModal'
+import TeleportModal from './TeleportModal'
 
 const ModalParent:React.FC = () => {
-    const { modal } = useModal()
-    
     return (
         <div>
-            {modal === 'Create Realm' && (
-                <CreateRealmModal />
-            )}
-            {modal === 'Account Dropdown' && (
-                <AccountDropdown />
-            )}
-            {modal === 'Loading' && (
-                <LoadingModal />
-            )}
-            {modal === 'Delete Room' && (
-                <DeleteRoomModal />
-            )}
+            <CreateRealmModal />
+            <AccountDropdown />
+            <LoadingModal />
+            <DeleteRoomModal />
+            <TeleportModal />
         </div>
     )
 }
