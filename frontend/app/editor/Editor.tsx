@@ -7,6 +7,7 @@ import PixiEditor from './PixiEditor'
 import Coords from './Toolbars/Coords'
 import { RealmData, Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import signal from '@/utils/signal'
+import { useModal } from '../hooks/useModal'
 
 type EditorProps = {
     realmData: RealmData
@@ -20,6 +21,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
     const [gameLoaded, setGameLoaded] = useState<boolean>(false)
     const [specialTile, setSpecialTile] = useState<SpecialTile>('None')
     const [eraserLayer, setEraserLayer] = useState<Layer | 'gizmo'>('floor')
+    const { setModal, setRoomList } = useModal()
 
     function selectTool(tool:Tool) {
         // do not allow tool selection if game not loaded
@@ -59,22 +61,33 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         signal.emit('selectEraserLayer', layer)
     }
 
+    function onPlaceTeleporter(newRoomList: string[]) {
+        if (gameLoaded === false) return
+
+        setModal('Teleport')
+        setRoomList(newRoomList)
+    }
+
+    function onResetSpecialTileMode() {
+        setSpecialTile('None')
+    }
+
+    function onTileSelected() {
+        setTool('Tile')
+    }
+
     useEffect(() => {
-        const onResetSpecialTileMode = () => {
-            setSpecialTile('None')
-        }
-        const onTileSelected = () => {
-            setTool('Tile')
-        }
 
         signal.on('tileSelected', onTileSelected)
         signal.on('resetSpecialTileMode', onResetSpecialTileMode)
+        signal.on('placeTeleporter', onPlaceTeleporter)
 
         return () => {
             signal.off('resetSpecialTileMode', onResetSpecialTileMode)
             signal.off('resetSpecialTileMode', onResetSpecialTileMode)
+            signal.off('placeTeleporter', onPlaceTeleporter)
         }
-    }, [])
+    }, [gameLoaded])
 
     return (
         <div className='relative w-full h-screen flex flex-col'>

@@ -21,6 +21,7 @@ export class EditorApp extends App {
     private needsToSave: boolean = false
     private currentCoordinates: Point = { x: 0, y: 0 }
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
+    private newTeleporterCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
 
     private gizmoSprites: GizmoSpriteMap = {}
@@ -117,8 +118,7 @@ export class EditorApp extends App {
 
     private placeImpassableCollider = (x: number, y: number, tile: PIXI.Sprite) => {
         this.addColliderToRealmData(x, y)
-
-        return this.placeColliderSprite(x, y, tile)
+        this.placeColliderSprite(x, y, tile)
     }
 
     private placeColliderFromSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
@@ -137,6 +137,23 @@ export class EditorApp extends App {
     private isImpassableColliderAtPosition = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
         return this.realmData[this.currentRoomIndex].tilemap[key]?.impassable === true
+    }
+
+    private placeTeleportSprite = (x: number, y: number, tile?: PIXI.Sprite) => {
+        const key = `${x}, ${y}` as TilePoint
+        const sprite = tile || new PIXI.Sprite(PIXI.Texture.from('/sprites/teleport-tile.png'))
+        sprite.x = x * 32
+        sprite.y = y * 32
+        this.gizmoContainer.addChild(sprite)
+        this.gizmoSprites[key] = sprite
+
+        return sprite
+    }
+
+    private setUpTeleporterAtPosition = (x: number, y: number) => {
+        this.newTeleporterCoordinates = { x, y }
+        const roomList = this.realmData.map((room: Room) => room.name)
+        signal.emit('placeTeleporter', roomList)
     }
 
     private removeGizmoAtPosition = (x: number, y: number) => {
@@ -286,6 +303,9 @@ export class EditorApp extends App {
             if (this.isColliderAtPosition(x, y) === false) {
                 this.placeImpassableCollider(x, y, tile)
             }
+            return
+        } else if (type === 'Teleport') {
+            this.setUpTeleporterAtPosition(x, y)
             return
         }
 

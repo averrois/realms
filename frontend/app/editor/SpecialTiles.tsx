@@ -24,7 +24,7 @@ const SpecialTiles:React.FC<SpecialTilesProps> = ({ specialTile, selectSpecialTi
             <SpecialTileItem 
                 iconColor='blue' 
                 title='Teleport' 
-                description='Set up a two-way teleporter between tiles.' 
+                description='Set up a one-way teleporter between tiles.' 
                 selected={specialTile === 'Teleport'} 
                 onClick={() => selectSpecialTile('Teleport')}>
                 <FlyingSaucer className='w-12 h-12'/>
