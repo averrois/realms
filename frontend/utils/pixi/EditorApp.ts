@@ -929,6 +929,18 @@ export class EditorApp extends App {
 
         const newRealmData = this.realmData
         newRealmData.rooms.splice(index, 1)
+        for (const room of newRealmData.rooms) {
+            for (const [key, value] of Object.entries(room.tilemap)) {
+                // delete teleporter value if it points to the deleted room
+                if (value.teleporter?.roomIndex === index) {
+                    delete value.teleporter
+                }
+            }
+        }
+        // reset spawn point if room deleted
+        if (newRealmData.spawnpoint.roomIndex === index) {
+            newRealmData.spawnpoint = { roomIndex: 0, x: 0, y: 0 }
+        }
         this.updateRealmData(newRealmData)
 
         if (this.currentRoomIndex === index) {

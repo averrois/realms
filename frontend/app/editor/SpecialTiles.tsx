@@ -10,7 +10,6 @@ type SpecialTilesProps = {
 
 const SpecialTiles:React.FC<SpecialTilesProps> = ({ specialTile, selectSpecialTile }) => {
 
-
     return (
         <div className='w-full flex flex-col items-center'>
             <SpecialTileItem 
@@ -32,7 +31,7 @@ const SpecialTiles:React.FC<SpecialTilesProps> = ({ specialTile, selectSpecialTi
             <SpecialTileItem 
                 iconColor='green' 
                 title='Spawn Point' 
-                description='Create a starting point for all players in your Realm.' 
+                description='Specify where players spawn into your Realm.' 
                 selected={specialTile === 'Spawn'} 
                 onClick={() => selectSpecialTile('Spawn')}>
                 <Tree className='w-12 h-12'/>
