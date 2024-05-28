@@ -142,11 +142,10 @@ export class EditorApp extends App {
     private removeGizmoAtPosition = (x: number, y: number) => {
         const key = `${x}, ${y}` as TilePoint
 
-        this.collidersFromSpritesMap[key] = false
-
-        if (this.collidersFromSpritesMap[key] === false) {
+        if (!this.collidersFromSpritesMap[key]) {
             this.removeGizmoSpriteAtPosition(x, y)
         }
+        this.collidersFromSpritesMap[key] = false
 
         this.removeGizmoFromRealmData(x, y)
     }
@@ -430,6 +429,8 @@ export class EditorApp extends App {
                     this.collidersFromSpritesMap[`${colliderCoordinates.x}, ${colliderCoordinates.y}`] = false
                     if (!this.isImpassableColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y)) {
                         this.removeGizmoSpriteAtPosition(colliderCoordinates.x, colliderCoordinates.y)
+                    } else {
+                        
                     }
                 })
             }
