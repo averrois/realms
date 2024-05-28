@@ -33,7 +33,6 @@ const TeleportModal:React.FC<TeleportModalProps> = () => {
         setModal('None')
     }
 
-    
     return (
         <Modal open={modal === 'Teleport'} closeOnOutsideClick>
             <div className='flex flex-col items-center gap-4 p-4'>

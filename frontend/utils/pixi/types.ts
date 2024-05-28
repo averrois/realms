@@ -20,6 +20,11 @@ export interface Room {
             transition?: string,
             object?: string,
             impassable?: boolean
+            teleporter?: {
+                roomIndex: number,
+                x: number,
+                y: number,
+            }
         }
     }
 }

@@ -51,14 +51,14 @@ export class EditorApp extends App {
 
         await super.loadRoom(index)
 
-        this.drawColliders()
+        this.drawSpecialTiles()
 
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('transition')
         this.setUpInitialTilemapDataAndPointerEvents('object')
     }
 
-    private drawColliders = () => {
+    private drawSpecialTiles = () => {
         this.gizmoContainer.removeChildren()
         for (const [key, value] of Object.entries(this.collidersFromSpritesMap)) {
             if (value) {
@@ -80,6 +80,11 @@ export class EditorApp extends App {
                 if (sprite) {
                     this.setUpEraserTool(sprite, x, y, 'gizmo')
                 }
+            }
+
+            if (value.teleporter) {
+                const [x, y] = key.split(',').map(Number)
+                this.placeTeleportSprite(x, y)
             }
         }
     }
@@ -117,6 +122,10 @@ export class EditorApp extends App {
     } 
 
     private placeImpassableCollider = (x: number, y: number, tile: PIXI.Sprite) => {
+        if (this.isColliderAtPosition(x, y)) return
+    
+        this.removeGizmoAtPosition(x, y)
+
         this.addColliderToRealmData(x, y)
         this.placeColliderSprite(x, y, tile)
     }
@@ -151,9 +160,41 @@ export class EditorApp extends App {
     }
 
     private setUpTeleporterAtPosition = (x: number, y: number) => {
+        if (this.collidersFromSpritesMap[`${x}, ${y}`]) return
+
         this.newTeleporterCoordinates = { x, y }
         const roomList = this.realmData.map((room: Room) => room.name)
         signal.emit('placeTeleporter', roomList)
+    }
+
+    private onCreateTeleporter = ({ roomIndex, x, y }: { roomIndex: number, x: number, y: number }) => {
+        this.removeGizmoAtPosition(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
+        if (roomIndex === this.currentRoomIndex) {
+            const sprite = this.placeTeleportSprite(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
+
+            this.setUpEraserTool(sprite, this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, 'gizmo')
+        }
+        this.addTeleporterToRealmData(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, roomIndex)
+    }
+
+    private addTeleporterToRealmData = (x: number, y: number, roomIndex: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        const newRealmData = this.realmData
+        newRealmData[this.currentRoomIndex] = {
+            ...newRealmData[this.currentRoomIndex],
+            tilemap: {
+                ...newRealmData[this.currentRoomIndex].tilemap,
+                [key]: {
+                    ...newRealmData[this.currentRoomIndex].tilemap[key],
+                    teleporter: {
+                        roomIndex,
+                        x,
+                        y
+                    }
+                }
+            }
+        }
+        this.updateRealmData(newRealmData)
     }
 
     private removeGizmoAtPosition = (x: number, y: number) => {
@@ -217,6 +258,7 @@ export class EditorApp extends App {
         signal.on('showGizmos', this.onShowGizmos)
         signal.on('selectSpecialTile', this.onSelectSpecialTile)
         signal.on('selectEraserLayer', this.onSelectEraserLayer)
+        signal.on('teleport', this.onCreateTeleporter)
     }
 
     private onSelectTile = (tile: string) => {
@@ -297,12 +339,14 @@ export class EditorApp extends App {
             if (this.collidersConflict(data.colliders, tile)) return
         }
 
+        if (this.getCurrentTileMode() === 'Single') {
+            this.removePreviewTiles()
+        }
+
         this.setUpEraserTool(tile, x, y, layer)
 
         if (type === 'Impassable') {
-            if (this.isColliderAtPosition(x, y) === false) {
-                this.placeImpassableCollider(x, y, tile)
-            }
+            this.placeImpassableCollider(x, y, tile)
             return
         } else if (type === 'Teleport') {
             this.setUpTeleporterAtPosition(x, y)
@@ -343,6 +387,8 @@ export class EditorApp extends App {
 
                 // cannot place a tile with collider on top of another collider
                 if (this.collidersFromSpritesMap[key] === true) return true
+
+                if (this.realmData[this.currentRoomIndex].tilemap[key]?.teleporter?.x === colliderCoordinates.x && this.realmData[this.currentRoomIndex].tilemap[key]?.teleporter?.y === colliderCoordinates.y) return true
         }
         return false
     }
@@ -540,7 +586,8 @@ export class EditorApp extends App {
         const newRealmData = this.realmData
         newRealmData[this.currentRoomIndex].tilemap[key] = {
             ...newRealmData[this.currentRoomIndex].tilemap[key],
-            impassable: false
+            impassable: false,
+            teleporter: undefined
             // TODO: remove all other kinds of gizmos
         }
         this.updateRealmData(newRealmData)
@@ -644,7 +691,6 @@ export class EditorApp extends App {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.toolMode === 'Tile') {
                 if (this.getCurrentTileMode() === 'Single') {
-                    this.removePreviewTiles()
                     this.placeTileOnMousePosition(e)
                     this.app.stage.on('pointermove', this.placeTileOnMousePosition)
                 } else if (this.getCurrentTileMode() === 'Rectangle') {
@@ -926,6 +972,7 @@ export class EditorApp extends App {
         signal.off('showGizmos', this.onShowGizmos)
         signal.off('selectSpecialTile', this.onSelectSpecialTile)
         signal.off('selectEraserLayer', this.onSelectEraserLayer)
+        signal.off('teleport', this.onCreateTeleporter)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
