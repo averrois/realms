@@ -170,11 +170,8 @@ export class EditorApp extends App {
 
     private onCreateTeleporter = ({ roomIndex, x, y }: { roomIndex: number, x: number, y: number }) => {
         this.removeGizmoAtPosition(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
-        if (roomIndex === this.currentRoomIndex) {
-            const sprite = this.placeTeleportSprite(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
-
-            this.setUpEraserTool(sprite, this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, 'gizmo')
-        }
+        const sprite = this.placeTeleportSprite(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
+        this.setUpEraserTool(sprite, this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, 'gizmo')
         this.addTeleporterToRealmData(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, roomIndex)
     }
 
@@ -942,6 +939,9 @@ export class EditorApp extends App {
             newRealmData.spawnpoint = { roomIndex: 0, x: 0, y: 0 }
         }
         this.updateRealmData(newRealmData)
+
+        this.gizmoContainer.removeChildren()
+        this.drawSpecialTiles()
 
         if (this.currentRoomIndex === index) {
             await this.changeRoom(0)

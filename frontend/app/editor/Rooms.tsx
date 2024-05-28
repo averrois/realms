@@ -7,12 +7,13 @@ import { useModal } from '../hooks/useModal'
 import RoomItem from './RoomItem'
 
 type RoomsProps = {
-    realmData: RealmData
+    rooms: string[]
+    setRooms: (rooms: string[]) => void
+    roomIndex: number
+    setRoomIndex: (index: number) => void
 }
 
-const Rooms:React.FC<RoomsProps> = ({ realmData }) => {
-    const [rooms, setRooms] = useState<string[]>(realmData.rooms.map(room => room.name))
-    const [roomIndex, setRoomIndex] = useState<number>(0)
+const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }) => {
     const roomsContainerRef = useRef<HTMLDivElement>(null)
     const { setModal }= useModal()
     const firstRender = useRef(true)

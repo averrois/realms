@@ -22,6 +22,8 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
     const [specialTile, setSpecialTile] = useState<SpecialTile>('None')
     const [eraserLayer, setEraserLayer] = useState<Layer | 'gizmo'>('floor')
     const { setModal, setRoomList } = useModal()
+    const [rooms, setRooms] = useState<string[]>(realmData.rooms.map(room => room.name))
+    const [roomIndex, setRoomIndex] = useState<number>(0)
 
     function selectTool(tool:Tool) {
         // do not allow tool selection if game not loaded
@@ -95,7 +97,16 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
             <div className='w-full grow flex flex-row'>
                 <LeftBar tool={tool} tileMode={tileMode} selectTool={selectTool} selectTileMode={selectTileMode} specialTile={specialTile} eraserLayer={eraserLayer} selectEraserLayer={selectEraserLayer}/>
                 <PixiEditor className='h-full grow' setGameLoaded={setGameLoaded} realmData={realmData}/>
-                <RightSection selectedTile={selectedTile} setSelectedTile={selectTile} realmData={realmData} specialTile={specialTile} selectSpecialTile={selectSpecialTile}/>
+                <RightSection 
+                    selectedTile={selectedTile} 
+                    setSelectedTile={selectTile} 
+                    specialTile={specialTile} 
+                    selectSpecialTile={selectSpecialTile}
+                    rooms={rooms}
+                    setRooms={setRooms}
+                    roomIndex={roomIndex}
+                    setRoomIndex={setRoomIndex}
+                />
             </div>
             <Coords />
         </div>
