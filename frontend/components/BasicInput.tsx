@@ -3,7 +3,7 @@ import React from 'react'
 type BasicInputProps = {
     label?: string
     className?: string
-    value?: string
+    value?: string | number
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
     type?: 'number' | 'text'
 }
