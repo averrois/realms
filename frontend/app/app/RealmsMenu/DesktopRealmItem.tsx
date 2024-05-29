@@ -1,6 +1,7 @@
 import { DotsThreeVertical } from '@phosphor-icons/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useModal } from '@/app/hooks/useModal'
 
 type DesktopRealmItemProps = {
     name: string,
@@ -13,6 +14,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
     const router = useRouter()
     const menuRef = useRef<HTMLDivElement>(null)
     const dotsRef = useRef<HTMLDivElement>(null)
+    const { setRealmToDelete, setModal } = useModal()
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -29,6 +31,12 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
 
     function handleDotsClick() {
         setShowMenu(!showMenu)
+    }
+
+    function handleDelete() {
+        setRealmToDelete({ name, id })
+        setModal('Delete Realm')
+        console.log('running')
     }
 
     return (
@@ -49,7 +57,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
                         Edit Map
                     </button>
                     <button className='grow w-full hover:bg-secondaryhover text-left pl-4' onClick={() => router.push(`/manage/${id}`)}>Manage Space</button>
-                    <button className='grow w-full hover:bg-red-500 rounded-b-lg text-left pl-4'>Delete</button>
+                    <button className='grow w-full hover:bg-red-500 rounded-b-lg text-left pl-4' onClick={handleDelete}>Delete</button>
                 </div>
             )}
         </div>

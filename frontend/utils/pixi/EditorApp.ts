@@ -90,8 +90,11 @@ export class EditorApp extends App {
             }
         }
 
-        const { x, y } = this.realmData.spawnpoint
-        this.placeSpawnTileSprite(x, y)
+        if (this.currentRoomIndex === this.realmData.spawnpoint.roomIndex) {
+            const { x, y } = this.realmData.spawnpoint
+            this.placeSpawnTileSprite(x, y)
+        }
+        
     }
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
@@ -978,18 +981,21 @@ export class EditorApp extends App {
         // reset spawn point if room deleted
         if (newRealmData.spawnpoint.roomIndex === index) {
             newRealmData.spawnpoint = { roomIndex: 0, x: 0, y: 0 }
+        } else if (newRealmData.spawnpoint.roomIndex > index) {
+            newRealmData.spawnpoint.roomIndex -= 1
         }
-        this.updateRealmData(newRealmData)
-
-        // redraw the special tiles. this is for teleporters and spawn point mainly 
-        this.gizmoContainer.removeChildren()
-        this.drawSpecialTiles()
 
         if (this.currentRoomIndex === index) {
             await this.changeRoom(0)
         } else if (this.currentRoomIndex > index) {
             this.currentRoomIndex -= 1
+
+            // redraw the special tiles. this is for teleporters and spawn point mainly 
+            this.gizmoContainer.removeChildren()
+            this.drawSpecialTiles()
         }
+
+        this.updateRealmData(newRealmData)
 
         signal.emit('roomDeleted', { deletedIndex: index, newIndex: this.currentRoomIndex })
     }
