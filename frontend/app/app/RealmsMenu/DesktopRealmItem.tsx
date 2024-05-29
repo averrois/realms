@@ -36,7 +36,6 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
     function handleDelete() {
         setRealmToDelete({ name, id })
         setModal('Delete Realm')
-        console.log('running')
     }
 
     return (
@@ -56,7 +55,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
                     <button className='grow w-full hover:bg-secondaryhover rounded-t-lg text-left pl-4' onClick={() => router.push(`/editor/${id}`)}>
                         Edit Map
                     </button>
-                    <button className='grow w-full hover:bg-secondaryhover text-left pl-4' onClick={() => router.push(`/manage/${id}`)}>Manage Space</button>
+                    <button className='grow w-full hover:bg-secondaryhover text-left pl-4' onClick={() => router.push(`/manage/${id}`)}>Manage</button>
                     <button className='grow w-full hover:bg-red-500 rounded-b-lg text-left pl-4' onClick={handleDelete}>Delete</button>
                 </div>
             )}

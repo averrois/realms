@@ -37,7 +37,7 @@ const TeleportModal:React.FC<TeleportModalProps> = () => {
         <Modal open={modal === 'Teleport'} closeOnOutsideClick>
             <div className='flex flex-col items-center gap-4 p-4'>
                 <div className='flex flex-row gap-8'>
-                    <div className='flex flex-col gap-1 items-center'>
+                    <div className='flex flex-col gap-1 items-center overflow-y-auto transparent-scrollbar max-h-[250px]'>
                         <h1 className='text-lg'>Destination Room</h1>
                         {roomList.map((room, index) => {
 
@@ -48,7 +48,7 @@ const TeleportModal:React.FC<TeleportModalProps> = () => {
                             return (
                                 <div 
                                     key={index} 
-                                    className={`${selectedRoomIndex === index ? 'border-black' : 'border-secondary'} border-4 bg-quaternary px-1 rounded-lg cursor-pointer w-24 text-center hover:bg-quaternaryhover`}
+                                    className={`${selectedRoomIndex === index ? 'border-black' : 'border-secondary'} border-4 bg-quaternary px-1 rounded-lg cursor-pointer w-36 text-center hover:bg-quaternaryhover`}
                                     onClick={() => selectRoom(index)}
                                 >
                                     {room}
