@@ -37,8 +37,6 @@ export class App {
         this.app.stage.addChild(this.layers.floor)
         this.app.stage.addChild(this.layers.transition)
         this.app.stage.addChild(this.layers.object)
-
-        await this.loadRoom(this.currentRoomIndex)
     }
 
     protected async loadRoom(index: number) {

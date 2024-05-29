@@ -33,6 +33,7 @@ export class EditorApp extends App {
     public async init() {
         await this.loadAssets()
         await super.init()
+        await this.loadRoom(this.currentRoomIndex)
 
         this.gizmoContainer.eventMode = 'static'
         this.gizmoContainer.visible = false
