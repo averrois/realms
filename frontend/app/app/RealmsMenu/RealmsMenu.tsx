@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import BasicButton from '@/components/BasicButton'
 import DesktopRealmItem from './DesktopRealmItem'
+import { useRouter } from 'next/navigation'
 
 type Realm = {
     id: string,
@@ -17,6 +18,7 @@ type RealmsMenuProps = {
 const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
 
     const [selectedRealm, setSelectedRealm] = useState<string>('')
+    const router = useRouter()
 
     useEffect(() => {
         if (errorMessage) {
@@ -41,7 +43,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                     )
                 })}
                 <div className='fixed bottom-0 w-full bg-primary grid place-items-center p-2'>
-                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === ''}>
+                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === ''} onClick={() => router.push(`/play/${selectedRealm}`)}>
                         Join Realm
                     </BasicButton>
                 </div>

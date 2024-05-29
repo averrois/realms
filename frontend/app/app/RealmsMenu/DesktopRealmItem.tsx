@@ -2,6 +2,7 @@ import { DotsThreeVertical } from '@phosphor-icons/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useModal } from '@/app/hooks/useModal'
+import Link from 'next/link'
 
 type DesktopRealmItemProps = {
     name: string,
@@ -40,10 +41,12 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
 
     return (
         <div className='relative select-none'>
-            <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
-                <img src='/pixel-screenshot.jpg' />
-                <div className='animate-pulse w-full h-full bg-secondary'/>
-            </div>
+            <Link href={`/play/${id}`}>
+                <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
+                    <img src='/pixel-screenshot.jpg' />
+                    <div className='animate-pulse w-full h-full bg-secondary'/>
+                </div>
+            </Link>
             <div className='mt-1 flex flex-row justify-between'>
                 <p>{name}</p>
                 <div ref={dotsRef}>
