@@ -241,7 +241,6 @@ export class EditorApp extends App {
         if (!this.collidersFromSpritesMap[key]) {
             this.removeGizmoSpriteAtPosition(x, y)
         }
-        this.collidersFromSpritesMap[key] = false
 
         this.removeGizmoFromRealmData(x, y)
     }
@@ -252,7 +251,7 @@ export class EditorApp extends App {
         if (sprite) {
             this.gizmoContainer.removeChild(sprite)
         }
-
+        delete this.collidersFromSpritesMap[key]
         delete this.gizmoSprites[key]
     }
 
