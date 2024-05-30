@@ -3,6 +3,7 @@ import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultMapData } from '@/utils/pixi/types'
+import PixiApp from '../PixiApp'
 
 export default async function Play({ params }: { params: { id: string } }) {
 
@@ -13,7 +14,7 @@ export default async function Play({ params }: { params: { id: string } }) {
         return redirect('/signin')
     }
 
-    const { data, error } = await supabase.from('realms').select('name, map_data').eq('id', params.id)
+    const { data, error } = await supabase.from('realms').select('id, name, map_data').eq('id', params.id)
     // Show not found page if no data is returned
     if (!data || !data[0]) {
         return <NotFound />
@@ -22,8 +23,8 @@ export default async function Play({ params }: { params: { id: string } }) {
     const map_data = realm.map_data || defaultMapData
 
     return (
-        <div>
-            Welcome to {realm.name}
+        <div className='relative w-full h-screen'>
+            <PixiApp mapData={map_data} className='absolute w-full h-full'/>
         </div>
     )
 }
