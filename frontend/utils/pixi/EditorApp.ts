@@ -1009,7 +1009,7 @@ export class EditorApp extends App {
 
     private getCurrentTileMode = (): TileMode => {
         // rectangle mode does nothing for object layer or teleport
-        if ((this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') || this.specialTileMode === 'Teleport') {
+        if ((this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') || this.specialTileMode === 'Teleport' || this.specialTileMode === 'Spawn') {
             return 'Single'
         }
 
