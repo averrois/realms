@@ -3,16 +3,17 @@ import playerSpriteSheetData from './PlayerSpriteSheetData'
 
 export class Player {
 
-    private src_id: string = '001'
-    private parent: PIXI.Container = new PIXI.Container()
+    private skin: string = '001'
+    public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
+    private isLocal: boolean = false
 
-    constructor(src_id: string) {
-        this.src_id = src_id
+    constructor(skin: string, isLocal: boolean = false) {
+        this.skin = skin
     }
 
-    private async loadAnimations() {
-        const src = `/sprites/characters/Character_${this.src_id}.png`
+    public async loadAnimations() {
+        const src = `/sprites/characters/Character_${this.skin}.png`
         await PIXI.Assets.load(src)
 
         const spriteSheetData = JSON.parse(JSON.stringify(playerSpriteSheetData))
@@ -25,5 +26,13 @@ export class Player {
         animatedSprite.animationSpeed = this.animationSpeed
         animatedSprite.play()
         this.parent.addChild(animatedSprite)
+    }
+
+    public setPosition(x: number, y: number) {
+        x = (x * 32) + 16
+        y = (y * 32) + 16
+
+        this.parent.x = x
+        this.parent.y = y
     }
 }
