@@ -22,14 +22,15 @@ export class PlayApp extends App {
     public async init() {
         await super.init()
         await this.loadRoom(this.realmData.spawnpoint.roomIndex)
+        this.app.stage.eventMode = 'static'
         this.setScale(this.scale)
         this.app.renderer.on('resize', this.resizeEvent)
+        this.clickMovement()
 
         await this.player.loadAnimations()
         this.player.setPosition(this.realmData.spawnpoint.x, this.realmData.spawnpoint.y)
         this.layers.object.addChild(this.player.parent)
         this.moveCameraToPlayer()
-        this.player.moveToTile(5, 13)
     }
 
     private setScale = (newScale: number) => {
@@ -37,7 +38,7 @@ export class PlayApp extends App {
         this.app.stage.scale.set(this.scale)
     }
 
-    private moveCameraToPlayer = () => {
+    public moveCameraToPlayer = () => {
         const x = Math.round(this.player.parent.x - (this.app.screen.width / 2) / this.scale)
         const y = Math.round(this.player.parent.y - (this.app.screen.height / 2) / this.scale)
         this.app.stage.pivot.set(x, y)
@@ -61,5 +62,13 @@ export class PlayApp extends App {
                 this.blocked.add(key as TilePoint)
             }
         }
+    }
+
+    private clickMovement = () => {
+        this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            const clickPosition = e.getLocalPosition(this.app.stage)
+            const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
+            this.player.moveToTile(x, y)
+        })
     }
 }
