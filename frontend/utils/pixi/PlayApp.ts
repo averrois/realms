@@ -1,13 +1,14 @@
 import { App } from './App'
 import { Player } from './Player/Player'
 import { RealmData } from './types'
+import * as PIXI from 'pixi.js'
 
 export class PlayApp extends App {
 
     private scale: number = 2
     private player: Player
 
-    constructor(realmData: RealmData, skin: string = '001') {
+    constructor(realmData: RealmData, skin: string = '012') {
         super(realmData)
         this.player = new Player(skin, true)
     }
@@ -22,7 +23,9 @@ export class PlayApp extends App {
         this.player.setPosition(this.realmData.spawnpoint.x, this.realmData.spawnpoint.y)
         this.layers.object.addChild(this.player.parent)
         this.moveCameraToPlayer()
+        this.player.moveToTile(2, 9)
     }
+
     private setScale = (newScale: number) => {
         this.scale = newScale
         this.app.stage.scale.set(this.scale)

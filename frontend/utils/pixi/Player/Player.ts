@@ -6,6 +6,7 @@ export class Player {
     private skin: string = '001'
     public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
+    private movementSpeed: number = 3
     private isLocal: boolean = false
 
     constructor(skin: string, isLocal: boolean = false) {
@@ -29,10 +30,40 @@ export class Player {
     }
 
     public setPosition(x: number, y: number) {
-        x = (x * 32) + 16
-        y = (y * 32) + 16
+        const pos = this.convertTilePosToPlayerPos(x, y)
+        this.parent.x = pos.x
+        this.parent.y = pos.y
+    }
 
-        this.parent.x = x
-        this.parent.y = y
+    private convertTilePosToPlayerPos = (x: number, y: number) => {
+        return {
+            x: (x * 32) + 16,
+            y: (y * 32) + 16
+        }
+    }
+
+    public moveToTile = (x: number, y: number) => {
+        const pos = this.convertTilePosToPlayerPos(x, y)
+        const targetX = pos.x
+        const targetY = pos.y
+
+        const move = ({ deltaTime }: { deltaTime: number }) => {
+            const speed = this.movementSpeed * deltaTime
+            const dx = targetX - this.parent.x
+            const dy = targetY - this.parent.y
+            const distance = Math.sqrt(dx * dx + dy * dy)
+
+            if (distance < speed) {
+                this.parent.x = targetX
+                this.parent.y = targetY
+                PIXI.Ticker.shared.remove(move)
+            } else {
+                const angle = Math.atan2(dy, dx)
+                this.parent.x += Math.cos(angle) * speed
+                this.parent.y += Math.sin(angle) * speed
+            }
+        }
+
+        PIXI.Ticker.shared.add(move)
     }
 }
