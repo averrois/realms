@@ -1,16 +1,25 @@
 import * as PIXI from 'pixi.js'
 import playerSpriteSheetData from './PlayerSpriteSheetData'
+import { Coordinate, findPath } from '../pathfinding'
+import { Point } from '../types'
+import { PlayApp } from '../PlayApp'
 
 export class Player {
 
     private skin: string = '001'
     public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
-    private movementSpeed: number = 3
+    private movementSpeed: number = 2
+    private currentTilePosition: Point = { x: 0, y: 0 }
     private isLocal: boolean = false
+    private playApp: PlayApp
+    private targetPosition: { x: number, y: number } | null = null
+    private path: Coordinate[] = []
+    private pathIndex: number = 0
 
-    constructor(skin: string, isLocal: boolean = false) {
+    constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
         this.skin = skin
+        this.playApp = playApp
     }
 
     public async loadAnimations() {
@@ -33,6 +42,7 @@ export class Player {
         const pos = this.convertTilePosToPlayerPos(x, y)
         this.parent.x = pos.x
         this.parent.y = pos.y
+        this.currentTilePosition = { x, y }
     }
 
     private convertTilePosToPlayerPos = (x: number, y: number) => {
@@ -43,27 +53,40 @@ export class Player {
     }
 
     public moveToTile = (x: number, y: number) => {
-        const pos = this.convertTilePosToPlayerPos(x, y)
-        const targetX = pos.x
-        const targetY = pos.y
+        const start: Coordinate = [this.currentTilePosition.x, this.currentTilePosition.y]
+        const end: Coordinate = [x, y]
 
-        const move = ({ deltaTime }: { deltaTime: number }) => {
-            const speed = this.movementSpeed * deltaTime
-            const dx = targetX - this.parent.x
-            const dy = targetY - this.parent.y
-            const distance = Math.sqrt(dx * dx + dy * dy)
+        const path = findPath(start, end, this.playApp.blocked)
+        if (!path) return
 
-            if (distance < speed) {
-                this.parent.x = targetX
-                this.parent.y = targetY
-                PIXI.Ticker.shared.remove(move)
+        this.path = path
+        this.pathIndex = 0
+        this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
+        PIXI.Ticker.shared.add(this.move)
+    }
+
+    private move = ({ deltaTime }: { deltaTime: number }) => {
+        if (!this.targetPosition) return
+
+        const dx = this.targetPosition.x - this.parent.x
+        const dy = this.targetPosition.y - this.parent.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+
+        if (distance < this.movementSpeed) {
+            this.parent.x = this.targetPosition.x
+            this.parent.y = this.targetPosition.y
+
+            this.pathIndex++
+            if (this.pathIndex < this.path.length) {
+                this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
             } else {
-                const angle = Math.atan2(dy, dx)
-                this.parent.x += Math.cos(angle) * speed
-                this.parent.y += Math.sin(angle) * speed
+                PIXI.Ticker.shared.remove(this.move)
+                this.targetPosition = null
             }
+        } else {
+            const angle = Math.atan2(dy, dx)
+            this.parent.x += Math.cos(angle) * this.movementSpeed
+            this.parent.y += Math.sin(angle) * this.movementSpeed
         }
-
-        PIXI.Ticker.shared.add(move)
     }
 }
