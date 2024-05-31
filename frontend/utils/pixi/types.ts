@@ -72,3 +72,5 @@ export type Point = {
     x: number,
     y: number,
 }
+
+export type Coordinate = [number, number]

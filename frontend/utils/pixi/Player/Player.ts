@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js'
 import playerSpriteSheetData from './PlayerSpriteSheetData'
-import { Coordinate } from '../pathfinding'
-import { Point } from '../types'
+import { Point, Coordinate } from '../types'
 import { PlayApp } from '../PlayApp'
+import { bfs } from '../pathfinding'
 
 export class Player {
 
@@ -56,13 +56,13 @@ export class Player {
         const start: Coordinate = [this.currentTilePosition.x, this.currentTilePosition.y]
         const end: Coordinate = [x, y]
 
-        const path = bfs(start, end, this.playApp.blocked)
+        const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
         if (!path || path.length === 0) return
 
         this.path = path
         this.pathIndex = 0
-        // this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
-        // PIXI.Ticker.shared.add(this.move)
+        this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
+        PIXI.Ticker.shared.add(this.move)
     }
 
     private move = ({ deltaTime }: { deltaTime: number }) => {
