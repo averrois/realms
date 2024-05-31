@@ -4,7 +4,6 @@ import PaletteDropdown from './PaletteDropdown'
 import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
 import TileMenuGrid from './TileMenuGrid'
 import Rooms from './Rooms'
-import { RealmData } from '@/utils/pixi/types'
 
 type TileMenuProps = {
     selectedTile: string,
@@ -15,11 +14,11 @@ type TileMenuProps = {
     setRoomIndex: (index: number) => void
 }
 
-const menuItems: SheetName[] = ['city']
+const menuItems: SheetName[] = ['ground', 'city']
 
 const TileMenu:React.FC<TileMenuProps> = ({ selectedTile, setSelectedTile, rooms, setRooms, roomIndex, setRoomIndex }) => {
 
-    const [selectedPalette, setSelectedPalette] = useState<SheetName>('city')
+    const [selectedPalette, setSelectedPalette] = useState<SheetName>(menuItems[0])
     
     return (
         <div className='flex flex-col items-center gap-2 p-2'>

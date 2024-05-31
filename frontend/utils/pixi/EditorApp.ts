@@ -12,7 +12,7 @@ export class EditorApp extends App {
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
-    private selectedPalette: SheetName = 'city'
+    private selectedPalette: SheetName = 'ground'
     private selectedTile: string = ''   
     private selectedTileLayer: Layer | null = null
     private specialTileMode: SpecialTile = 'None'
@@ -122,7 +122,6 @@ export class EditorApp extends App {
     private placeSpawnTileSprite = (x: number, y: number) => {
         if (this.collidersFromSpritesMap[`${x}, ${y}`]) return
 
-        this.removeGizmoAtPosition(x, y)
         this.removeSpawnTile()
         this.spawnTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/spawn-tile.png'))
         this.spawnTile.x = x * 32
@@ -131,6 +130,7 @@ export class EditorApp extends App {
     }
 
     private placeSpawnTile = (x: number, y: number) => {
+        this.removeGizmoAtPosition(x, y)
         this.placeSpawnTileSprite(x, y)
         this.addSpawnToRealmData(x, y)
     }
@@ -296,6 +296,11 @@ export class EditorApp extends App {
         signal.on('selectSpecialTile', this.onSelectSpecialTile)
         signal.on('selectEraserLayer', this.onSelectEraserLayer)
         signal.on('teleport', this.onCreateTeleporter)
+        signal.on('selectPalette', this.onSelectPalette)
+    }
+
+    private onSelectPalette = (palette: SheetName) => {
+        this.selectedPalette = palette
     }
 
     private onSelectTile = (tile: string) => {
@@ -1037,6 +1042,7 @@ export class EditorApp extends App {
         signal.off('selectSpecialTile', this.onSelectSpecialTile)
         signal.off('selectEraserLayer', this.onSelectEraserLayer)
         signal.off('teleport', this.onCreateTeleporter)
+        signal.off('selectPalette', this.onSelectPalette)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()

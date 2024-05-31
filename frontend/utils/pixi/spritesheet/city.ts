@@ -3,7 +3,7 @@ import { SpriteSheetData } from './spritesheet'
 export const citySpriteSheetData: SpriteSheetData = {
     width: 1024,
     height: 1536,
-    url: '/sprites/city/city.png',
+    url: '/sprites/spritesheets/city.png',
     sprites: {
         tl_lgrass_trans: { x: 0, y: 32, width: 32, height: 32, layer: 'transition' },
         t_lgrass_trans: { x: 32, y: 32, width: 32, height: 32, layer: 'transition' },

@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
+import { groundSpriteSheetData } from './ground'
 import { Layer } from '../types'
 
 export type Collider = {
@@ -27,10 +28,11 @@ type Sheets = {
     [key in SheetName]?: PIXI.Spritesheet
 }
 
-export type SheetName = 'city'
+export type SheetName = 'ground' | 'city'
 
 class Sprites {
     public spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
+        ground: groundSpriteSheetData,
         city: citySpriteSheetData
     }
     public sheets: Sheets = {}

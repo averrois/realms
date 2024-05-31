@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import signal from '@/utils/signal'
 
 type PaletteDropdownProps = {
     menuItems: any[]
@@ -9,6 +10,12 @@ type PaletteDropdownProps = {
 }
 
 const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedItem, setSelectedItem }) => {
+
+    function handleSelect(item: any) {
+        setSelectedItem(item)
+        signal.emit('selectPalette', item)
+    }
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -33,7 +40,7 @@ const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedIte
                     {() => (
                         <div
                             className={'block px-3 text-sm capitalize cursor-pointer text-white bg-secondaryhoverdark hover:bg-secondaryhover'}
-                            onClick={() => setSelectedItem(item)}
+                            onClick={() => handleSelect(item)}
                         >
                             {item}
                         </div>
