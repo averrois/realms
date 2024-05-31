@@ -659,6 +659,7 @@ export class EditorApp extends App {
 
         tile.x = x * 32
         tile.y = y * 32
+        tile.zIndex = Infinity
         this.previewTiles.push(tile)
 
         let colliderConflict = false
@@ -681,7 +682,6 @@ export class EditorApp extends App {
         } else {
             this.layers[layer as Layer].addChild(tile)
         }
-
 
         if (!colliderConflict) {
             this.sortObjectsByY()

@@ -10,7 +10,7 @@ export class PlayApp extends App {
     public blocked: Set<TilePoint> = new Set()
     public keysDown: Set<string> = new Set()
 
-    constructor(realmData: RealmData, skin: string = '049') {
+    constructor(realmData: RealmData, skin: string = '045') {
         super(realmData)
         this.player = new Player(skin, this, true)
     }

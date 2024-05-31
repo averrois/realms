@@ -127,8 +127,17 @@ export class App {
 
     public sortObjectsByY = () => {
         this.layers.object.children.forEach((child) => {
-            child.zIndex = child.y
+            child.zIndex = this.getZIndex(child)
         })
+    }
+
+    public getZIndex = (child: PIXI.ContainerChild) => {
+        if (child instanceof PIXI.Container) {
+            return child.y
+        } else {
+            const containerChild = child as PIXI.ContainerChild
+            return containerChild.y + 32
+        }
     }
 
     public destroy() {

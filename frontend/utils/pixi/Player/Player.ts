@@ -11,7 +11,7 @@ export class Player {
     private direction: Direction = 'down'
     public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
-    private movementSpeed: number = 3
+    private movementSpeed: number = 3.5
     private currentTilePosition: Point = { x: 0, y: 0 }
     private isLocal: boolean = false
     private playApp: PlayApp
@@ -19,8 +19,7 @@ export class Player {
     private path: Coordinate[] = []
     private pathIndex: number = 0
     private sheet: any = null
-    private moving: boolean = false
-
+    
     constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
         this.skin = skin
         this.playApp = playApp
@@ -64,7 +63,6 @@ export class Player {
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
         if (!path || path.length === 0) {
             this.changeAnimationState(`idle_${this.direction}` as AnimationState)
-            this.moving = false
             return
         }
 
@@ -76,8 +74,6 @@ export class Player {
 
     private move = ({ deltaTime }: { deltaTime: number }) => {
         if (!this.targetPosition) return
-
-        this.moving = true
 
         this.currentTilePosition = {
             x: this.path[this.pathIndex][0],
@@ -104,8 +100,6 @@ export class Player {
                 } else {
                     PIXI.Ticker.shared.remove(this.move)
                     this.targetPosition = null
-                    this.moving = false
-
                     // set idle
                     this.changeAnimationState(`idle_${this.direction}` as AnimationState)
                 }
@@ -147,8 +141,6 @@ export class Player {
     }
 
     public keydown = (event: KeyboardEvent) => {
-        if (this.moving) return
-
         const movementInput = { x: 0, y: 0 }
         if (event.key === 'ArrowUp' || event.key === 'w') {
             movementInput.y -= 1
