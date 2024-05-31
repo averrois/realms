@@ -1,6 +1,11 @@
 import { TilePoint, Coordinate } from './types'
 
 export function bfs(start: Coordinate, end: Coordinate, blocked: Set<TilePoint>): Coordinate[] | null {
+    // if the end position is blocked, return null
+    if (blocked.has(`${end[0]}, ${end[1]}`)) {
+        return null
+    }
+
     const directions: Coordinate[] = [
         [0, 1], [1, 0], [0, -1], [-1, 0]
     ]

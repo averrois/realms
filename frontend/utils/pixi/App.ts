@@ -124,7 +124,7 @@ export class App {
         }
     }
 
-    protected sortObjectsByY = () => {
+    public sortObjectsByY = () => {
         this.layers.object.children.sort((a, b) => {
             return a.y - b.y
         })

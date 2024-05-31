@@ -9,7 +9,7 @@ export class PlayApp extends App {
     private player: Player
     public blocked: Set<TilePoint> = new Set()
 
-    constructor(realmData: RealmData, skin: string = '012') {
+    constructor(realmData: RealmData, skin: string = '029') {
         super(realmData)
         this.player = new Player(skin, this, true)
     }
