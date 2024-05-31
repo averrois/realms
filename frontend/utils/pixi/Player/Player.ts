@@ -64,6 +64,7 @@ export class Player {
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
         if (!path || path.length === 0) {
             this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+            this.moving = false
             return
         }
 
