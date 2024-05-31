@@ -72,3 +72,9 @@ export type Point = {
     x: number,
     y: number,
 }
+
+export type Coordinate = [number, number]
+
+export type AnimationState = 'idle_down' | 'idle_up' | 'idle_left' | 'idle_right' | 'walk_down' | 'walk_up' | 'walk_left' | 'walk_right'
+
+export type Direction = 'down' | 'up' | 'left' | 'right'

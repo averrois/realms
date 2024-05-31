@@ -1,11 +1,11 @@
 'use client'
 import React from 'react'
-import { useModal } from '@/app/hooks/useModal'
 import CreateRealmModal from './CreateRealmModal'
 import AccountDropdown from './AccountDropdown'
 import LoadingModal from './LoadingModal'
 import DeleteRoomModal from './DeleteRoomModal'
 import TeleportModal from './TeleportModal'
+import DeleteRealmModal from './DeleteRealmModal'
 
 const ModalParent:React.FC = () => {
     return (
@@ -15,6 +15,7 @@ const ModalParent:React.FC = () => {
             <LoadingModal />
             <DeleteRoomModal />
             <TeleportModal />
+            <DeleteRealmModal />
         </div>
     )
 }

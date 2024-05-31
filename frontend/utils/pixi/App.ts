@@ -31,14 +31,13 @@ export class App {
         await this.app.init({
             resizeTo: container,
             backgroundColor: 0x0F0F0F,
+            roundPixels: true
         })
         this.initialized = true
 
         this.app.stage.addChild(this.layers.floor)
         this.app.stage.addChild(this.layers.transition)
         this.app.stage.addChild(this.layers.object)
-
-        await this.loadRoom(this.currentRoomIndex)
     }
 
     protected async loadRoom(index: number) {
@@ -126,7 +125,7 @@ export class App {
         }
     }
 
-    protected sortObjectsByY = () => {
+    public sortObjectsByY = () => {
         this.layers.object.children.sort((a, b) => {
             return a.y - b.y
         })

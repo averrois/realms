@@ -44,7 +44,6 @@ const CreateRealmModal:React.FC = () => {
             toast.success('Your new realm has been created!')
             router.push(`/editor/${data[0].id}`)
         }
-
     }
 
     return (

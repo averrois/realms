@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import BasicButton from '@/components/BasicButton'
-import { PencilSquareIcon } from '@heroicons/react/24/outline'
-import Link from 'next/link'
+import DesktopRealmItem from './DesktopRealmItem'
+import { useRouter } from 'next/navigation'
 
 type Realm = {
     id: string,
@@ -18,6 +18,7 @@ type RealmsMenuProps = {
 const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
 
     const [selectedRealm, setSelectedRealm] = useState<string>('')
+    const router = useRouter()
 
     useEffect(() => {
         if (errorMessage) {
@@ -42,7 +43,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                     )
                 })}
                 <div className='fixed bottom-0 w-full bg-primary grid place-items-center p-2'>
-                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === ''}>
+                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === ''} onClick={() => router.push(`/play/${selectedRealm}`)}>
                         Join Realm
                     </BasicButton>
                 </div>
@@ -53,18 +54,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                 <div className='hidden sm:grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-8 w-full'>
                     {realms.map((realm) => {
                         return (
-                            <div key={realm.id}>
-                                <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
-                                    <img src='/pixel-screenshot.jpg' />
-                                    <div className='animate-pulse w-full h-full bg-secondary'/>
-                                </div>
-                                <div className='mt-1 flex flex-row justify-between'>
-                                    <p>{realm.name}</p>
-                                    <Link href={`/editor/${realm.id}`}>
-                                        <PencilSquareIcon className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1'/>
-                                    </Link>
-                                </div>
-                            </div>
+                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id}/>
                         )
                     })}
                 </div>
