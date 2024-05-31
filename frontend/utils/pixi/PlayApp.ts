@@ -9,7 +9,7 @@ export class PlayApp extends App {
     private player: Player
     public blocked: Set<TilePoint> = new Set()
 
-    constructor(realmData: RealmData, skin: string = '029') {
+    constructor(realmData: RealmData, skin: string = '049') {
         super(realmData)
         this.player = new Player(skin, this, true)
     }
@@ -39,8 +39,8 @@ export class PlayApp extends App {
     }
 
     public moveCameraToPlayer = () => {
-        const x = Math.round(this.player.parent.x - (this.app.screen.width / 2) / this.scale)
-        const y = Math.round(this.player.parent.y - (this.app.screen.height / 2) / this.scale)
+        const x = this.player.parent.x - (this.app.screen.width / 2) / this.scale
+        const y = this.player.parent.y - (this.app.screen.height / 2) / this.scale
         this.app.stage.pivot.set(x, y)
     }
 
