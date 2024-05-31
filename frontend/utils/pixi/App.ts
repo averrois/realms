@@ -126,8 +126,8 @@ export class App {
     }
 
     public sortObjectsByY = () => {
-        this.layers.object.children.sort((a, b) => {
-            return a.y - b.y
+        this.layers.object.children.forEach((child) => {
+            child.zIndex = child.y
         })
     }
 

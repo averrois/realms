@@ -8,6 +8,7 @@ export class PlayApp extends App {
     private scale: number = 2
     private player: Player
     public blocked: Set<TilePoint> = new Set()
+    public keysDown: Set<string> = new Set()
 
     constructor(realmData: RealmData, skin: string = '049') {
         super(realmData)
@@ -26,6 +27,7 @@ export class PlayApp extends App {
         this.setScale(this.scale)
         this.app.renderer.on('resize', this.resizeEvent)
         this.clickMovement()
+        this.setUpKeyboardEvents()
 
         await this.player.loadAnimations()
         this.player.setPosition(this.realmData.spawnpoint.x, this.realmData.spawnpoint.y)
@@ -70,5 +72,27 @@ export class PlayApp extends App {
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
             this.player.moveToTile(x, y)
         })
+    }
+
+    private setUpKeyboardEvents = () => {
+        document.addEventListener('keydown', this.keydown)
+        document.addEventListener('keyup', this.keyup)
+    }
+
+    private keydown = (event: KeyboardEvent) => {
+        if (this.keysDown.has(event.key)) return
+        this.player.keydown(event)
+        this.keysDown.add(event.key)
+    }
+
+    private keyup = (event: KeyboardEvent) => {
+        this.keysDown.delete(event.key)
+    }
+
+    public destroy() {
+        document.removeEventListener('keydown', this.keydown)
+        document.removeEventListener('keyup', this.keyup)
+
+        super.destroy()
     }
 }
