@@ -95,7 +95,6 @@ export class EditorApp extends App {
             const { x, y } = this.realmData.spawnpoint
             this.placeSpawnTileSprite(x, y)
         }
-        
     }
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {

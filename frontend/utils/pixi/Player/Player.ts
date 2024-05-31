@@ -19,10 +19,11 @@ export class Player {
     private path: Coordinate[] = []
     private pathIndex: number = 0
     private sheet: any = null
-    
+
     constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
         this.skin = skin
         this.playApp = playApp
+        this.isLocal = isLocal
     }
 
     public async loadAnimations() {
@@ -56,15 +57,15 @@ export class Player {
     }
 
     public moveToTile = (x: number, y: number) => {
-        PIXI.Ticker.shared.remove(this.move)
         const start: Coordinate = [this.currentTilePosition.x, this.currentTilePosition.y]
         const end: Coordinate = [x, y]
 
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
         if (!path || path.length === 0) {
-            this.changeAnimationState(`idle_${this.direction}` as AnimationState)
             return
         }
+
+        PIXI.Ticker.shared.remove(this.move)
 
         this.path = path
         this.pathIndex = 0
@@ -95,8 +96,9 @@ export class Player {
                 this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
             } else {
                 const movementInput = this.getMovementInput()
-                if (movementInput.x !== 0 || movementInput.y !== 0) {
-                    this.moveToTile(this.currentTilePosition.x + movementInput.x, this.currentTilePosition.y + movementInput.y)
+                const newTilePosition = { x: this.currentTilePosition.x + movementInput.x, y: this.currentTilePosition.y + movementInput.y }
+                if ((movementInput.x !== 0 || movementInput.y !== 0) && !this.playApp.blocked.has(`${newTilePosition.x}, ${newTilePosition.y}`)) {
+                    this.moveToTile(newTilePosition.x, newTilePosition.y)
                 } else {
                     PIXI.Ticker.shared.remove(this.move)
                     this.targetPosition = null
@@ -127,8 +129,11 @@ export class Player {
             this.changeAnimationState(`walk_${this.direction}` as AnimationState)
         }
 
-        this.playApp.moveCameraToPlayer()
         this.playApp.sortObjectsByY()
+
+        if (this.isLocal) {
+            this.playApp.moveCameraToPlayer()
+        }
     }
 
     private changeAnimationState = (state: AnimationState) => {
