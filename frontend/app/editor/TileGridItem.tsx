@@ -32,7 +32,7 @@ const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected
                     imageRendering: 'pixelated'
                 }}></div>
             </div>
-            <p className='text-sm'>{sprite}</p>
+            {/* <p className='text-sm'>{sprite}</p> */}
         </div>
     )
 }
