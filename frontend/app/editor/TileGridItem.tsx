@@ -5,15 +5,15 @@ import { sprites } from '@/utils/pixi/spritesheet/spritesheet'
 
 type TileGridItemProps = {
     sheetName: SheetName
-    sprite: string
+    spriteName: string
     selected: boolean
     onClick: () => void
 }
 
-const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, sprite, selected, onClick }) => {
+const TileGridItem: React.FC<TileGridItemProps> = ({ sheetName, spriteName, selected, onClick }) => {
     
     const src = sprites.spriteSheetDataSet[sheetName].url
-    const { x, y, width, height } = sprites.spriteSheetDataSet[sheetName].sprites[sprite]
+    const { x, y, width, height } = sprites.spriteSheetDataSet[sheetName].sprites[spriteName]
     const sheetWidth = sprites.spriteSheetDataSet[sheetName].width // Width of the whole sprite sheet
     const sheetHeight = sprites.spriteSheetDataSet[sheetName]. height // Height of the whole sprite sheet
 
