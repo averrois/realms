@@ -34,7 +34,6 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
     const [selectedPalette, setSelectedPalette] = useState<SheetName>(palettes[0])
 
     function selectTool(tool:Tool) {
-        // do not allow tool selection if game not loaded
         if (gameLoaded === false) return
 
         setTool(tool)

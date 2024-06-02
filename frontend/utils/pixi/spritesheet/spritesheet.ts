@@ -108,6 +108,10 @@ class Sprites {
         }
 
         for (const spriteData of data.spritesList) {
+            if (spriteData.name === 'empty') {
+                continue
+            }
+
             spriteSheetData.frames[spriteData.name] = {
                 frame: {
                     x: spriteData.x,
