@@ -5,9 +5,8 @@ import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
 import { Eraser } from '@phosphor-icons/react'
-import { GridFour, Square, Eye, EyeSlash } from '@phosphor-icons/react'
+import { GridFour, Square, Eye, EyeSlash, Wall, FlowerTulip, Couch, Atom } from '@phosphor-icons/react'
 import signal from '@/utils/signal'
-import { NumberSquareOne, NumberSquareTwo, NumberSquareThree, Atom } from '@phosphor-icons/react'
 
 type LeftBarProps = {
     tool: Tool,
@@ -71,13 +70,13 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
             {tool === 'Eraser' && (
                 <div className='flex flex-col gap-2'>
                     <ToolButton selected={eraserLayer === 'floor'} onClick={() => selectEraserLayer('floor')}>
-                        <NumberSquareOne className='h-8 w-8'/>
+                        <Wall className='h-8 w-8'/>
                     </ToolButton>
                     <ToolButton selected={eraserLayer === 'above_floor'} onClick={() => selectEraserLayer('above_floor')}>
-                        <NumberSquareTwo className='h-8 w-8'/>
+                        <FlowerTulip className='h-8 w-8'/>
                     </ToolButton>
                     <ToolButton selected={eraserLayer === 'object'} onClick={() => selectEraserLayer('object')}>
-                        <NumberSquareThree className='h-8 w-8'/>
+                        <Couch className='h-8 w-8'/>
                     </ToolButton>
                     <ToolButton selected={eraserLayer === 'gizmo'} onClick={() => selectEraserLayer('gizmo')}>
                         <Atom className='h-8 w-8'/>
