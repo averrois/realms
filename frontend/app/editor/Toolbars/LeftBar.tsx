@@ -73,7 +73,7 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
                     <ToolButton selected={eraserLayer === 'floor'} onClick={() => selectEraserLayer('floor')}>
                         <NumberSquareOne className='h-8 w-8'/>
                     </ToolButton>
-                    <ToolButton selected={eraserLayer === 'transition'} onClick={() => selectEraserLayer('transition')}>
+                    <ToolButton selected={eraserLayer === 'above_floor'} onClick={() => selectEraserLayer('above_floor')}>
                         <NumberSquareTwo className='h-8 w-8'/>
                     </ToolButton>
                     <ToolButton selected={eraserLayer === 'object'} onClick={() => selectEraserLayer('object')}>

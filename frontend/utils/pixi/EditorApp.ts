@@ -56,7 +56,7 @@ export class EditorApp extends App {
         this.drawSpecialTiles()
 
         this.setUpInitialTilemapDataAndPointerEvents('floor')
-        this.setUpInitialTilemapDataAndPointerEvents('transition')
+        this.setUpInitialTilemapDataAndPointerEvents('above_floor')
         this.setUpInitialTilemapDataAndPointerEvents('object')
     }
 
@@ -336,14 +336,14 @@ export class EditorApp extends App {
         this.eraserLayer = layer
 
         this.layers.floor.eventMode = 'none'
-        this.layers.transition.eventMode = 'none'
+        this.layers.above_floor.eventMode = 'none'
         this.layers.object.eventMode = 'none'
         this.gizmoContainer.eventMode = 'none'
 
         if (layer === 'floor') {
             this.layers.floor.eventMode = 'static'
-        } else if (layer === 'transition') {
-            this.layers.transition.eventMode = 'static'
+        } else if (layer === 'above_floor') {
+            this.layers.above_floor.eventMode = 'static'
         } else if (layer === 'object') {
             this.layers.object.eventMode = 'static'
         } else if (layer === 'gizmo') {
