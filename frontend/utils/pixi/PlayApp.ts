@@ -56,17 +56,22 @@ export class PlayApp extends App {
         const x = this.player.parent.x - (this.app.screen.width / 2) / this.scale
         const y = this.player.parent.y - (this.app.screen.height / 2) / this.scale
         this.app.stage.pivot.set(x, y)
+        this.fadeOverlay.clear()
+        this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
+        this.fadeOverlay.fill(0x0F0F0F)
         this.fadeOverlay.pivot.set(-x, -y)
     }
 
     private resizeEvent = () => {
         this.moveCameraToPlayer()
-        this.resizeFadeOverlay()
     }
 
-    private resizeFadeOverlay = () => {
-        this.fadeOverlay.width = this.app.screen.width
-        this.fadeOverlay.height = this.app.screen.height
+    private setUpFadeOverlay = () => {
+        this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
+        this.fadeOverlay.fill(0x0F0F0F)
+        this.fadeOverlay.alpha = 0
+        this.fadeOverlay.eventMode = 'none'
+        this.app.stage.addChild(this.fadeOverlay)
     }
 
     private setUpBlockedTiles = () => {
@@ -143,13 +148,6 @@ export class PlayApp extends App {
         return this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
     }
 
-    private setUpFadeOverlay = () => {
-        this.fadeOverlay.rect(0, 0, this.app.screen.width, this.app.screen.height)
-        this.fadeOverlay.fill(0x0F0F0F)
-        this.fadeOverlay.alpha = 0
-        this.fadeOverlay.eventMode = 'none'
-        this.app.stage.addChild(this.fadeOverlay)
-    }
 
     private fadeIn = () => {
         PIXI.Ticker.shared.remove(this.fadeOutTicker)
