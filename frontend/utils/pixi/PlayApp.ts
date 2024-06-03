@@ -1,6 +1,6 @@
 import { App } from './App'
 import { Player } from './Player/Player'
-import { RealmData, TilePoint } from './types'
+import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 
 export class PlayApp extends App {
@@ -9,6 +9,7 @@ export class PlayApp extends App {
     private player: Player
     public blocked: Set<TilePoint> = new Set()
     public keysDown: Set<string> = new Set()
+    private teleportLocation: Point | null = null
 
     constructor(realmData: RealmData, skin: string = '009') {
         super(realmData)
@@ -18,6 +19,7 @@ export class PlayApp extends App {
     override async loadRoom(index: number) {
         await super.loadRoom(index)
         this.setUpBlockedTiles()
+        this.spawnLocalPlayer()
     }
 
     public async init() {
@@ -28,9 +30,16 @@ export class PlayApp extends App {
         this.app.renderer.on('resize', this.resizeEvent)
         this.clickMovement()
         this.setUpKeyboardEvents()
+    }
 
+    private spawnLocalPlayer = async () => {
         await this.player.loadAnimations()
-        this.player.setPosition(this.realmData.spawnpoint.x, this.realmData.spawnpoint.y)
+
+        if (this.teleportLocation) {
+            this.player.setPosition(this.teleportLocation.x, this.teleportLocation.y)
+        } else {
+            this.player.setPosition(this.realmData.spawnpoint.x, this.realmData.spawnpoint.y)
+        }
         this.layers.object.addChild(this.player.parent)
         this.moveCameraToPlayer()
     }
@@ -71,6 +80,7 @@ export class PlayApp extends App {
             const clickPosition = e.getLocalPosition(this.app.stage)
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
             this.player.moveToTile(x, y)
+            this.player.setMovementMode('mouse')
         })
     }
 
@@ -87,6 +97,23 @@ export class PlayApp extends App {
 
     private keyup = (event: KeyboardEvent) => {
         this.keysDown.delete(event.key)
+    }
+
+    public teleportIfOnTeleportSquare = (x: number, y: number) => {
+        const tile = `${x}, ${y}` as TilePoint
+        const teleport = this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
+        if (teleport) {
+            this.teleportLocation = { x: teleport.x, y: teleport.y }
+            this.currentRoomIndex = teleport.roomIndex
+            this.loadRoom(teleport.roomIndex)
+            return true
+        }
+        return false
+    }
+
+    public hasTeleport = (x: number, y: number) => {
+        const tile = `${x}, ${y}` as TilePoint
+        return this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
     }
 
     public destroy() {

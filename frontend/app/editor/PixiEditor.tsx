@@ -3,6 +3,7 @@ import React, { useRef } from 'react'
 import { EditorApp } from '@/utils/pixi/EditorApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
+import { useModal } from '../hooks/useModal'
 
 type PixiEditorProps = {
     className?: string
@@ -13,13 +14,16 @@ type PixiEditorProps = {
 const PixiEditor:React.FC<PixiEditorProps> = ({ className, setGameLoaded, realmData }) => {
 
     const appRef = useRef<EditorApp | null>(null)
+    const { setModal } = useModal()
 
     useEffect(() => {
         const mount = async () => {
             const app = new EditorApp(realmData)
             appRef.current = app
+            setModal('Loading')
             await app.init()
             setGameLoaded(true)
+            setModal('None')
 
             const pixiApp = app.getApp()
             

@@ -19,6 +19,8 @@ export class Player {
     private path: Coordinate[] = []
     private pathIndex: number = 0
     private sheet: any = null
+    private movementMode: 'keyboard' | 'mouse' = 'mouse'
+    private animationsLoaded: boolean = false
 
     constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
         this.skin = skin
@@ -27,6 +29,8 @@ export class Player {
     }
 
     public async loadAnimations() {
+        if (this.animationsLoaded) return
+
         const src = `/sprites/characters/Character_${this.skin}.png`
         await PIXI.Assets.load(src)
 
@@ -40,6 +44,8 @@ export class Player {
         animatedSprite.animationSpeed = this.animationSpeed
         animatedSprite.play()
         this.parent.addChild(animatedSprite)
+
+        this.animationsLoaded = true
     }
 
     public setPosition(x: number, y: number) {
@@ -97,13 +103,26 @@ export class Player {
             } else {
                 const movementInput = this.getMovementInput()
                 const newTilePosition = { x: this.currentTilePosition.x + movementInput.x, y: this.currentTilePosition.y + movementInput.y }
+
+                if (this.isLocal && this.movementMode === 'keyboard') {
+                    const teleported = this.playApp.teleportIfOnTeleportSquare(this.currentTilePosition.x, this.currentTilePosition.y)
+
+                    if (teleported) {
+                        this.stop()
+                        return
+                    }
+                }
+
                 if ((movementInput.x !== 0 || movementInput.y !== 0) && !this.playApp.blocked.has(`${newTilePosition.x}, ${newTilePosition.y}`)) {
                     this.moveToTile(newTilePosition.x, newTilePosition.y)
                 } else {
-                    PIXI.Ticker.shared.remove(this.move)
-                    this.targetPosition = null
-                    // set idle
-                    this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+                    this.stop()
+
+                    if (this.isLocal && this.movementMode === 'mouse') {
+                        // will teleport if on teleporter
+                        const teleported = this.playApp.teleportIfOnTeleportSquare(this.currentTilePosition.x, this.currentTilePosition.y)
+                        if (teleported) return
+                    }   
                 }
             }
         } else {
@@ -136,6 +155,12 @@ export class Player {
         }
     }
 
+    private stop = () => {
+        PIXI.Ticker.shared.remove(this.move)
+        this.targetPosition = null
+        this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+    }
+
     private changeAnimationState = (state: AnimationState) => {
         if (this.animationState === state) return
 
@@ -146,6 +171,7 @@ export class Player {
     }
 
     public keydown = (event: KeyboardEvent) => {
+        this.setMovementMode('keyboard')
         const movementInput = { x: 0, y: 0 }
         if (event.key === 'ArrowUp' || event.key === 'w') {
             movementInput.y -= 1
@@ -161,6 +187,10 @@ export class Player {
         }
 
         this.moveToTile(this.currentTilePosition.x + movementInput.x, this.currentTilePosition.y + movementInput.y)
+    }
+
+    public setMovementMode = (mode: 'keyboard' | 'mouse') => {
+        this.movementMode = mode
     }
 
     private getMovementInput = () => {

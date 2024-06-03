@@ -212,11 +212,17 @@ export class EditorApp extends App {
         this.removeGizmoAtPosition(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
         const sprite = this.placeTeleportSprite(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
         this.setUpEraserTool(sprite, this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, 'gizmo')
-        this.addTeleporterToRealmData(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, roomIndex)
+        this.addTeleporterToRealmData({ 
+            x: this.newTeleporterCoordinates.x,
+            y: this.newTeleporterCoordinates.y
+        }, {
+            x: x,
+            y: y 
+        }, roomIndex)
     }
 
-    private addTeleporterToRealmData = (x: number, y: number, roomIndex: number) => {
-        const key = `${x}, ${y}` as TilePoint
+    private addTeleporterToRealmData = (start: Point, destination: Point, roomIndex: number) => {
+        const key = `${start.x}, ${start.y}` as TilePoint
         const newRealmData = this.realmData
         newRealmData.rooms[this.currentRoomIndex] = {
             ...newRealmData.rooms[this.currentRoomIndex],
@@ -226,8 +232,8 @@ export class EditorApp extends App {
                     ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
                     teleporter: {
                         roomIndex,
-                        x,
-                        y
+                        x: destination.x,
+                        y: destination.y
                     }
                 }
             }
