@@ -104,13 +104,10 @@ export class Player {
                 const movementInput = this.getMovementInput()
                 const newTilePosition = { x: this.currentTilePosition.x + movementInput.x, y: this.currentTilePosition.y + movementInput.y }
 
-                if (this.isLocal && this.movementMode === 'keyboard') {
-                    const teleported = this.playApp.teleportIfOnTeleportSquare(this.currentTilePosition.x, this.currentTilePosition.y)
-
-                    if (teleported) {
-                        this.stop()
-                        return
-                    }
+                const teleported = this.teleportIfOnTeleporter('keyboard')
+                if (teleported) {
+                    this.stop()
+                    return
                 }
 
                 if ((movementInput.x !== 0 || movementInput.y !== 0) && !this.playApp.blocked.has(`${newTilePosition.x}, ${newTilePosition.y}`)) {
@@ -118,11 +115,8 @@ export class Player {
                 } else {
                     this.stop()
 
-                    if (this.isLocal && this.movementMode === 'mouse') {
-                        // will teleport if on teleporter
-                        const teleported = this.playApp.teleportIfOnTeleportSquare(this.currentTilePosition.x, this.currentTilePosition.y)
-                        if (teleported) return
-                    }   
+                    const teleported = this.teleportIfOnTeleporter('mouse')
+                    if (teleported) return
                 }
             }
         } else {
@@ -159,6 +153,14 @@ export class Player {
         PIXI.Ticker.shared.remove(this.move)
         this.targetPosition = null
         this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+    }
+
+    private teleportIfOnTeleporter = (movementMode: 'keyboard' | 'mouse') => {
+        if (this.isLocal && this.movementMode === movementMode) {
+            const teleported = this.playApp.teleportIfOnTeleportSquare(this.currentTilePosition.x, this.currentTilePosition.y)
+            return teleported
+        }
+        return false
     }
 
     private changeAnimationState = (state: AnimationState) => {

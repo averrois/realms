@@ -10,6 +10,7 @@ export class PlayApp extends App {
     public blocked: Set<TilePoint> = new Set()
     public keysDown: Set<string> = new Set()
     private teleportLocation: Point | null = null
+    private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
 
     constructor(realmData: RealmData, skin: string = '009') {
         super(realmData)
@@ -30,6 +31,7 @@ export class PlayApp extends App {
         this.app.renderer.on('resize', this.resizeEvent)
         this.clickMovement()
         this.setUpKeyboardEvents()
+        this.setUpFadeOverlay()
     }
 
     private spawnLocalPlayer = async () => {
@@ -101,25 +103,36 @@ export class PlayApp extends App {
 
     public teleportIfOnTeleportSquare = (x: number, y: number) => {
         const tile = `${x}, ${y}` as TilePoint
-        const teleport = this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
+        const teleport = this.realmData.rooms[this.currentRoomIndex].tilemap[tile]?.teleporter
         if (teleport) {
-            if (this.currentRoomIndex === teleport.roomIndex) {
-                this.player.setPosition(teleport.x, teleport.y)
-                this.moveCameraToPlayer()
-                return true
-            } else {
-                this.teleportLocation = { x: teleport.x, y: teleport.y }
-                this.currentRoomIndex = teleport.roomIndex
-                this.loadRoom(teleport.roomIndex)
-                return true
-            }
+            this.teleport(teleport.roomIndex, teleport.x, teleport.y)
+            return true
         }
         return false
+    }
+
+    private teleport = (roomIndex: number, x: number, y: number) => {
+        if (this.currentRoomIndex === roomIndex) {
+            this.player.setPosition(x, y)
+            this.moveCameraToPlayer()
+        } else {
+            this.teleportLocation = { x, y }
+            this.currentRoomIndex = roomIndex
+            this.loadRoom(roomIndex)
+        }
     }
 
     public hasTeleport = (x: number, y: number) => {
         const tile = `${x}, ${y}` as TilePoint
         return this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
+    }
+
+    private setUpFadeOverlay = () => {
+        this.fadeOverlay.rect(0, 0, this.app.screen.width, this.app.screen.height)
+        this.fadeOverlay.fill(0x000000)
+        this.fadeOverlay.alpha = 0
+        this.fadeOverlay.eventMode = 'none'
+        this.app.stage.addChild(this.fadeOverlay)
     }
 
     public destroy() {
