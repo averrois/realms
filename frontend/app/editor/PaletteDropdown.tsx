@@ -3,12 +3,13 @@ import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 type PaletteDropdownProps = {
-    menuItems: any[]
+    palettes: any[]
     selectedItem: any
     setSelectedItem: (item: any) => void
 }
 
-const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedItem, setSelectedItem }) => {
+const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ palettes, selectedItem, setSelectedItem }) => {
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -28,7 +29,7 @@ const PaletteDropdown:React.FC<PaletteDropdownProps> = ({ menuItems, selectedIte
       >
         <Menu.Items className="absolute right-0 z-10 w-64 origin-top-right bg-secondary shadow-lg focus:outline-none">
           <div>
-            {menuItems.map((item) => (
+            {palettes.map((item) => (
                 <Menu.Item key={item}>
                     {() => (
                         <div

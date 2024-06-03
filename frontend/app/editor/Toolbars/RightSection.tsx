@@ -1,22 +1,27 @@
 import React, { useState } from 'react'
 import TileMenu from '../TileMenu'
-import { RealmData, SpecialTile, Tool } from '@/utils/pixi/types'
+import { SpecialTile } from '@/utils/pixi/types'
 import SpecialTiles from '../SpecialTiles'
+import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
+import { TileWithPalette } from '../Editor'
 
 type RightSectionProps = {
-    selectedTile: string
-    setSelectedTile: (tile: string) => void
+    selectedTile: TileWithPalette
+    setSelectedTile: (tile: TileWithPalette) => void
     selectSpecialTile: (specialTile: SpecialTile) => void
     specialTile: SpecialTile
     rooms: string[]
     setRooms: (rooms: string[]) => void
     roomIndex: number
     setRoomIndex: (index: number) => void
+    palettes: SheetName[]
+    selectedPalette: SheetName
+    setSelectedPalette: (palette: SheetName) => void
 }
 
 type Tab = 'Tile' | 'Special Tiles'
 
-const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, specialTile, selectSpecialTile, rooms, setRooms, roomIndex, setRoomIndex }) => {
+const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTile, specialTile, selectSpecialTile, rooms, setRooms, roomIndex, setRoomIndex, palettes, selectedPalette, setSelectedPalette }) => {
     
     const [tab, setTab] = useState<Tab>('Tile')
 
@@ -37,7 +42,7 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
                 </div>
             </div>
             <div className='bg-secondaryhover h-[4px]'/>
-            <div>
+        <div>
                 {tab === 'Tile' && (
                     <TileMenu 
                         selectedTile={selectedTile} 
@@ -46,6 +51,9 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
                         setRooms={setRooms}
                         roomIndex={roomIndex}
                         setRoomIndex={setRoomIndex}
+                        palettes={palettes}
+                        selectedPalette={selectedPalette}
+                        setSelectedPalette={setSelectedPalette}
                     />
                 )}
                 {tab === 'Special Tiles' && <SpecialTiles specialTile={specialTile} selectSpecialTile={selectSpecialTile}/>}

@@ -12,7 +12,7 @@ export class EditorApp extends App {
     private dragging: boolean = false
     private initialDragPosition: PIXI.Point = new PIXI.Point()
     private scale: number = 1
-    private selectedPalette: SheetName = 'city'
+    private selectedPalette: SheetName = 'ground'
     private selectedTile: string = ''   
     private selectedTileLayer: Layer | null = null
     private specialTileMode: SpecialTile = 'None'
@@ -56,7 +56,7 @@ export class EditorApp extends App {
         this.drawSpecialTiles()
 
         this.setUpInitialTilemapDataAndPointerEvents('floor')
-        this.setUpInitialTilemapDataAndPointerEvents('transition')
+        this.setUpInitialTilemapDataAndPointerEvents('above_floor')
         this.setUpInitialTilemapDataAndPointerEvents('object')
     }
 
@@ -95,7 +95,6 @@ export class EditorApp extends App {
             const { x, y } = this.realmData.spawnpoint
             this.placeSpawnTileSprite(x, y)
         }
-        
     }
 
     private setUpInitialTilemapDataAndPointerEvents = (layer: Layer) => {
@@ -123,7 +122,6 @@ export class EditorApp extends App {
     private placeSpawnTileSprite = (x: number, y: number) => {
         if (this.collidersFromSpritesMap[`${x}, ${y}`]) return
 
-        this.removeGizmoAtPosition(x, y)
         this.removeSpawnTile()
         this.spawnTile = new PIXI.Sprite(PIXI.Texture.from('/sprites/spawn-tile.png'))
         this.spawnTile.x = x * 32
@@ -132,6 +130,7 @@ export class EditorApp extends App {
     }
 
     private placeSpawnTile = (x: number, y: number) => {
+        this.removeGizmoAtPosition(x, y)
         this.placeSpawnTileSprite(x, y)
         this.addSpawnToRealmData(x, y)
     }
@@ -213,11 +212,17 @@ export class EditorApp extends App {
         this.removeGizmoAtPosition(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
         const sprite = this.placeTeleportSprite(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y)
         this.setUpEraserTool(sprite, this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, 'gizmo')
-        this.addTeleporterToRealmData(this.newTeleporterCoordinates.x, this.newTeleporterCoordinates.y, roomIndex)
+        this.addTeleporterToRealmData({ 
+            x: this.newTeleporterCoordinates.x,
+            y: this.newTeleporterCoordinates.y
+        }, {
+            x: x,
+            y: y 
+        }, roomIndex)
     }
 
-    private addTeleporterToRealmData = (x: number, y: number, roomIndex: number) => {
-        const key = `${x}, ${y}` as TilePoint
+    private addTeleporterToRealmData = (start: Point, destination: Point, roomIndex: number) => {
+        const key = `${start.x}, ${start.y}` as TilePoint
         const newRealmData = this.realmData
         newRealmData.rooms[this.currentRoomIndex] = {
             ...newRealmData.rooms[this.currentRoomIndex],
@@ -227,8 +232,8 @@ export class EditorApp extends App {
                     ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
                     teleporter: {
                         roomIndex,
-                        x,
-                        y
+                        x: destination.x,
+                        y: destination.y
                     }
                 }
             }
@@ -297,6 +302,11 @@ export class EditorApp extends App {
         signal.on('selectSpecialTile', this.onSelectSpecialTile)
         signal.on('selectEraserLayer', this.onSelectEraserLayer)
         signal.on('teleport', this.onCreateTeleporter)
+        signal.on('selectPalette', this.onSelectPalette)
+    }
+
+    private onSelectPalette = (palette: SheetName) => {
+        this.selectedPalette = palette
     }
 
     private onSelectTile = (tile: string) => {
@@ -332,14 +342,14 @@ export class EditorApp extends App {
         this.eraserLayer = layer
 
         this.layers.floor.eventMode = 'none'
-        this.layers.transition.eventMode = 'none'
+        this.layers.above_floor.eventMode = 'none'
         this.layers.object.eventMode = 'none'
         this.gizmoContainer.eventMode = 'none'
 
         if (layer === 'floor') {
             this.layers.floor.eventMode = 'static'
-        } else if (layer === 'transition') {
-            this.layers.transition.eventMode = 'static'
+        } else if (layer === 'above_floor') {
+            this.layers.above_floor.eventMode = 'static'
         } else if (layer === 'object') {
             this.layers.object.eventMode = 'static'
         } else if (layer === 'gizmo') {
@@ -659,6 +669,7 @@ export class EditorApp extends App {
 
         tile.x = x * 32
         tile.y = y * 32
+        tile.zIndex = Infinity
         this.previewTiles.push(tile)
 
         let colliderConflict = false
@@ -681,7 +692,6 @@ export class EditorApp extends App {
         } else {
             this.layers[layer as Layer].addChild(tile)
         }
-
 
         if (!colliderConflict) {
             this.sortObjectsByY()
@@ -1038,6 +1048,7 @@ export class EditorApp extends App {
         signal.off('selectSpecialTile', this.onSelectSpecialTile)
         signal.off('selectEraserLayer', this.onSelectEraserLayer)
         signal.off('teleport', this.onCreateTeleporter)
+        signal.off('selectPalette', this.onSelectPalette)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()

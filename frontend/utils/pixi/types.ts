@@ -31,7 +31,7 @@ export interface Room {
     tilemap: {
         [key: `${number}, ${number}`]: {
             floor?: string,
-            transition?: string,
+            above_floor?: string,
             object?: string,
             impassable?: boolean
             teleporter?: {
@@ -54,12 +54,12 @@ export interface GizmoSpriteMap {
 export interface TilemapSprites {
     [key: `${number}, ${number}`]: {
         floor?: Sprite,
-        transition?: Sprite,
+        above_floor?: Sprite,
         object?: Sprite,
     }
 }
 
-export type Layer = 'floor' | 'transition' | 'object'
+export type Layer = 'floor' | 'above_floor' | 'object'
 
 export type Bounds = {
     x: number,

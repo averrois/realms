@@ -9,7 +9,7 @@ export class App {
     protected initialized: boolean = false
     protected layers: { [key in Layer]: PIXI.Container } = {
         floor: new PIXI.Container(),
-        transition: new PIXI.Container(),
+        above_floor: new PIXI.Container(),
         object: new PIXI.Container(),
     }
     protected currentRoomIndex: number = 0    
@@ -36,14 +36,14 @@ export class App {
         this.initialized = true
 
         this.app.stage.addChild(this.layers.floor)
-        this.app.stage.addChild(this.layers.transition)
+        this.app.stage.addChild(this.layers.above_floor)
         this.app.stage.addChild(this.layers.object)
     }
 
     protected async loadRoom(index: number) {
         // Clear the current room
         this.layers.floor.removeChildren()
-        this.layers.transition.removeChildren()
+        this.layers.above_floor.removeChildren()
         this.layers.object.removeChildren()
         this.collidersFromSpritesMap = {}
 
@@ -51,7 +51,7 @@ export class App {
 
         for (const [tilePoint, tileData] of Object.entries(room.tilemap)) {
             const floor = tileData.floor
-            const transition = tileData.transition
+            const above_floor = tileData.above_floor
             const object = tileData.object
 
             const [x, y] = tilePoint.split(',').map(Number)
@@ -60,8 +60,8 @@ export class App {
                 await this.placeTileFromJson(x, y, 'floor', floor)
             }
 
-            if (transition) {
-                await this.placeTileFromJson(x, y, 'transition', transition)
+            if (above_floor) {
+                await this.placeTileFromJson(x, y, 'above_floor', above_floor)
             }
 
             if (object) {
@@ -109,7 +109,7 @@ export class App {
         return this.app
     }
 
-    protected convertScreenToTileCoordinates = (x: number, y: number) => {
+    public convertScreenToTileCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: Math.floor(x / tileSize),
@@ -117,7 +117,7 @@ export class App {
         }
     }
 
-    protected convertTileToScreenCoordinates = (x: number, y: number) => {
+    public convertTileToScreenCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: x * tileSize,
@@ -126,9 +126,18 @@ export class App {
     }
 
     public sortObjectsByY = () => {
-        this.layers.object.children.sort((a, b) => {
-            return a.y - b.y
+        this.layers.object.children.forEach((child) => {
+            child.zIndex = this.getZIndex(child)
         })
+    }
+
+    public getZIndex = (child: PIXI.ContainerChild) => {
+        if (child instanceof PIXI.Container) {
+            return child.y
+        } else {
+            const containerChild = child as PIXI.ContainerChild
+            return containerChild.y + 32
+        }
     }
 
     public destroy() {

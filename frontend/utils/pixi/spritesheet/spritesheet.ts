@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
+import { groundSpriteSheetData } from './ground'
 import { Layer } from '../types'
+import { SpriteSheetData } from './SpriteSheetData'
 
 export type Collider = {
     x: number,
@@ -8,6 +10,7 @@ export type Collider = {
 }
 
 export interface SpriteSheetTile {
+    name: string,
     x: number
     y: number
     width: number
@@ -16,21 +19,15 @@ export interface SpriteSheetTile {
     colliders?: Collider[]
 }
 
-export interface SpriteSheetData {
-    width: number,
-    height: number,
-    url: string,
-    sprites: { [key: string]: SpriteSheetTile },
-}
-
 type Sheets = {
     [key in SheetName]?: PIXI.Spritesheet
 }
 
-export type SheetName = 'city'
+export type SheetName = 'ground' | 'city'
 
 class Sprites {
     public spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
+        ground: groundSpriteSheetData,
         city: citySpriteSheetData
     }
     public sheets: Sheets = {}
@@ -110,8 +107,12 @@ class Sprites {
             animations: {}
         }
 
-        for (const [name, spriteData] of Object.entries(data.sprites)) {
-            spriteSheetData.frames[name] = {
+        for (const spriteData of data.spritesList) {
+            if (spriteData.name === 'empty') {
+                continue
+            }
+
+            spriteSheetData.frames[spriteData.name] = {
                 frame: {
                     x: spriteData.x,
                     y: spriteData.y,

@@ -8,29 +8,36 @@ import Coords from './Toolbars/Coords'
 import { RealmData, Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import signal from '@/utils/signal'
 import { useModal } from '../hooks/useModal'
+import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
 
 type EditorProps = {
     realmData: RealmData
 }
 
+export type TileWithPalette = {
+    name: string
+    palette: SheetName}
+
+const palettes: SheetName[] = ['ground', 'city']
+
 const Editor:React.FC<EditorProps> = ({ realmData }) => {
     
     const [tool, setTool] = useState<Tool>('None')
     const [tileMode, setTileMode] = useState<TileMode>('Single')
-    const [selectedTile, setSelectedTile] = useState<string>('')
+    const [selectedTile, setSelectedTile] = useState<TileWithPalette>({ name: '', palette: 'ground' })
     const [gameLoaded, setGameLoaded] = useState<boolean>(false)
     const [specialTile, setSpecialTile] = useState<SpecialTile>('None')
     const [eraserLayer, setEraserLayer] = useState<Layer | 'gizmo'>('floor')
     const { setModal, setRoomList } = useModal()
     const [rooms, setRooms] = useState<string[]>(realmData.rooms.map(room => room.name))
     const [roomIndex, setRoomIndex] = useState<number>(0)
+    const [selectedPalette, setSelectedPalette] = useState<SheetName>(palettes[0])
 
     function selectTool(tool:Tool) {
-        // do not allow tool selection if game not loaded
         if (gameLoaded === false) return
 
         setTool(tool)
-        setSelectedTile('')
+        setSelectedTile({ name: '', palette: 'ground' })
         signal.emit('selectTool', tool)
     }
 
@@ -49,11 +56,12 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         signal.emit('selectSpecialTile', specialTile)
     }
 
-    function selectTile(tile: string) {
+    function selectTile(tile: TileWithPalette) {
         if (gameLoaded === false) return
 
         setSelectedTile(tile)
-        signal.emit('tileSelected', tile)
+        signal.emit('selectPalette', tile.palette)
+        signal.emit('tileSelected', tile.name)
     }
 
     function selectEraserLayer(layer: Layer | 'gizmo') {
@@ -106,6 +114,9 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
                     setRooms={setRooms}
                     roomIndex={roomIndex}
                     setRoomIndex={setRoomIndex}
+                    palettes={palettes}
+                    selectedPalette={selectedPalette}
+                    setSelectedPalette={setSelectedPalette}
                 />
             </div>
             <Coords />

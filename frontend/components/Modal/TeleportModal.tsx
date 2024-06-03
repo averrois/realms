@@ -25,10 +25,12 @@ const TeleportModal:React.FC<TeleportModalProps> = () => {
     }
 
     function onSubmit() {
+        const xInt = parseInt(x)
+        const yInt = parseInt(y)
         signal.emit('teleport', {
             roomIndex: selectedRoomIndex,
-            x: parseInt(x),
-            y: parseInt(y)
+            x: xInt,
+            y: yInt,
         })
         setModal('None')
     }
