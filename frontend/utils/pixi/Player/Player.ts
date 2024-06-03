@@ -21,6 +21,7 @@ export class Player {
     private sheet: any = null
     private movementMode: 'keyboard' | 'mouse' = 'mouse'
     private animationsLoaded: boolean = false
+    public frozen: boolean = false
 
     constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
         this.skin = skin
@@ -87,6 +88,10 @@ export class Player {
             y: this.path[this.pathIndex][1]
         }
 
+        if (this.isLocal && this.playApp.hasTeleport(this.currentTilePosition.x, this.currentTilePosition.y) && this.movementMode === 'keyboard') {
+            this.setFrozen(true)
+        }
+
         const speed = this.movementSpeed * deltaTime
 
         const dx = this.targetPosition.x - this.parent.x
@@ -104,6 +109,7 @@ export class Player {
                 const movementInput = this.getMovementInput()
                 const newTilePosition = { x: this.currentTilePosition.x + movementInput.x, y: this.currentTilePosition.y + movementInput.y }
 
+                // Teleport
                 const teleported = this.teleportIfOnTeleporter('keyboard')
                 if (teleported) {
                     this.stop()
@@ -115,6 +121,7 @@ export class Player {
                 } else {
                     this.stop()
 
+                    // Teleport
                     const teleported = this.teleportIfOnTeleporter('mouse')
                     if (teleported) return
                 }
@@ -173,6 +180,8 @@ export class Player {
     }
 
     public keydown = (event: KeyboardEvent) => {
+        if (this.frozen) return
+
         this.setMovementMode('keyboard')
         const movementInput = { x: 0, y: 0 }
         if (event.key === 'ArrowUp' || event.key === 'w') {
@@ -211,5 +220,9 @@ export class Player {
         }
 
         return movementInput
+    }
+
+    public setFrozen = (frozen: boolean) => {
+        this.frozen = frozen
     }
 }

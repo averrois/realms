@@ -11,6 +11,7 @@ export class PlayApp extends App {
     public keysDown: Set<string> = new Set()
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
+    private fadeDuration: number = 0.5
 
     constructor(realmData: RealmData, skin: string = '009') {
         super(realmData)
@@ -55,10 +56,17 @@ export class PlayApp extends App {
         const x = this.player.parent.x - (this.app.screen.width / 2) / this.scale
         const y = this.player.parent.y - (this.app.screen.height / 2) / this.scale
         this.app.stage.pivot.set(x, y)
+        this.fadeOverlay.pivot.set(-x, -y)
     }
 
     private resizeEvent = () => {
         this.moveCameraToPlayer()
+        this.resizeFadeOverlay()
+    }
+
+    private resizeFadeOverlay = () => {
+        this.fadeOverlay.width = this.app.screen.width
+        this.fadeOverlay.height = this.app.screen.height
     }
 
     private setUpBlockedTiles = () => {
@@ -79,6 +87,8 @@ export class PlayApp extends App {
 
     private clickMovement = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
+            if (this.player.frozen) return  
+
             const clickPosition = e.getLocalPosition(this.app.stage)
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
             this.player.moveToTile(x, y)
@@ -111,15 +121,21 @@ export class PlayApp extends App {
         return false
     }
 
-    private teleport = (roomIndex: number, x: number, y: number) => {
+    private teleport = async (roomIndex: number, x: number, y: number) => {
+        this.player.setFrozen(true)
+        await this.fadeIn()
+
         if (this.currentRoomIndex === roomIndex) {
             this.player.setPosition(x, y)
             this.moveCameraToPlayer()
         } else {
             this.teleportLocation = { x, y }
             this.currentRoomIndex = roomIndex
-            this.loadRoom(roomIndex)
+            await this.loadRoom(roomIndex)
         }
+
+        this.player.setFrozen(false)
+        this.fadeOut()
     }
 
     public hasTeleport = (x: number, y: number) => {
@@ -129,11 +145,41 @@ export class PlayApp extends App {
 
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width, this.app.screen.height)
-        this.fadeOverlay.fill(0x000000)
+        this.fadeOverlay.fill(0x0F0F0F)
         this.fadeOverlay.alpha = 0
         this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
+
+    private fadeIn = () => {
+        PIXI.Ticker.shared.remove(this.fadeOutTicker)
+        this.fadeOverlay.alpha = 0
+        return new Promise<void>((resolve) => {
+            const fadeTicker = ({ deltaTime }: { deltaTime: number }) => {
+                this.fadeOverlay.alpha += (deltaTime / 60) / this.fadeDuration
+                if (this.fadeOverlay.alpha >= 1) {
+                    this.fadeOverlay.alpha = 1
+                    PIXI.Ticker.shared.remove(fadeTicker)
+                    resolve()
+                }
+            }
+
+            PIXI.Ticker.shared.add(fadeTicker)
+        })
+    }
+
+    private fadeOut = () => {
+        PIXI.Ticker.shared.add(this.fadeOutTicker)
+    }
+
+    private fadeOutTicker = ({ deltaTime }: { deltaTime: number }) => {
+        this.fadeOverlay.alpha -= (deltaTime / 60) / this.fadeDuration
+        if (this.fadeOverlay.alpha <= 0) {
+            this.fadeOverlay.alpha = 0
+            PIXI.Ticker.shared.remove(this.fadeOutTicker)
+        }
+    }
+
 
     public destroy() {
         document.removeEventListener('keydown', this.keydown)

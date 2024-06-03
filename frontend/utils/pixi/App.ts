@@ -109,7 +109,7 @@ export class App {
         return this.app
     }
 
-    protected convertScreenToTileCoordinates = (x: number, y: number) => {
+    public convertScreenToTileCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: Math.floor(x / tileSize),
@@ -117,7 +117,7 @@ export class App {
         }
     }
 
-    protected convertTileToScreenCoordinates = (x: number, y: number) => {
+    public convertTileToScreenCoordinates = (x: number, y: number) => {
         const tileSize = 32
         return {
             x: x * tileSize,
