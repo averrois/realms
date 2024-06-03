@@ -49,7 +49,7 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
             <ToolButton selected={tool === 'ZoomIn'} label={'Zoom In'} onClick={() => selectTool('ZoomIn')}>
                 <MagnifyingGlassPlusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
-            <ToolButton selected={tool === 'ZoomOut'} label={'Hand Out'} onClick={() => selectTool('ZoomOut')}>
+            <ToolButton selected={tool === 'ZoomOut'} label={'Zoom Out'} onClick={() => selectTool('ZoomOut')}>
                 <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
             <ToolButton selected={tool === 'Eraser'} label={'Eraser'} onClick={() => selectTool('Eraser')}>
