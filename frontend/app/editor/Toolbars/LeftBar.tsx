@@ -43,42 +43,42 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
 
     return (
         <div className='w-[48px] bg-secondary flex flex-col items-center py-1 gap-2'>
-            <ToolButton selected={tool === 'Hand'} onClick={() => selectTool('Hand')}>
+            <ToolButton selected={tool === 'Hand'} label={'Hand'} onClick={() => selectTool('Hand')}>
                 <HandRaisedIcon className='h-8 w-8 text-white'/>
             </ToolButton>
-            <ToolButton selected={tool === 'ZoomIn'} onClick={() => selectTool('ZoomIn')}>
+            <ToolButton selected={tool === 'ZoomIn'} label={'Zoom In'} onClick={() => selectTool('ZoomIn')}>
                 <MagnifyingGlassPlusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
-            <ToolButton selected={tool === 'ZoomOut'} onClick={() => selectTool('ZoomOut')}>
+            <ToolButton selected={tool === 'ZoomOut'} label={'Hand Out'} onClick={() => selectTool('ZoomOut')}>
                 <MagnifyingGlassMinusIcon className='h-8 w-8 text-white'/>
             </ToolButton>
-            <ToolButton selected={tool === 'Eraser'} onClick={() => selectTool('Eraser')}>
+            <ToolButton selected={tool === 'Eraser'} label={'Eraser'} onClick={() => selectTool('Eraser')}>
                 <Eraser className='h-8 w-8'/>
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
-            <ToolButton selected={tileMode === 'Single'} onClick={() => selectTileMode('Single')}>
+            <ToolButton selected={tileMode === 'Single'} label={'Single Tile'} onClick={() => selectTileMode('Single')}>
                 <Square className='h-8 w-8'/>
             </ToolButton>
-            <ToolButton selected={tileMode === 'Rectangle'} onClick={() => selectTileMode('Rectangle')}>
+            <ToolButton selected={tileMode === 'Rectangle'} label={'Rectangle'} onClick={() => selectTileMode('Rectangle')}>
                 <GridFour className='h-8 w-8'/>
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
-            <ToolButton selected={false} onClick={toggleShowGizmos} className={specialTile !== 'None' ? 'pointer-events-none text-gray-700' : ''}>
+            <ToolButton selected={false} onClick={toggleShowGizmos} label={'Toggle Special Tiles'} className={specialTile !== 'None' ? 'pointer-events-none text-gray-700' : ''}>
                 {showGizmos ? <EyeSlash className='h-8 w-8'/> : <Eye className='h-8 w-8'/>}
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
             {tool === 'Eraser' && (
                 <div className='flex flex-col gap-2'>
-                    <ToolButton selected={eraserLayer === 'floor'} onClick={() => selectEraserLayer('floor')}>
+                    <ToolButton selected={eraserLayer === 'floor'} label={'Erase Floor'} onClick={() => selectEraserLayer('floor')}>
                         <Wall className='h-8 w-8'/>
                     </ToolButton>
-                    <ToolButton selected={eraserLayer === 'above_floor'} onClick={() => selectEraserLayer('above_floor')}>
+                    <ToolButton selected={eraserLayer === 'above_floor'} label={'Erase Above Floor'} onClick={() => selectEraserLayer('above_floor')}>
                         <FlowerTulip className='h-8 w-8'/>
                     </ToolButton>
-                    <ToolButton selected={eraserLayer === 'object'} onClick={() => selectEraserLayer('object')}>
+                    <ToolButton selected={eraserLayer === 'object'} label={'Erase Objects'} onClick={() => selectEraserLayer('object')}>
                         <Couch className='h-8 w-8'/>
                     </ToolButton>
-                    <ToolButton selected={eraserLayer === 'gizmo'} onClick={() => selectEraserLayer('gizmo')}>
+                    <ToolButton selected={eraserLayer === 'gizmo'} label={'Erase Special Tiles'} onClick={() => selectEraserLayer('gizmo')}>
                         <Atom className='h-8 w-8'/>
                     </ToolButton>
                 </div>

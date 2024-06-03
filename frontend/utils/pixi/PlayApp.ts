@@ -103,10 +103,16 @@ export class PlayApp extends App {
         const tile = `${x}, ${y}` as TilePoint
         const teleport = this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
         if (teleport) {
-            this.teleportLocation = { x: teleport.x, y: teleport.y }
-            this.currentRoomIndex = teleport.roomIndex
-            this.loadRoom(teleport.roomIndex)
-            return true
+            if (this.currentRoomIndex === teleport.roomIndex) {
+                this.player.setPosition(teleport.x, teleport.y)
+                this.moveCameraToPlayer()
+                return true
+            } else {
+                this.teleportLocation = { x: teleport.x, y: teleport.y }
+                this.currentRoomIndex = teleport.roomIndex
+                this.loadRoom(teleport.roomIndex)
+                return true
+            }
         }
         return false
     }
