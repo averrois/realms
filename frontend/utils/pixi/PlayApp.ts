@@ -4,7 +4,6 @@ import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 
 export class PlayApp extends App {
-
     private scale: number = 2
     private player: Player
     public blocked: Set<TilePoint> = new Set()
@@ -145,7 +144,7 @@ export class PlayApp extends App {
 
     public hasTeleport = (x: number, y: number) => {
         const tile = `${x}, ${y}` as TilePoint
-        return this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
+        return this.realmData.rooms[this.currentRoomIndex].tilemap[tile]?.teleporter
     }
 
 
@@ -182,6 +181,7 @@ export class PlayApp extends App {
     public destroy() {
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
+        PIXI.Ticker.shared.destroy()
 
         super.destroy()
     }
