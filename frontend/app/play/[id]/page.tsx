@@ -4,9 +4,9 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultMapData } from '@/utils/pixi/types'
 import PixiApp from '../PixiApp'
-import { getRealmData } from '@/utils/supabase/realmsQuery'
+import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
 
-export default async function Play({ params }: { params: { id: string } }) {
+export default async function Play({ params, searchParams }: { params: { id: string }, searchParams: { shareId: string } }) {
 
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
@@ -15,7 +15,7 @@ export default async function Play({ params }: { params: { id: string } }) {
         return redirect('/signin')
     }
 
-    const { data, error } = await getRealmData(session.access_token, params.id)
+    const { data, error } = !searchParams.shareId ? await supabase.from('realms').select('map_data').eq('id', params.id) : await getPlayRealmData(session.access_token, searchParams.shareId)
     // Show not found page if no data is returned
     if (!data || !data[0]) {
         return <NotFound />
