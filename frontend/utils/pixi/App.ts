@@ -6,7 +6,6 @@ PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
 
 export class App {
     protected app: PIXI.Application = new PIXI.Application()
-    private resolution: number = 2
     protected initialized: boolean = false
     protected layers: { [key in Layer]: PIXI.Container } = {
         floor: new PIXI.Container(),
@@ -33,7 +32,6 @@ export class App {
             resizeTo: container,
             backgroundColor: 0x0F0F0F,
             roundPixels: true,
-            resolution: this.resolution,
         })
         this.initialized = true
 
