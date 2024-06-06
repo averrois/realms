@@ -12,9 +12,9 @@ export class PlayApp extends App {
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
 
-    constructor(realmData: RealmData, skin: string = '009') {
+    constructor(realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
-        this.player = new Player(skin, this, true)
+        this.player = new Player(skin, this, username, true)
     }
 
     override async loadRoom(index: number) {
@@ -23,8 +23,13 @@ export class PlayApp extends App {
         this.spawnLocalPlayer()
     }
 
+    private async loadAssets() {
+        await PIXI.Assets.load('/fonts/silkscreen.ttf')
+    }
+
     public async init() {
         await super.init()
+        await this.loadAssets()
         await this.loadRoom(this.realmData.spawnpoint.roomIndex)
         this.app.stage.eventMode = 'static'
         this.setScale(this.scale)
@@ -35,7 +40,7 @@ export class PlayApp extends App {
     }
 
     private spawnLocalPlayer = async () => {
-        await this.player.loadAnimations()
+        await this.player.init()
 
         if (this.teleportLocation) {
             this.player.setPosition(this.teleportLocation.x, this.teleportLocation.y)

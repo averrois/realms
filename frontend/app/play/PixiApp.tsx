@@ -7,15 +7,16 @@ import { RealmData } from '@/utils/pixi/types'
 type PixiAppProps = {
     className?: string
     mapData: RealmData
+    username: string
 }
 
-const PixiApp:React.FC<PixiAppProps> = ({ className, mapData }) => {
+const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username }) => {
 
     const appRef = useRef<PlayApp | null>(null)
 
     useEffect(() => {
         const mount = async () => {
-            const app = new PlayApp(mapData)
+            const app = new PlayApp(mapData, username)
             appRef.current = app
             await app.init()
 
