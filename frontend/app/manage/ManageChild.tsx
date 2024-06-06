@@ -102,11 +102,13 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                     <h1 className={`${selectedTab === 0 ? 'font-bold' : ''} cursor-pointer`} onClick={() => setSelectedTab(0)}>Sharing Options</h1> 
                     <h1 className={`${selectedTab === 1 ? 'font-bold' : ''} cursor-pointer`} onClick={() => setSelectedTab(1)}>Discord Channel</h1> 
                 </div>
-                <div className='flex flex-col w-[400px]'>
+                <div className='flex flex-col w-[300px]'>
                     {selectedTab === 0 && (
                         <div className='flex flex-col gap-2'>
                             Who can join this realm?
-                            <Dropdown items={privacyOptions} selectedItem={privacy} setSelectedItem={setPrivacy}/>
+                            <div>
+                                <Dropdown items={privacyOptions} selectedItem={privacy} setSelectedItem={setPrivacy}/>
+                            </div>
                             <BasicButton className='flex flex-row items-center gap-2 text-sm max-w-max' onClick={copyLink}>
                                 Copy Link <Copy />
                             </BasicButton>

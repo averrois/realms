@@ -1,8 +1,18 @@
-import { Jersey_25, Roboto, Inter } from 'next/font/google'
+import { Jersey_25, Roboto, Inter, Nunito_Sans } from 'next/font/google'
 import "./globals.css";
 import Layout from '@/components/Layout/Layout'
 
 const inter = Inter({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+})
+
+const jersey = Jersey_25({
+    subsets: ['latin'],
+    weight: ['400'],
+})
+
+const nunito = Nunito_Sans({
     subsets: ['latin'],
     weight: ['400', '500', '600', '700'],
 })
@@ -23,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
+    <html lang="en" className={nunito.className}>
       <body>
         <Layout>
             {children}
