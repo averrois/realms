@@ -1,10 +1,10 @@
-import { Jersey_25 } from 'next/font/google'
+import { Jersey_25, Roboto, Inter } from 'next/font/google'
 import "./globals.css";
 import Layout from '@/components/Layout/Layout'
 
-const jersey = Jersey_25({
+const inter = Inter({
     subsets: ['latin'],
-    weight: ['400'],
+    weight: ['400', '500', '600', '700'],
 })
 
 const defaultUrl = process.env.VERCEL_URL
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={jersey.className}>
+    <html lang="en" className={inter.className}>
       <body>
         <Layout>
             {children}
