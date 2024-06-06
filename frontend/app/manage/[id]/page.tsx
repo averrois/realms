@@ -19,10 +19,11 @@ export default async function Manage({ params }: { params: { id: string } }) {
     if (!data || !data[0]) {
         return <NotFound />
     }
+    const realm = data[0]
 
     return (
         <div>
-            <ManageChild />
+            <ManageChild realmId={realm.id} privacyLevel={realm.privacy_level}/>
         </div>
     )
 }
