@@ -52,7 +52,7 @@ export class Player {
         const text = new PIXI.Text({
             text: this.username,
             style: {
-                fontFamily: 'silkscreen',
+                fontFamily: 'nunito',
                 fontSize: 128,
                 fill: 0xFFFFFF,
             }

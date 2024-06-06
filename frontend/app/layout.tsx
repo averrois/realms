@@ -1,16 +1,7 @@
-import { Jersey_25, Roboto, Inter, Nunito_Sans } from 'next/font/google'
+import { Nunito_Sans } from 'next/font/google'
 import "./globals.css";
 import Layout from '@/components/Layout/Layout'
 
-const inter = Inter({
-    subsets: ['latin'],
-    weight: ['400', '500', '600', '700'],
-})
-
-const jersey = Jersey_25({
-    subsets: ['latin'],
-    weight: ['400'],
-})
 
 const nunito = Nunito_Sans({
     subsets: ['latin'],

@@ -25,6 +25,7 @@ export class PlayApp extends App {
 
     private async loadAssets() {
         await PIXI.Assets.load('/fonts/silkscreen.ttf')
+        await PIXI.Assets.load('/fonts/nunito.ttf')
     }
 
     public async init() {
