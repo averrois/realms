@@ -13,7 +13,7 @@ type ManageChildProps = {
 }
 
 const privacyOptions = [
-    'anyone with link',
+    'anyone with share link',
     'anyone in the discord server'
 ]
 
@@ -27,14 +27,14 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel }) => {
 
     function getDropdownValue() {
         if (privacyLevel === 'anyone') {
-            return 'anyone with link'
+            return 'anyone with share link'
         } else {
             return 'anyone in the discord server'
         }
     }
 
     function getPrivacyLevel() {
-        if (privacy === 'anyone with link') {
+        if (privacy === 'anyone with share link') {
             return 'anyone'
         } else {
             return 'discord'
@@ -64,17 +64,18 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel }) => {
     return (
         <div className='flex flex-col items-center pt-24'>
             <div className='flex flex-row gap-8 relative'>
-                <div className='flex flex-col h-[500px] border-white border-r-2 pr-4 gap-2'>
-                    <h1 className={`${selectedTab === 0 ? 'font-bold' : ''} cursor-pointer`}>Sharing Options</h1> 
+                <div className='flex flex-col h-[500px] w-[200px] border-white border-r-2 pr-4 gap-2'>
+                    <h1 className={`${selectedTab === 0 ? 'font-bold' : ''} cursor-pointer`} onClick={() => setSelectedTab(0)}>Discord Channel</h1> 
+                    <h1 className={`${selectedTab === 1 ? 'font-bold' : ''} cursor-pointer`} onClick={() => setSelectedTab(1)}>Sharing Options</h1> 
                 </div>
-                {selectedTab === 0 && (
-                    <div className='flex flex-col'>
+                <div className='flex flex-col w-[400px]'>
+                    {selectedTab === 1 && (
                         <div className='flex flex-col gap-2'>
                             Who can join this realm?
                             <Dropdown items={privacyOptions} selectedItem={privacy} setSelectedItem={setPrivacy}/>
                         </div>
+                    )}
                     </div>
-                )}
                 <BasicButton className='absolute bottom-[-50px] right-0' onClick={save}>
                     Save
                 </BasicButton>
