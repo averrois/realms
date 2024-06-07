@@ -3,6 +3,7 @@ import React, { useRef } from 'react'
 import { PlayApp } from '@/utils/pixi/PlayApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
+import { useModal } from '../hooks/useModal'
 
 type PixiAppProps = {
     className?: string
@@ -13,13 +14,15 @@ type PixiAppProps = {
 const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username }) => {
 
     const appRef = useRef<PlayApp | null>(null)
+    const { setModal } = useModal()
 
     useEffect(() => {
         const mount = async () => {
             const app = new PlayApp(mapData, username)
             appRef.current = app
+            setModal('Loading')
             await app.init()
-
+            setModal('None')
             const pixiApp = app.getApp()
             
             document.getElementById('app-container')!.appendChild(pixiApp.canvas)
