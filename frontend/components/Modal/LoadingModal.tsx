@@ -9,11 +9,14 @@ type SaveProps = {
 
 const LoadingModal:React.FC<SaveProps> = () => {
     
-    const { modal, setModal}  = useModal()
+    const { modal, loadingText }  = useModal()
 
     return (
         <Modal open={modal === 'Loading'} className='bg-transparent'>
-            <LoadingSpinner />
+            <div className='flex flex-col items-center'>
+                <LoadingSpinner />
+                <h1>{loadingText}</h1>
+            </div>
         </Modal>
     )
 }

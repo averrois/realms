@@ -14,13 +14,14 @@ type PixiEditorProps = {
 const PixiEditor:React.FC<PixiEditorProps> = ({ className, setGameLoaded, realmData }) => {
 
     const appRef = useRef<EditorApp | null>(null)
-    const { setModal } = useModal()
+    const { setModal, setLoadingText } = useModal()
 
     useEffect(() => {
         const mount = async () => {
             const app = new EditorApp(realmData)
             appRef.current = app
             setModal('Loading')
+            setLoadingText('Loading editor...')
             await app.init()
             setGameLoaded(true)
             setModal('None')

@@ -12,12 +12,10 @@ export class PlayApp extends App {
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
-    private netcode: Netcode
 
-    constructor(realmData: RealmData, username: string, access_token: string, skin: string = '009') {
+    constructor(realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
         this.player = new Player(skin, this, username, true)
-        this.netcode = new Netcode(access_token)
     }
 
     override async loadRoom(index: number) {

@@ -15,7 +15,7 @@ type RoomsProps = {
 
 const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }) => {
     const roomsContainerRef = useRef<HTMLDivElement>(null)
-    const { setModal }= useModal()
+    const { setModal, setLoadingText }= useModal()
     const firstRender = useRef(true)
 
     function onClickCreateRoom() {
@@ -35,6 +35,7 @@ const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }
 
         const onLoadingRoom = () => {
             setModal('Loading')
+            setLoadingText('Loading room...')
         }
 
         const onRoomChanged = (index: number) => {

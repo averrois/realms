@@ -4,7 +4,6 @@ import { PlayApp } from '@/utils/pixi/PlayApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
 import { useModal } from '../hooks/useModal'
-import { createClient } from '@/utils/supabase/client'
 
 type PixiAppProps = {
     className?: string
@@ -16,13 +15,14 @@ type PixiAppProps = {
 const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_token }) => {
 
     const appRef = useRef<PlayApp | null>(null)
-    const { setModal } = useModal()
+    const { setModal, setLoadingText } = useModal()
 
     useEffect(() => {
         const mount = async () => {
-            const app = new PlayApp(mapData, username, access_token)
+            const app = new PlayApp(mapData, username)
             appRef.current = app
             setModal('Loading')
+            setLoadingText('')
             await app.init()
             setModal('None')
             const pixiApp = app.getApp()

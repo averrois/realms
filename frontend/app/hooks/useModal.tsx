@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC } from 'react';
 
-type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm'
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' 
 
 type RoomToDelete = {
     name: string,
@@ -21,7 +21,9 @@ type ModalContextType = {
     roomList: string[],
     setRoomList: (value: string[]) => void
     realmToDelete: RealmToDelete,
-    setRealmToDelete: (value: RealmToDelete) => void
+    setRealmToDelete: (value: RealmToDelete) => void,
+    loadingText: string,
+    setLoadingText: (value: string) => void
 }
 
 const ModalContext = createContext<ModalContextType>({
@@ -38,7 +40,9 @@ const ModalContext = createContext<ModalContextType>({
         name: '',
         id: ''
     },
-    setRealmToDelete: () => {}
+    setRealmToDelete: () => {},
+    loadingText: '',
+    setLoadingText: () => {},
 })
 
 type ModalProviderProps = {
@@ -56,8 +60,9 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
         name: '',
         id: ''
     })
+    const [loadingText, setLoadingText] = useState<string>('')
 
-    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete }
+    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText }
 
     return (
         <ModalContext.Provider value={value}>
