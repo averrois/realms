@@ -2,7 +2,7 @@ import io from 'socket.io-client'
 
 const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
-export class Netcode {
+class Netcode {
     public socket: any
 
     public async connect(access_token: string) {
@@ -17,7 +17,19 @@ export class Netcode {
             }
         )
 
-        await this.socket.connect()
+        return new Promise<boolean>((resolve, reject) => {
+            this.socket.connect()
+
+            this.socket.on('connect', () => {
+                console.log('Connected to the server.')
+                resolve(true)
+            })
+
+            this.socket.on('connect_error', (err: any) => {
+                console.error('Connection error:', err)
+                resolve(false)
+            })
+        })
     }
 }
 

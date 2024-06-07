@@ -4,6 +4,7 @@ import { PlayApp } from '@/utils/pixi/PlayApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
 import { useModal } from '../hooks/useModal'
+import { netcode } from '@/utils/pixi/netcode'
 
 type PixiAppProps = {
     className?: string
@@ -22,7 +23,14 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
             const app = new PlayApp(mapData, username)
             appRef.current = app
             setModal('Loading')
-            setLoadingText('')
+            setLoadingText('Connecting to server...')
+            const connected = await netcode.connect(access_token)
+            if (!connected) {
+                setModal('Failed To Connect')
+                return
+            }
+
+            setLoadingText('Loading game...')
             await app.init()
             setModal('None')
             const pixiApp = app.getApp()
@@ -37,6 +45,7 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
         return () => {
             if (appRef.current) {
                 appRef.current.destroy()
+                console.log('destroy')
             }
         }
     }, [])

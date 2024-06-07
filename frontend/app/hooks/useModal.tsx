@@ -1,7 +1,7 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC } from 'react';
 
-type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' 
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect'
 
 type RoomToDelete = {
     name: string,

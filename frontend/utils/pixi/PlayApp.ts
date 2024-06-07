@@ -2,7 +2,6 @@ import { App } from './App'
 import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
-import { Netcode } from './netcode'
 
 export class PlayApp extends App {
     private scale: number = 2
