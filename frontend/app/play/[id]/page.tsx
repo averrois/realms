@@ -10,8 +10,9 @@ export default async function Play({ params, searchParams }: { params: { id: str
 
     const supabase = createClient()
     const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    if (!session) {
+    if (!session || !user) {
         return redirect('/signin')
     }
 
@@ -25,7 +26,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
 
     return (
         <div className='relative w-full h-screen'>
-            <PixiApp mapData={map_data} className='absolute w-full h-full' username={session.user.user_metadata.full_name}/>
+            <PixiApp mapData={map_data} className='absolute w-full h-full' username={user.user_metadata.full_name} access_token={session.access_token}/>
         </div>
     )
 }
