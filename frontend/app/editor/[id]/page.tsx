@@ -1,7 +1,6 @@
 import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { getRealmData } from '@/utils/supabase/realmsQuery'
 import Editor from '../Editor'
 import { defaultMapData } from '@/utils/pixi/types'
 
