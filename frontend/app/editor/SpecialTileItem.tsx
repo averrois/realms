@@ -32,7 +32,7 @@ const SpecialTileItem:React.FC<SpecialTileItemProps> = ({ children, iconColor, t
                     {children}
                 </div>
                 <div className='flex flex-col'>
-                    <h1 className='text-xl'>{title}</h1>
+                    <h1 className='text-lg font-bold'>{title}</h1>
                     <p>{description}</p>
                 </div>
             </div>

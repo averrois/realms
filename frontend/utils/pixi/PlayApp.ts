@@ -4,7 +4,6 @@ import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 
 export class PlayApp extends App {
-
     private scale: number = 2
     private player: Player
     public blocked: Set<TilePoint> = new Set()
@@ -13,9 +12,9 @@ export class PlayApp extends App {
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
 
-    constructor(realmData: RealmData, skin: string = '009') {
+    constructor(realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
-        this.player = new Player(skin, this, true)
+        this.player = new Player(skin, this, username, true)
     }
 
     override async loadRoom(index: number) {
@@ -24,8 +23,14 @@ export class PlayApp extends App {
         this.spawnLocalPlayer()
     }
 
+    private async loadAssets() {
+        await PIXI.Assets.load('/fonts/silkscreen.ttf')
+        await PIXI.Assets.load('/fonts/nunito.ttf')
+    }
+
     public async init() {
         await super.init()
+        await this.loadAssets()
         await this.loadRoom(this.realmData.spawnpoint.roomIndex)
         this.app.stage.eventMode = 'static'
         this.setScale(this.scale)
@@ -36,7 +41,7 @@ export class PlayApp extends App {
     }
 
     private spawnLocalPlayer = async () => {
-        await this.player.loadAnimations()
+        await this.player.init()
 
         if (this.teleportLocation) {
             this.player.setPosition(this.teleportLocation.x, this.teleportLocation.y)
@@ -145,7 +150,7 @@ export class PlayApp extends App {
 
     public hasTeleport = (x: number, y: number) => {
         const tile = `${x}, ${y}` as TilePoint
-        return this.realmData.rooms[this.currentRoomIndex].tilemap[tile].teleporter
+        return this.realmData.rooms[this.currentRoomIndex].tilemap[tile]?.teleporter
     }
 
 
@@ -182,6 +187,7 @@ export class PlayApp extends App {
     public destroy() {
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
+        PIXI.Ticker.shared.destroy()
 
         super.destroy()
     }

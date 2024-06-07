@@ -1,6 +1,6 @@
 'use client'
 import React, { useState } from 'react'
-import PaletteDropdown from './PaletteDropdown'
+import Dropdown from '../../components/Dropdown'
 import { SheetName } from '@/utils/pixi/spritesheet/spritesheet'
 import TileMenuGrid from './TileMenuGrid'
 import Rooms from './Rooms'
@@ -30,7 +30,7 @@ const TileMenu:React.FC<TileMenuProps> = ({ selectedTile, setSelectedTile, rooms
         <div className='flex flex-col items-center gap-2 p-2'>
             <div className='flex flex-row items-center justify-between w-full'>
                 Palette
-                <PaletteDropdown palettes={palettes} selectedItem={selectedPalette} setSelectedItem={setSelectedPalette}/>
+                <Dropdown items={palettes} selectedItem={selectedPalette} setSelectedItem={setSelectedPalette}/>
             </div>
             <div className='w-full flex flex-row gap-2'>
                 <ToolButton selected={selectedLayer === 'floor'} onClick={() => setSelectedLayer('floor')}>

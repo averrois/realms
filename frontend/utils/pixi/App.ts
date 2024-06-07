@@ -31,7 +31,7 @@ export class App {
         await this.app.init({
             resizeTo: container,
             backgroundColor: 0x0F0F0F,
-            roundPixels: true
+            roundPixels: true,
         })
         this.initialized = true
 

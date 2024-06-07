@@ -7,6 +7,8 @@ import { bfs } from '../pathfinding'
 export class Player {
 
     private skin: string = '001'
+    private username: string = ''
+
     private animationState: AnimationState = 'idle_down'
     private direction: Direction = 'down'
     public parent: PIXI.Container = new PIXI.Container()
@@ -20,18 +22,17 @@ export class Player {
     private pathIndex: number = 0
     private sheet: any = null
     private movementMode: 'keyboard' | 'mouse' = 'mouse'
-    private animationsLoaded: boolean = false
     public frozen: boolean = false
+    private initialized: boolean = false
 
-    constructor(skin: string, playApp: PlayApp, isLocal: boolean = false) {
+    constructor(skin: string, playApp: PlayApp, username: string, isLocal: boolean = false) {
         this.skin = skin
         this.playApp = playApp
+        this.username = username
         this.isLocal = isLocal
     }
 
-    public async loadAnimations() {
-        if (this.animationsLoaded) return
-
+    private async loadAnimations() {
         const src = `/sprites/characters/Character_${this.skin}.png`
         await PIXI.Assets.load(src)
 
@@ -45,8 +46,28 @@ export class Player {
         animatedSprite.animationSpeed = this.animationSpeed
         animatedSprite.play()
         this.parent.addChild(animatedSprite)
+    }
 
-        this.animationsLoaded = true
+    private addUsername() {
+        const text = new PIXI.Text({
+            text: this.username,
+            style: {
+                fontFamily: 'silkscreen',
+                fontSize: 128,
+                fill: 0xFFFFFF,
+            }
+        })
+        text.anchor.set(0.5)
+        text.scale.set(0.07)
+        text.y = 8
+        this.parent.addChild(text)
+    }
+
+    public async init() {
+        if (this.initialized) return
+        await this.loadAnimations()
+        this.addUsername()
+        this.initialized = true
     }
 
     public setPosition(x: number, y: number) {
