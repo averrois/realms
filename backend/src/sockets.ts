@@ -63,7 +63,6 @@ export function sockets(io: Server) {
 
         // Handle a disconnection
         socket.on('disconnect', () => {
-            console.log('disconnect')
             const uid = socket.handshake.query.uid as string
             users.removeUser(uid)
         })

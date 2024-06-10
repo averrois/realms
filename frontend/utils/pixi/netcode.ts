@@ -4,6 +4,7 @@ const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
 class Netcode {
     public socket: Socket = {} as Socket
+    private connected: boolean = false
 
     public async connect(realmId: string, uid: string, access_token: string) {
         this.socket = io(backend_url, {
@@ -22,6 +23,8 @@ class Netcode {
             this.socket.connect()
 
             this.socket.on('connect', () => {
+                this.connected = true
+
                 this.socket.emit('joinRealm', realmId)
             })
 
@@ -38,6 +41,13 @@ class Netcode {
                 resolve(false)
             })
         })
+    }
+
+    public disconnect() {
+        if (this.connected) {
+            this.connected = false
+            this.socket.disconnect()
+        }
     }
 }
 
