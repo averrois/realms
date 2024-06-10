@@ -2,6 +2,7 @@ import { Server } from 'socket.io'
 import { JoinRealm } from './socket-types'
 import { z } from 'zod'
 import { supabase } from './supabase'
+import { users } from './Users'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
@@ -24,6 +25,11 @@ function protectConnection(io: Server) {
                 return next(new Error("Invalid uid"))
             }
 
+            if (users.getUser(uid)) {
+                return next(new Error("User already connected"))
+            }
+
+            users.addUser(uid, user.user)
             next()
         }
     })
@@ -52,9 +58,14 @@ export function sockets(io: Server) {
             }
 
             socket.join(realmId)
-            console.log('joined room', realmId)
-
             socket.emit('joinedRealm')
+        })
+
+        // Handle a disconnection
+        socket.on('disconnect', () => {
+            console.log('disconnect')
+            const uid = socket.handshake.query.uid as string
+            users.removeUser(uid)
         })
     })
 }
