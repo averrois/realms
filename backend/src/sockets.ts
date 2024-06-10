@@ -46,6 +46,11 @@ export function sockets(io: Server) {
                 socket.emit('failedToJoinRoom')
             }
 
+            const join = () => {
+                socket.join(realmData.realmId)
+                socket.emit('joinedRealm')
+            }
+
             if (JoinRealm.safeParse(realmData).success === false) {
                 rejectJoin()
                 return
@@ -60,27 +65,23 @@ export function sockets(io: Server) {
 
             const realm = data[0]
 
-            let joinRealm = false
+            if (realm.owner_id === socket.handshake.query.uid) {
+                join()
+                return
+            }
+
             if (realm.privacy_level === 'discord') {
-                // TODO: Check if they are in discord server if realm is set to only discord 
+                // TODO: Check if they are in discord 
                 rejectJoin()
                 return
             } else if (realm.privacy_level === 'anyone') {
-                if (realm.owner_id === socket.handshake.query.uid) {
-                    joinRealm = true
-                } else {
-                    if (realm.share_id === realmData.shareId) {
-                        joinRealm = true
-                    }
+                if (realm.share_id === realmData.shareId) {
+                    join()
+                    return
                 }
             }
 
-            if (joinRealm) {
-                socket.join(realmData.realmId)
-                socket.emit('joinedRealm')
-            } else {
-                rejectJoin()
-            }
+            rejectJoin()
         })
 
         // Handle a disconnection
