@@ -1,18 +1,19 @@
-import io from 'socket.io-client'
+import io, { Socket } from 'socket.io-client'
 
 const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
 class Netcode {
-    public socket: any
+    public socket: Socket = {} as Socket
 
-    public async connect(access_token: string) {
+    public async connect(realmId: string, uid: string, access_token: string) {
         this.socket = io(backend_url, {
                 reconnection: true,
                 autoConnect: false,
                 reconnectionAttempts: 5,
                 reconnectionDelay: 2000,
                 query: {
-                    access_token
+                    access_token,
+                    uid
                 }
             }
         )
@@ -21,8 +22,15 @@ class Netcode {
             this.socket.connect()
 
             this.socket.on('connect', () => {
-                console.log('Connected to the server.')
+                this.socket.emit('joinRealm', realmId)
+            })
+
+            this.socket.on('joinedRealm', () => {
                 resolve(true)
+            })
+
+            this.socket.on('failedToJoinRoom', () => {
+                resolve(false)
             })
 
             this.socket.on('connect_error', (err: any) => {

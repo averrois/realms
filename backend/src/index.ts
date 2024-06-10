@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
-import { supabase } from './supabase'
+import { sockets } from './sockets'
 
 require('dotenv').config()
 
@@ -20,29 +20,7 @@ const io = new SocketIOServer(server, {
   }
 })
 
-io.use(async (socket, next) => {
-    const access_token = socket.handshake.query.access_token as string
-    if (!access_token) {
-        // Reject the connection by calling next with an error.
-        const error = new Error("access token is required")
-        return next(error)
-    } else {
-        // If clientId is provided, check if valid user
-        const { data: user, error: error } = await supabase.auth.getUser(access_token)
-
-        if (error) {
-            return next(new Error("Invalid access token"))
-        }
-
-        next()
-    }
-})
-
-// Handle a connection
-io.on('connection', (socket) => {
-    console.log('connected')
-})
-
+sockets(io)
 
 const PORT = process.env.PORT || 3001
 server.listen(PORT, () => {
