@@ -41,6 +41,7 @@ export function sockets(io: Server) {
     // Handle a connection
     io.on('connection', (socket) => {
         socket.on('joinRealm', async (realmId: z.infer<typeof JoinRealm>) => {
+
             const rejectJoin = () => {
                 socket.emit('failedToJoinRoom')
             }
@@ -50,12 +51,18 @@ export function sockets(io: Server) {
                 return
             }
 
-            const { data, error } = await supabase.from('realms').select('id').eq('id', realmId)
+            const { data, error } = await supabase.from('realms').select('privacy_level').eq('id', realmId)
 
             if (error || !data || data.length === 0) {
                 rejectJoin()
                 return
             }
+
+            if (data[0].privacy_level === 'discord') {
+                // TODO: Check if they are in discord server if realm is set to only discord 
+                rejectJoin()
+                return
+            } 
 
             socket.join(realmId)
             socket.emit('joinedRealm')
