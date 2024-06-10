@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC, useEffect } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect'
 
@@ -66,9 +66,10 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 
     const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText }
 
-    useEffect(() => {
-        setModal('None')
-    }, [pathname])
+    // useEffect(() => {
+    //     setModal('None')
+    //     console.log(pathname)
+    // }, [pathname])
 
     return (
         <ModalContext.Provider value={value}>

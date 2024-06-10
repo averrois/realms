@@ -13,9 +13,10 @@ type PixiAppProps = {
     access_token: string
     realmId: string
     uid: string
+    shareId: string
 }
 
-const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_token, realmId, uid }) => {
+const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_token, realmId, uid, shareId }) => {
 
     const appRef = useRef<PlayApp | null>(null)
     const { setModal, setLoadingText } = useModal()
@@ -26,7 +27,7 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
             appRef.current = app
             setModal('Loading')
             setLoadingText('Connecting to server...')
-            const connected = await netcode.connect(realmId, uid, access_token)
+            const connected = await netcode.connect(realmId, uid, shareId, access_token)
             if (!connected) {
                 setModal('Failed To Connect')
                 return

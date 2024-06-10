@@ -25,9 +25,9 @@ function protectConnection(io: Server) {
                 return next(new Error("Invalid uid"))
             }
 
-            if (users.getUser(uid)) {
-                return next(new Error("User already connected"))
-            }
+            // if (users.getUser(uid)) {
+            //     return next(new Error("User already connected"))
+            // }
 
             users.addUser(uid, user.user)
             next()
@@ -40,32 +40,47 @@ export function sockets(io: Server) {
 
     // Handle a connection
     io.on('connection', (socket) => {
-        socket.on('joinRealm', async (realmId: z.infer<typeof JoinRealm>) => {
+        socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
 
             const rejectJoin = () => {
                 socket.emit('failedToJoinRoom')
             }
 
-            if (JoinRealm.safeParse(realmId).success === false) {
+            if (JoinRealm.safeParse(realmData).success === false) {
                 rejectJoin()
                 return
             }
 
-            const { data, error } = await supabase.from('realms').select('privacy_level').eq('id', realmId)
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId)
 
             if (error || !data || data.length === 0) {
                 rejectJoin()
                 return
             }
 
-            if (data[0].privacy_level === 'discord') {
+            const realm = data[0]
+
+            let joinRealm = false
+            if (realm.privacy_level === 'discord') {
                 // TODO: Check if they are in discord server if realm is set to only discord 
                 rejectJoin()
                 return
-            } 
+            } else if (realm.privacy_level === 'anyone') {
+                if (realm.owner_id === socket.handshake.query.uid) {
+                    joinRealm = true
+                } else {
+                    if (realm.share_id === realmData.shareId) {
+                        joinRealm = true
+                    }
+                }
+            }
 
-            socket.join(realmId)
-            socket.emit('joinedRealm')
+            if (joinRealm) {
+                socket.join(realmData.realmId)
+                socket.emit('joinedRealm')
+            } else {
+                rejectJoin()
+            }
         })
 
         // Handle a disconnection

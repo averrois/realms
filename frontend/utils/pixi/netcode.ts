@@ -6,7 +6,7 @@ class Netcode {
     public socket: Socket = {} as Socket
     private connected: boolean = false
 
-    public async connect(realmId: string, uid: string, access_token: string) {
+    public async connect(realmId: string, uid: string, shareId: string, access_token: string) {
         this.socket = io(backend_url, {
                 reconnection: true,
                 autoConnect: false,
@@ -25,7 +25,10 @@ class Netcode {
             this.socket.on('connect', () => {
                 this.connected = true
 
-                this.socket.emit('joinRealm', realmId)
+                this.socket.emit('joinRealm', {
+                    realmId,
+                    shareId
+                })
             })
 
             this.socket.on('joinedRealm', () => {
