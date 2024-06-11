@@ -246,4 +246,8 @@ export class Player {
     public setFrozen = (frozen: boolean) => {
         this.frozen = frozen
     }
+
+    public destroy() {
+        PIXI.Ticker.shared.remove(this.move)
+    }
 }

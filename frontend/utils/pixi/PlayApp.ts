@@ -13,6 +13,7 @@ export class PlayApp extends App {
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
     private uid: string = ''
+    private players: { [key: string]: Player } = {}
 
     constructor(uid: string, realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
@@ -33,8 +34,8 @@ export class PlayApp extends App {
     }
 
     private async spawnOtherPlayers() {
+        this.players = {}
         const {data, error} = await server.getPlayerPositionsInRoom(this.currentRoomIndex)
-        console.log(data.players)
         if (error) {
             console.error('Failed to get player positions in room:', error)
             return
@@ -42,12 +43,18 @@ export class PlayApp extends App {
 
         for (const player of data.players) {
             if (player.uid === this.uid) continue
-            const otherPlayer = new Player('009', this, player.username)
-            await otherPlayer.init()
-            otherPlayer.setPosition(player.x, player.y)
-            this.layers.object.addChild(otherPlayer.parent)
+            await this.spawnPlayer(player.uid, '009', player.username, player.x, player.y)
         }
 
+        this.sortObjectsByY()
+    }
+
+    private async spawnPlayer(uid: string, skin: string, username: string, x: number, y: number) {
+        const otherPlayer = new Player(skin, this, username)
+        await otherPlayer.init()
+        otherPlayer.setPosition(x, y)
+        this.layers.object.addChild(otherPlayer.parent)
+        this.players[uid] = otherPlayer
         this.sortObjectsByY()
     }
 
@@ -206,11 +213,19 @@ export class PlayApp extends App {
         }
     }
 
+    private destroyPlayers = () => {
+        for (const player of Object.values(this.players)) {
+            player.destroy()
+        }
+        this.player.destroy()
+    }
+
     public destroy() {
+        this.destroyPlayers()
         server.disconnect()
+        PIXI.Ticker.shared.destroy()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
-        PIXI.Ticker.shared.destroy()
 
         super.destroy()
     }
