@@ -23,7 +23,7 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
 
     useEffect(() => {
         const mount = async () => {
-            const app = new PlayApp(mapData, username)
+            const app = new PlayApp(uid, mapData, username)
             appRef.current = app
             setModal('Loading')
             setLoadingText('Connecting to server...')

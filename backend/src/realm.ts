@@ -57,6 +57,11 @@ class SessionManager {
         return this.sessions[id]
     }
 
+    public getPlayerSession(uid: string): Session {
+        const realmId = this.playerIdToRealmId[uid]
+        return this.sessions[realmId]
+    }
+
     public addPlayerToSession(realmId: string, uid: string, username: string) {
         this.sessions[realmId].addPlayer(uid, username)
         this.playerIdToRealmId[uid] = realmId
@@ -117,6 +122,13 @@ class Session {
         this.roomData[roomIndex].add(uid)
 
         player.room = roomIndex
+    }
+
+    public getPlayerPositionsInRoom(roomIndex: number): Player[] {
+        const players = Array.from(this.roomData[roomIndex] || [])
+            .map(uid => this.players[uid])
+
+        return players
     }
 }
 

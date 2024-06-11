@@ -12,9 +12,11 @@ export class PlayApp extends App {
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
+    private uid: string = ''
 
-    constructor(realmData: RealmData, username: string, skin: string = '009') {
+    constructor(uid: string, realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
+        this.uid = uid
         this.player = new Player(skin, this, username, true)
     }
 
@@ -22,12 +24,31 @@ export class PlayApp extends App {
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
-        const {data, error} = await server.getPlayerPositionsInRoom(this.currentRoomIndex)
+        await this.spawnOtherPlayers()
     }
 
     private async loadAssets() {
         await PIXI.Assets.load('/fonts/silkscreen.ttf')
         await PIXI.Assets.load('/fonts/nunito.ttf')
+    }
+
+    private async spawnOtherPlayers() {
+        const {data, error} = await server.getPlayerPositionsInRoom(this.currentRoomIndex)
+        console.log(data.players)
+        if (error) {
+            console.error('Failed to get player positions in room:', error)
+            return
+        }
+
+        for (const player of data.players) {
+            if (player.uid === this.uid) continue
+            const otherPlayer = new Player('009', this, player.username)
+            await otherPlayer.init()
+            otherPlayer.setPosition(player.x, player.y)
+            this.layers.object.addChild(otherPlayer.parent)
+        }
+
+        this.sortObjectsByY()
     }
 
     public async init() {
