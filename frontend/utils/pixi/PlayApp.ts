@@ -2,7 +2,7 @@ import { App } from './App'
 import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
-import { netcode } from './netcode'
+import { server } from './server'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -22,6 +22,7 @@ export class PlayApp extends App {
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
+        const {data, error} = await server.getPlayerPositionsInRoom(this.currentRoomIndex)
     }
 
     private async loadAssets() {
@@ -39,6 +40,7 @@ export class PlayApp extends App {
         this.clickMovement()
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
+        this.fadeOut()
     }
 
     private spawnLocalPlayer = async () => {
@@ -75,7 +77,6 @@ export class PlayApp extends App {
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
-        this.fadeOverlay.alpha = 0
         this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
@@ -185,7 +186,7 @@ export class PlayApp extends App {
     }
 
     public destroy() {
-        netcode.disconnect()
+        server.disconnect()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
         PIXI.Ticker.shared.destroy()

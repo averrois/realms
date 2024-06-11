@@ -1,9 +1,11 @@
 import io, { Socket } from 'socket.io-client'
+import { request } from '../backend/requests'
 
 const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
-class Netcode {
+class Server {
     public socket: Socket = {} as Socket
+    private access_token: string = ''
     private connected: boolean = false
 
     public async connect(realmId: string, uid: string, shareId: string, access_token: string) {
@@ -18,6 +20,7 @@ class Netcode {
                 }
             }
         )
+        this.access_token = access_token
 
         return new Promise<boolean>((resolve, reject) => {
             this.socket.connect()
@@ -52,8 +55,15 @@ class Netcode {
             this.socket.disconnect()
         }
     }
+
+    public async getPlayerPositionsInRoom(roomIndex: number) {
+        return request('/getPlayerPositionsInRoom', {
+            access_token: this.access_token,
+            roomIndex: roomIndex,
+        })
+    }
 }
 
-const netcode = new Netcode()
+const server = new Server()
 
-export { netcode }
+export { server }

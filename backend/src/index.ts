@@ -2,7 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
-import { sockets } from './sockets'
+import { sockets } from './sockets/sockets'
+import routes from './sockets/routes/routes'
 
 require('dotenv').config()
 
@@ -19,6 +20,8 @@ const io = new SocketIOServer(server, {
     origin: process.env.FRONTEND_URL
   }
 })
+
+app.use(routes())
 
 sockets(io)
 

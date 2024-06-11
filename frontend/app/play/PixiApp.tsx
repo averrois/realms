@@ -4,7 +4,7 @@ import { PlayApp } from '@/utils/pixi/PlayApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
 import { useModal } from '../hooks/useModal'
-import { netcode } from '@/utils/pixi/netcode'
+import { server } from '@/utils/pixi/server'
 
 type PixiAppProps = {
     className?: string
@@ -27,7 +27,7 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
             appRef.current = app
             setModal('Loading')
             setLoadingText('Connecting to server...')
-            const connected = await netcode.connect(realmId, uid, shareId, access_token)
+            const connected = await server.connect(realmId, uid, shareId, access_token)
             if (!connected) {
                 setModal('Failed To Connect')
                 return

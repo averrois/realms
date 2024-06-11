@@ -1,9 +1,9 @@
 import { Server } from 'socket.io'
 import { JoinRealm } from './socket-types'
 import { z } from 'zod'
-import { supabase } from './supabase'
-import { users } from './Users'
-import { sessionManager } from './realm'
+import { supabase } from '../supabase'
+import { users } from '../Users'
+import { sessionManager } from '../realm'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
