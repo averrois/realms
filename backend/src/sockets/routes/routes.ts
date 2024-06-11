@@ -13,13 +13,13 @@ export default function routes(): Router {
             return res.status(400).json({ error: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data, error } = await supabase.auth.refreshSession({ refresh_token: params.refresh_token })
 
-        if (error) {
-            return res.status(401).json({ error: 'Invalid access token' })
+        if (error || !data.user) {
+            return res.status(401).json({ error: 'Invalid refresh token' })
         }
 
-        const session = sessionManager.getPlayerSession(user.user.id)
+        const session = sessionManager.getPlayerSession(data.user.id)
         if (!session) {
             return res.status(400).json({ error: 'User not in a realm.' })
         }

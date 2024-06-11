@@ -7,22 +7,22 @@ import { sessionManager } from '../realm'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
-        const access_token = socket.handshake.query.access_token as string
+        const refresh_token = socket.handshake.query.refresh_token as string
         const uid = socket.handshake.query.uid as string
-        if (!access_token || !uid) {
+        if (!refresh_token || !uid) {
             // Reject the connection by calling next with an error.
-            const error = new Error("Invalid access token or uid")
+            const error = new Error("Invalid refresh token or uid")
             return next(error)
         } else {
             // If clientId is provided, check if valid user
-            const { data: user, error: error } = await supabase.auth.getUser(access_token)
+            const { data, error } = await supabase.auth.refreshSession({ refresh_token: refresh_token })
 
             if (error) {
-                return next(new Error("Invalid access token"))
+                return next(new Error("Invalid refresh token"))
             }
 
-            // reject connection if the uid does not match the access token
-            if (!user || user.user.id !== uid) {
+            // reject connection if the uid does not match the refresh token
+            if (!data.user || data.user.id !== uid) {
                 return next(new Error("Invalid uid"))
             }
 
@@ -30,7 +30,7 @@ function protectConnection(io: Server) {
                 return next(new Error("User already connected"))
             }
 
-            users.addUser(uid, user.user)
+            users.addUser(uid, data.user)
             next()
         }
     })

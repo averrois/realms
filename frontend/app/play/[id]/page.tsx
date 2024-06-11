@@ -26,7 +26,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
 
     return (
         <div className='relative w-full h-screen'>
-            <PixiApp mapData={map_data} className='absolute w-full h-full' username={user.user_metadata.full_name} access_token={session.access_token} realmId={params.id} uid={user.id} shareId={searchParams.shareId || ''}/>
+            <PixiApp mapData={map_data} className='absolute w-full h-full' username={user.user_metadata.full_name} refresh_token={session.refresh_token} realmId={params.id} uid={user.id} shareId={searchParams.shareId || ''}/>
         </div>
     )
 }
