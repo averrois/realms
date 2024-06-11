@@ -3,6 +3,7 @@ import { JoinRealm } from './socket-types'
 import { z } from 'zod'
 import { supabase } from './supabase'
 import { users } from './Users'
+import { sessionManager } from './realm'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
@@ -25,9 +26,9 @@ function protectConnection(io: Server) {
                 return next(new Error("Invalid uid"))
             }
 
-            // if (users.getUser(uid)) {
-            //     return next(new Error("User already connected"))
-            // }
+            if (users.getUser(uid)) {
+                return next(new Error("User already connected"))
+            }
 
             users.addUser(uid, user.user)
             next()
@@ -46,17 +47,12 @@ export function sockets(io: Server) {
                 socket.emit('failedToJoinRoom')
             }
 
-            const join = () => {
-                socket.join(realmData.realmId)
-                socket.emit('joinedRealm')
-            }
-
             if (JoinRealm.safeParse(realmData).success === false) {
                 rejectJoin()
                 return
             }
 
-            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId)
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data').eq('id', realmData.realmId)
 
             if (error || !data || data.length === 0) {
                 rejectJoin()
@@ -64,6 +60,19 @@ export function sockets(io: Server) {
             }
 
             const realm = data[0]
+
+            const join = () => {
+                socket.join(realmData.realmId)
+                socket.emit('joinedRealm')
+
+                if (!sessionManager.getSession(realmData.realmId)) {
+                    sessionManager.createSession(realmData.realmId, realm.map_data)
+                }
+
+                const uid = socket.handshake.query.uid as string
+                const username = users.getUser(uid)!.user_metadata.full_name
+                sessionManager.addPlayerToSession(realmData.realmId, uid, username)
+            }
 
             if (realm.owner_id === socket.handshake.query.uid) {
                 join()
