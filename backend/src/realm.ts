@@ -98,7 +98,6 @@ class Session {
 
         this.roomData[spawnIndex].add(uid)
         this.players[uid] = player
-        console.log(this.players)
     }
 
     public removePlayer(uid: string): void {
@@ -107,7 +106,17 @@ class Session {
         const player = this.players[uid]
         this.roomData[player.room].delete(uid)
         delete this.players[uid]
-        console.log(this.players)
+    }
+
+    public changeRoom(uid: string, roomIndex: number): void {
+        if (!this.players[uid]) return
+
+        const player = this.players[uid]
+
+        this.roomData[player.room].delete(uid)
+        this.roomData[roomIndex].add(uid)
+
+        player.room = roomIndex
     }
 }
 

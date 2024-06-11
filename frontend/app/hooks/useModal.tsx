@@ -66,10 +66,11 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
 
     const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText }
 
-    // useEffect(() => {
-    //     setModal('None')
-    //     console.log(pathname)
-    // }, [pathname])
+    useEffect(() => {
+        if (modal !== 'None') {
+            setModal('None')   
+        }
+    }, [pathname])
 
     return (
         <ModalContext.Provider value={value}>
