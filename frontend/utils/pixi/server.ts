@@ -5,22 +5,22 @@ const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
 class Server {
     public socket: Socket = {} as Socket
-    private refresh_token: string = ''
+    private access_token: string = ''
     private connected: boolean = false
 
-    public async connect(realmId: string, uid: string, shareId: string, refresh_token: string) {
+    public async connect(realmId: string, uid: string, shareId: string, access_token: string) {
         this.socket = io(backend_url, {
                 reconnection: true,
                 autoConnect: false,
                 reconnectionAttempts: 5,
                 reconnectionDelay: 2000,
                 query: {
-                    refresh_token,
+                    access_token,
                     uid
                 }
             }
         )
-        this.refresh_token = refresh_token
+        this.access_token = access_token
 
         return new Promise<boolean>((resolve, reject) => {
             this.socket.connect()
@@ -58,7 +58,7 @@ class Server {
 
     public async getPlayerPositionsInRoom(roomIndex: number) {
         return request('/getPlayerPositionsInRoom', {
-            refresh_token: this.refresh_token,
+            access_token: this.access_token,
             roomIndex: roomIndex,
         })
     }
