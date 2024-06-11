@@ -38,6 +38,7 @@ export interface Player {
     username: string,
     x: number,
     y: number,
+    room: number,
 }
 
 export type RoomData = { [key: number]: Player[] }
@@ -64,25 +65,38 @@ class SessionManager {
 
 class Session {
     private mapData: RealmData
-    private roomData: RoomData = {}
+    private roomData: { [key: number]: Set<string> } = {}
+    private players: { [key: string]: Player } = {}
 
     constructor(mapData: RealmData) {
         this.mapData = mapData
     }
 
     public addPlayer(uid: string, username: string): void {
+        this.removePlayer(uid)
+
         const spawnIndex = this.mapData.spawnpoint.roomIndex
 
-        if (!this.roomData[spawnIndex]) this.roomData[spawnIndex] = []
+        if (!this.roomData[spawnIndex]) this.roomData[spawnIndex] = new Set<string>()
 
         const player: Player = {
             uid,
             username,
             x: this.mapData.spawnpoint.x,
             y: this.mapData.spawnpoint.y,
+            room: spawnIndex,
         }
 
-        this.roomData[spawnIndex].push(player)
+        this.roomData[spawnIndex].add(uid)
+        this.players[uid] = player
+    }
+
+    public removePlayer(uid: string): void {
+        if (!this.players[uid]) return
+
+        const player = this.players[uid]
+        this.roomData[player.room].delete(uid)
+        delete this.players[uid]
     }
 }
 
