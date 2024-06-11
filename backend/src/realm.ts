@@ -61,6 +61,15 @@ class SessionManager {
         this.sessions[realmId].addPlayer(uid, username)
         this.playerIdToRealmId[uid] = realmId
     }
+
+    public logOutPlayer(uid: string) {
+        const realmId = this.playerIdToRealmId[uid]
+        // If the player is not in a realm, do nothing
+        if (!realmId) return
+
+        this.sessions[realmId].removePlayer(uid)
+        delete this.playerIdToRealmId[uid]
+    }
 }
 
 class Session {
@@ -89,6 +98,7 @@ class Session {
 
         this.roomData[spawnIndex].add(uid)
         this.players[uid] = player
+        console.log(this.players)
     }
 
     public removePlayer(uid: string): void {
@@ -97,6 +107,7 @@ class Session {
         const player = this.players[uid]
         this.roomData[player.room].delete(uid)
         delete this.players[uid]
+        console.log(this.players)
     }
 }
 

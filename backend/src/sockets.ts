@@ -97,6 +97,7 @@ export function sockets(io: Server) {
         socket.on('disconnect', () => {
             const uid = socket.handshake.query.uid as string
             users.removeUser(uid)
+            sessionManager.logOutPlayer(uid)
         })
     })
 }
