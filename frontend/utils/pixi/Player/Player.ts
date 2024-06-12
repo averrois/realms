@@ -3,6 +3,7 @@ import playerSpriteSheetData from './PlayerSpriteSheetData'
 import { Point, Coordinate, AnimationState, Direction } from '../types'
 import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
+import { server } from '../server'
 
 export class Player {
 
@@ -99,6 +100,10 @@ export class Player {
         this.pathIndex = 0
         this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
         PIXI.Ticker.shared.add(this.move)
+
+        if (this.isLocal) {
+            server.socket.emit('movePlayer', { x, y })
+        }
     }
 
     private move = ({ deltaTime }: { deltaTime: number }) => {
@@ -180,7 +185,17 @@ export class Player {
     private stop = () => {
         PIXI.Ticker.shared.remove(this.move)
         this.targetPosition = null
-        this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+
+        if (this.isLocal) {
+            this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+        } else {
+            // if player doesnt move for x secs, do idle animation
+            setTimeout(() => {
+                if (!this.targetPosition) {
+                    this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+                }
+            }, 100)
+        }
     }
 
     private teleportIfOnTeleporter = (movementMode: 'keyboard' | 'mouse') => {
@@ -191,7 +206,7 @@ export class Player {
         return false
     }
 
-    private changeAnimationState = (state: AnimationState) => {
+    public changeAnimationState = (state: AnimationState) => {
         if (this.animationState === state) return
 
         this.animationState = state
@@ -245,5 +260,9 @@ export class Player {
 
     public setFrozen = (frozen: boolean) => {
         this.frozen = frozen
+    }
+
+    public destroy() {
+        PIXI.Ticker.shared.remove(this.move)
     }
 }

@@ -18,7 +18,7 @@ type TopBarProps = {
 
 const TopBar:React.FC<TopBarProps> = () => {
 
-    const { modal, setModal } = useModal()
+    const { setLoadingText, setModal } = useModal()
     const { id } = useParams()
 
     const supabase = createClient()
@@ -26,6 +26,7 @@ const TopBar:React.FC<TopBarProps> = () => {
     function beginSave() {
         signal.emit('beginSave')
         setModal('Loading')
+        setLoadingText('Saving...')
     }
 
     useEffect(() => {

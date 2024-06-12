@@ -2,6 +2,7 @@ import { App } from './App'
 import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
+import { server } from './server'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -11,21 +12,52 @@ export class PlayApp extends App {
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
+    private uid: string = ''
+    private players: { [key: string]: Player } = {}
 
-    constructor(realmData: RealmData, username: string, skin: string = '009') {
+    constructor(uid: string, realmData: RealmData, username: string, skin: string = '009') {
         super(realmData)
+        this.uid = uid
         this.player = new Player(skin, this, username, true)
     }
 
     override async loadRoom(index: number) {
+        this.removeSocketEvents()
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
+        await this.spawnOtherPlayers()
+        this.setUpSocketEvents()
     }
 
     private async loadAssets() {
         await PIXI.Assets.load('/fonts/silkscreen.ttf')
         await PIXI.Assets.load('/fonts/nunito.ttf')
+    }
+
+    private async spawnOtherPlayers() {
+        this.players = {}
+        const {data, error} = await server.getPlayersInRoom(this.currentRoomIndex)
+        if (error) {
+            console.error('Failed to get player positions in room:', error)
+            return
+        }
+
+        for (const player of data.players) {
+            if (player.uid === this.uid) continue
+            await this.spawnPlayer(player.uid, '009', player.username, player.x, player.y)
+        }
+
+        this.sortObjectsByY()
+    }
+
+    private async spawnPlayer(uid: string, skin: string, username: string, x: number, y: number) {
+        const otherPlayer = new Player(skin, this, username)
+        await otherPlayer.init()
+        otherPlayer.setPosition(x, y)
+        this.layers.object.addChild(otherPlayer.parent)
+        this.players[uid] = otherPlayer
+        this.sortObjectsByY()
     }
 
     public async init() {
@@ -38,6 +70,7 @@ export class PlayApp extends App {
         this.clickMovement()
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
+        this.fadeOut()
     }
 
     private spawnLocalPlayer = async () => {
@@ -74,7 +107,6 @@ export class PlayApp extends App {
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
-        this.fadeOverlay.alpha = 0
         this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
@@ -134,15 +166,17 @@ export class PlayApp extends App {
     private teleport = async (roomIndex: number, x: number, y: number) => {
         this.player.setFrozen(true)
         await this.fadeIn()
-
         if (this.currentRoomIndex === roomIndex) {
             this.player.setPosition(x, y)
             this.moveCameraToPlayer()
         } else {
             this.teleportLocation = { x, y }
             this.currentRoomIndex = roomIndex
+            this.player.changeAnimationState('idle_down')
             await this.loadRoom(roomIndex)
         }
+
+        server.socket.emit('teleport', { x, y, roomIndex })
 
         this.player.setFrozen(false)
         this.fadeOut()
@@ -183,11 +217,63 @@ export class PlayApp extends App {
         }
     }
 
+    private destroyPlayers = () => {
+        for (const player of Object.values(this.players)) {
+            player.destroy()
+        }
+        this.player.destroy()
+    }
+
+    private onPlayerLeftRoom = (uid: string) => {
+        if (this.players[uid]) {
+            this.players[uid].destroy()
+            this.layers.object.removeChild(this.players[uid].parent)
+            delete this.players[uid]
+            console.log('Player left room:', uid)
+        }
+    }
+
+    private onPlayerJoinedRoom = (playerData: any) => {
+        this.spawnPlayer(playerData.uid, '009', playerData.username, playerData.x, playerData.y)
+    }
+
+    private onPlayerMoved = (data: any) => {
+        if (this.blocked.has(`${data.x}, ${data.y}`)) return
+
+        const player = this.players[data.uid]
+        if (player) {
+            player.moveToTile(data.x, data.y)
+        }
+    }
+
+    private onPlayerTeleported = (data: any) => {
+        const player = this.players[data.uid]
+        if (player) {
+            player.setPosition(data.x, data.y)
+        }
+    }
+
+    private setUpSocketEvents = () => {
+        server.socket.on('playerLeftRoom', this.onPlayerLeftRoom)
+        server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
+        server.socket.on('playerMoved', this.onPlayerMoved)
+        server.socket.on('playerTeleported', this.onPlayerTeleported)
+    }
+
+    private removeSocketEvents = () => {
+        server.socket.off('playerLeftRoom', this.onPlayerLeftRoom)
+        server.socket.off('playerJoinedRoom', this.onPlayerJoinedRoom)
+        server.socket.off('playerMoved', this.onPlayerMoved)
+        server.socket.off('playerTeleported', this.onPlayerTeleported)
+    }
 
     public destroy() {
+        this.removeSocketEvents()
+        this.destroyPlayers()
+        server.disconnect()
+        PIXI.Ticker.shared.destroy()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
-        PIXI.Ticker.shared.destroy()
 
         super.destroy()
     }

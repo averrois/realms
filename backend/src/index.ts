@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
+import { sockets } from './sockets/sockets'
+import routes from './sockets/routes/routes'
 
 require('dotenv').config()
 
@@ -19,11 +21,9 @@ const io = new SocketIOServer(server, {
   }
 })
 
-// Handle a connection
-io.on('connection', (socket) => {
-    console.log('user connected')
-})
+app.use(routes())
 
+sockets(io)
 
 const PORT = process.env.PORT || 3001
 server.listen(PORT, () => {

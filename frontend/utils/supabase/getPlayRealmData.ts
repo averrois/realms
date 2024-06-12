@@ -14,15 +14,24 @@ export async function getPlayRealmData(accessToken: string, shareId: string) {
         return { data: null, error: userError }
     }
 
-    const { data, error } = await supabase.from('realms').select('map_data, privacy_level').eq('share_id', shareId)
+    const { data, error } = await supabase.from('realms').select('map_data, privacy_level, owner_id').eq('share_id', shareId)
 
-    if (data && data[0]) {
-        if (data[0].privacy_level === 'anyone') {
-            return { data, error }
-        } else if (data[0].privacy_level === 'discord') {
-            // TODO: check if they are in discord 
-        }
-    }  
+    if (!data || !data[0] || error) {
+        return { data: null, error }
+    }
+
+    const realm = data[0]
+
+    // if we are the owner, always return the data
+    if (realm.owner_id === user.user.id) {
+        return { data, error }
+    }
+
+    if (realm.privacy_level === 'anyone') {
+        return { data, error }
+    } else if (realm.privacy_level === 'discord') {
+        // TODO: check if they are in discord 
+    }
 
     return { data: null, error: 'Realm not found'}
 }

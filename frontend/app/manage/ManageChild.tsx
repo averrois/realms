@@ -25,7 +25,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
     const [selectedTab, setSelectedTab] = useState(0)
     const [privacy, setPrivacy] = useState(getDropdownValue())
     const [shareId, setShareId] = useState(startingShareId)
-    const { setModal } = useModal()
+    const { setModal, setLoadingText } = useModal()
 
     const supabase = createClient()
 
@@ -47,6 +47,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
 
     async function save() {
         setModal('Loading')
+        setLoadingText('Saving...')
 
         const { error } = await supabase
             .from('realms')
@@ -73,6 +74,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
 
     async function generateNewLink() {
         setModal('Loading')
+        setLoadingText('Generating new link...')
 
         const newShareId = uuidv4()
         const { error } = await supabase
