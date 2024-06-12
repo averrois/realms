@@ -1,15 +1,15 @@
 import { Router } from 'express'
-import { GetPlayerPositionsInRoom } from './route-types'
+import { GetPlayersInRoom } from './route-types'
 import { supabase } from '../../supabase'
 import { z } from 'zod'
-import { sessionManager } from '../../realm'
+import { sessionManager } from '../../session'
 
 export default function routes(): Router {
     const router = Router()
 
-    router.get('/getPlayerPositionsInRoom', async (req, res) => {
-        const params = req.query as unknown as z.infer<typeof GetPlayerPositionsInRoom>
-        if (!GetPlayerPositionsInRoom.safeParse(params).success) {
+    router.get('/getPlayersInRoom', async (req, res) => {
+        const params = req.query as unknown as z.infer<typeof GetPlayersInRoom>
+        if (!GetPlayersInRoom.safeParse(params).success) {
             return res.status(400).json({ error: 'Invalid parameters' })
         }
 
@@ -24,7 +24,7 @@ export default function routes(): Router {
             return res.status(400).json({ error: 'User not in a realm.' })
         }
 
-        const players = session.getPlayerPositionsInRoom(params.roomIndex)
+        const players = session.getPlayersInRoom(params.roomIndex)
         return res.json({ players })
     })
 

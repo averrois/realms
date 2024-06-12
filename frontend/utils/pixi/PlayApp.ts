@@ -22,10 +22,12 @@ export class PlayApp extends App {
     }
 
     override async loadRoom(index: number) {
+        this.removeSocketEvents()
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
         await this.spawnOtherPlayers()
+        this.setUpSocketEvents()
     }
 
     private async loadAssets() {
@@ -35,7 +37,7 @@ export class PlayApp extends App {
 
     private async spawnOtherPlayers() {
         this.players = {}
-        const {data, error} = await server.getPlayerPositionsInRoom(this.currentRoomIndex)
+        const {data, error} = await server.getPlayersInRoom(this.currentRoomIndex)
         if (error) {
             console.error('Failed to get player positions in room:', error)
             return
@@ -220,7 +222,41 @@ export class PlayApp extends App {
         this.player.destroy()
     }
 
+    private onPlayerDisconnected = (uid: string) => {
+        if (this.players[uid]) {
+            this.players[uid].destroy()
+            this.layers.object.removeChild(this.players[uid].parent)
+            delete this.players[uid]
+        }
+    }
+
+    private onPlayerConnected = (playerData: any) => {
+        this.spawnPlayer(playerData.uid, '009', playerData.username, playerData.x, playerData.y)
+    }
+
+    private onPlayerMoved = (data: any) => {
+        if (this.blocked.has(`${data.x}, ${data.y}`)) return
+
+        const player = this.players[data.uid]
+        if (player) {
+            player.moveToTile(data.x, data.y)
+        }
+    }
+
+    private setUpSocketEvents = () => {
+        server.socket.on('playerDisconnected', this.onPlayerDisconnected)
+        server.socket.on('playerConnected', this.onPlayerConnected)
+        server.socket.on('playerMoved', this.onPlayerMoved)
+    }
+
+    private removeSocketEvents = () => {
+        server.socket.off('playerDisconnected', this.onPlayerDisconnected)
+        server.socket.off('playerConnected', this.onPlayerConnected)
+        server.socket.off('playerMoved', this.onPlayerMoved)
+    }
+
     public destroy() {
+        this.removeSocketEvents()
         this.destroyPlayers()
         server.disconnect()
         PIXI.Ticker.shared.destroy()

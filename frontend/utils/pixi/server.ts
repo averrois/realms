@@ -56,8 +56,8 @@ class Server {
         }
     }
 
-    public async getPlayerPositionsInRoom(roomIndex: number) {
-        return request('/getPlayerPositionsInRoom', {
+    public async getPlayersInRoom(roomIndex: number) {
+        return request('/getPlayersInRoom', {
             access_token: this.access_token,
             roomIndex: roomIndex,
         })

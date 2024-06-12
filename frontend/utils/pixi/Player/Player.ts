@@ -3,6 +3,7 @@ import playerSpriteSheetData from './PlayerSpriteSheetData'
 import { Point, Coordinate, AnimationState, Direction } from '../types'
 import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
+import { server } from '../server'
 
 export class Player {
 
@@ -89,7 +90,7 @@ export class Player {
         const end: Coordinate = [x, y]
 
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
-        if (!path || path.length === 0) {
+        if (!path || path.length === 0 || this.playApp.blocked.has(`${x}, ${y}`)) {
             return
         }
 
@@ -99,6 +100,10 @@ export class Player {
         this.pathIndex = 0
         this.targetPosition = this.convertTilePosToPlayerPos(this.path[this.pathIndex][0], this.path[this.pathIndex][1])
         PIXI.Ticker.shared.add(this.move)
+
+        if (this.isLocal) {
+            server.socket.emit('movePlayer', { x, y })
+        }
     }
 
     private move = ({ deltaTime }: { deltaTime: number }) => {

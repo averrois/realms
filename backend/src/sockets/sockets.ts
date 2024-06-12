@@ -1,9 +1,9 @@
 import { Server } from 'socket.io'
-import { JoinRealm } from './socket-types'
+import { JoinRealm, OnEventCallback } from './socket-types'
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
-import { sessionManager } from '../realm'
+import { sessionManager } from '../session'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
@@ -41,6 +41,33 @@ export function sockets(io: Server) {
 
     // Handle a connection
     io.on('connection', (socket) => {
+
+        function on(eventName: string, callback: OnEventCallback) {
+            socket.on(eventName, (data: any) => {
+                const session = sessionManager.getPlayerSession(socket.handshake.query.uid as string)
+                if (!session) {
+                    return
+                }
+                callback({ session, data })
+            })
+        }
+
+        function emit(eventName: string, data: any) {
+            const session = sessionManager.getPlayerSession(socket.handshake.query.uid as string)
+            if (!session) {
+                return
+            }
+
+            const room = session.getPlayerRoom(socket.handshake.query.uid as string)
+            const players = session.getPlayersInRoom(room)
+
+            for (const player of players) {
+                if (player.socketId === socket.id) continue
+
+                io.to(player.socketId).emit(eventName, data)
+            }
+        }
+
         socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
 
             const rejectJoin = () => {
@@ -52,7 +79,7 @@ export function sockets(io: Server) {
                 return
             }
 
-            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data').eq('id', realmData.realmId)
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId)
 
             if (error || !data || data.length === 0) {
                 rejectJoin()
@@ -61,17 +88,22 @@ export function sockets(io: Server) {
 
             const realm = data[0]
 
-            const join = () => {
+            const join = async () => {
                 socket.join(realmData.realmId)
                 socket.emit('joinedRealm')
 
                 if (!sessionManager.getSession(realmData.realmId)) {
-                    sessionManager.createSession(realmData.realmId, realm.map_data)
+                    sessionManager.createSession(realmData.realmId)
                 }
 
                 const uid = socket.handshake.query.uid as string
                 const username = users.getUser(uid)!.user_metadata.full_name
-                sessionManager.addPlayerToSession(realmData.realmId, uid, username)
+                await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username)
+
+                const session = sessionManager.getPlayerSession(uid)
+                const player = session.getPlayer(uid)
+
+                emit('playerConnected', player)
             }
 
             if (realm.owner_id === socket.handshake.query.uid) {
@@ -94,10 +126,22 @@ export function sockets(io: Server) {
         })
 
         // Handle a disconnection
-        socket.on('disconnect', () => {
+        on('disconnect', ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
-            users.removeUser(uid)
+            emit('playerDisconnected', uid)
             sessionManager.logOutPlayer(uid)
+            users.removeUser(uid)
         })
+
+        on('movePlayer', ({ session, data }) => {  
+            const player = session.getPlayer(socket.handshake.query.uid as string)
+            player.x = data.x
+            player.y = data.y
+            emit('playerMoved', {
+                uid: player.uid,
+                x: player.x,
+                y: player.y
+            })
+        })  
     })
 }

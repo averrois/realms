@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 export const defaultMapData: RealmData = {
     spawnpoint: {
         roomIndex: 0,
@@ -39,16 +41,17 @@ export interface Player {
     x: number,
     y: number,
     room: number,
+    socketId: string,
 }
 
 export type RoomData = { [key: number]: Player[] }
 
-class SessionManager {
+export class SessionManager {
     private sessions: { [key: string]: Session } = {}
     private playerIdToRealmId: { [key: string]: string } = {}
 
-    public createSession(id: string, mapData: RealmData): void {
-        const realm = new Session(mapData)
+    public createSession(id: string): void {
+        const realm = new Session(id)
 
         this.sessions[id] = realm
     }
@@ -62,8 +65,8 @@ class SessionManager {
         return this.sessions[realmId]
     }
 
-    public addPlayerToSession(realmId: string, uid: string, username: string) {
-        this.sessions[realmId].addPlayer(uid, username)
+    public async addPlayerToSession(socketId: string, realmId: string, uid: string, username: string) {
+        await this.sessions[realmId].addPlayer(socketId, uid, username)
         this.playerIdToRealmId[uid] = realmId
     }
 
@@ -77,28 +80,38 @@ class SessionManager {
     }
 }
 
-class Session {
-    private mapData: RealmData
+export class Session {
     private roomData: { [key: number]: Set<string> } = {}
     private players: { [key: string]: Player } = {}
+    private id: string
 
-    constructor(mapData: RealmData) {
-        this.mapData = mapData
+    constructor(id: string) {
+        this.id = id
     }
 
-    public addPlayer(uid: string, username: string): void {
+    public async addPlayer(socketId: string, uid: string, username: string) {
         this.removePlayer(uid)
 
-        const spawnIndex = this.mapData.spawnpoint.roomIndex
+        const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id)
+        let spawnIndex = 0
+        let spawnX = 0
+        let spawnY = 0
+        if (data && data[0]) {
+            const mapData: RealmData = data[0].map_data
+            spawnIndex = mapData.spawnpoint.roomIndex
+            spawnX = mapData.spawnpoint.x
+            spawnY = mapData.spawnpoint.y
+        }
 
         if (!this.roomData[spawnIndex]) this.roomData[spawnIndex] = new Set<string>()
 
         const player: Player = {
             uid,
             username,
-            x: this.mapData.spawnpoint.x,
-            y: this.mapData.spawnpoint.y,
+            x: spawnX,
+            y: spawnY,
             room: spawnIndex,
+            socketId: socketId,
         }
 
         this.roomData[spawnIndex].add(uid)
@@ -124,12 +137,21 @@ class Session {
         player.room = roomIndex
     }
 
-    public getPlayerPositionsInRoom(roomIndex: number): Player[] {
+    public getPlayersInRoom(roomIndex: number): Player[] {
         const players = Array.from(this.roomData[roomIndex] || [])
             .map(uid => this.players[uid])
 
         return players
     }
+
+    public getPlayer(uid: string): Player {
+        return this.players[uid]
+    }
+
+    public getPlayerRoom(uid: string): number {
+        return this.players[uid].room
+    }
+
 }
 
 const sessionManager = new SessionManager()
