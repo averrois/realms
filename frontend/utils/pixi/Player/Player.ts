@@ -206,7 +206,7 @@ export class Player {
         return false
     }
 
-    private changeAnimationState = (state: AnimationState) => {
+    public changeAnimationState = (state: AnimationState) => {
         if (this.animationState === state) return
 
         this.animationState = state

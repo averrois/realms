@@ -166,15 +166,17 @@ export class PlayApp extends App {
     private teleport = async (roomIndex: number, x: number, y: number) => {
         this.player.setFrozen(true)
         await this.fadeIn()
-
         if (this.currentRoomIndex === roomIndex) {
             this.player.setPosition(x, y)
             this.moveCameraToPlayer()
         } else {
             this.teleportLocation = { x, y }
             this.currentRoomIndex = roomIndex
+            this.player.changeAnimationState('idle_down')
             await this.loadRoom(roomIndex)
         }
+
+        server.socket.emit('teleport', { x, y, roomIndex })
 
         this.player.setFrozen(false)
         this.fadeOut()
@@ -222,15 +224,16 @@ export class PlayApp extends App {
         this.player.destroy()
     }
 
-    private onPlayerDisconnected = (uid: string) => {
+    private onPlayerLeftRoom = (uid: string) => {
         if (this.players[uid]) {
             this.players[uid].destroy()
             this.layers.object.removeChild(this.players[uid].parent)
             delete this.players[uid]
+            console.log('Player left room:', uid)
         }
     }
 
-    private onPlayerConnected = (playerData: any) => {
+    private onPlayerJoinedRoom = (playerData: any) => {
         this.spawnPlayer(playerData.uid, '009', playerData.username, playerData.x, playerData.y)
     }
 
@@ -243,16 +246,25 @@ export class PlayApp extends App {
         }
     }
 
+    private onPlayerTeleported = (data: any) => {
+        const player = this.players[data.uid]
+        if (player) {
+            player.setPosition(data.x, data.y)
+        }
+    }
+
     private setUpSocketEvents = () => {
-        server.socket.on('playerDisconnected', this.onPlayerDisconnected)
-        server.socket.on('playerConnected', this.onPlayerConnected)
+        server.socket.on('playerLeftRoom', this.onPlayerLeftRoom)
+        server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.on('playerMoved', this.onPlayerMoved)
+        server.socket.on('playerTeleported', this.onPlayerTeleported)
     }
 
     private removeSocketEvents = () => {
-        server.socket.off('playerDisconnected', this.onPlayerDisconnected)
-        server.socket.off('playerConnected', this.onPlayerConnected)
+        server.socket.off('playerLeftRoom', this.onPlayerLeftRoom)
+        server.socket.off('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.off('playerMoved', this.onPlayerMoved)
+        server.socket.off('playerTeleported', this.onPlayerTeleported)
     }
 
     public destroy() {

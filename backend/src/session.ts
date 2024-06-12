@@ -132,6 +132,9 @@ export class Session {
         const player = this.players[uid]
 
         this.roomData[player.room].delete(uid)
+
+        if (!this.roomData[roomIndex]) this.roomData[roomIndex] = new Set<string>()
+
         this.roomData[roomIndex].add(uid)
 
         player.room = roomIndex

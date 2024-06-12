@@ -103,7 +103,7 @@ export function sockets(io: Server) {
                 const session = sessionManager.getPlayerSession(uid)
                 const player = session.getPlayer(uid)
 
-                emit('playerConnected', player)
+                emit('playerJoinedRoom', player)
             }
 
             if (realm.owner_id === socket.handshake.query.uid) {
@@ -128,7 +128,7 @@ export function sockets(io: Server) {
         // Handle a disconnection
         on('disconnect', ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
-            emit('playerDisconnected', uid)
+            emit('playerLeftRoom', uid)
             sessionManager.logOutPlayer(uid)
             users.removeUser(uid)
         })
@@ -143,5 +143,20 @@ export function sockets(io: Server) {
                 y: player.y
             })
         })  
+
+        on('teleport', ({ session, data }) => {
+            const uid = socket.handshake.query.uid as string
+            const player = session.getPlayer(uid)
+            player.x = data.x
+            player.y = data.y
+            if (player.room !== data.roomIndex) {
+                emit('playerLeftRoom', uid)
+                const session = sessionManager.getPlayerSession(uid)
+                session.changeRoom(uid, data.roomIndex)
+                emit('playerJoinedRoom', player)
+            } else {
+                emit('playerTeleported', { uid, x: player.x, y: player.y })
+            }
+        })
     })
 }
