@@ -90,7 +90,7 @@ export class Player {
         const end: Coordinate = [x, y]
 
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
-        if (!path || path.length === 0 || this.playApp.blocked.has(`${x}, ${y}`)) {
+        if (!path || path.length === 0) {
             return
         }
 
@@ -185,7 +185,17 @@ export class Player {
     private stop = () => {
         PIXI.Ticker.shared.remove(this.move)
         this.targetPosition = null
-        this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+
+        if (this.isLocal) {
+            this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+        } else {
+            // if player doesnt move for x secs, do idle animation
+            setTimeout(() => {
+                if (!this.targetPosition) {
+                    this.changeAnimationState(`idle_${this.direction}` as AnimationState)
+                }
+            }, 100)
+        }
     }
 
     private teleportIfOnTeleporter = (movementMode: 'keyboard' | 'mouse') => {
