@@ -47,13 +47,13 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
             <div className='w-96 h-96 flex flex-col items-center justify-between pt-8'>
                 <AnimatedCharacter src={`/sprites/characters/Character_${skins[skinIndex]}.png`} className='w-48'/>
                 <div className='flex flex-row items-center justify-center gap-4 mb-16'>
-                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1' onClick={decrement}>
+                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
                     <BasicButton className='font-bold' onClick={onClickSwitch}>
                         Switch
                     </BasicButton>
-                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1' onClick={increment}>
+                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
                         <ArrowFatRight className='h-12 w-12'/>
                     </button>
                 </div>
