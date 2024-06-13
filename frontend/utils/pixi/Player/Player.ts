@@ -15,7 +15,7 @@ export class Player {
     public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
     private movementSpeed: number = 3.5
-    private currentTilePosition: Point = { x: 0, y: 0 }
+    public currentTilePosition: Point = { x: 0, y: 0 }
     private isLocal: boolean = false
     private playApp: PlayApp
     private targetPosition: { x: number, y: number } | null = null

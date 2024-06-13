@@ -71,6 +71,7 @@ export class PlayApp extends App {
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
         this.fadeOut()
+        this.setUpMouseStyles()
     }
 
     private spawnLocalPlayer = async () => {
@@ -111,7 +112,6 @@ export class PlayApp extends App {
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
-        // this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
 
@@ -139,6 +139,18 @@ export class PlayApp extends App {
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
             this.player.moveToTile(x, y)
             this.player.setMovementMode('mouse')
+        })
+    }
+
+    private setUpMouseStyles = () => {
+        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
+            const clickPosition = e.getLocalPosition(this.app.stage)
+            const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
+            if (this.player.currentTilePosition.x === x && this.player.currentTilePosition.y === y) {
+                this.app.canvas.style.cursor = 'pointer'
+            } else {
+                this.app.canvas.style.cursor = 'default'
+            }
         })
     }
 
