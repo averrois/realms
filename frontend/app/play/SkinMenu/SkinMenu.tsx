@@ -6,6 +6,7 @@ import { ArrowFatLeft, ArrowFatRight } from '@phosphor-icons/react'
 import BasicButton from '@/components/BasicButton'
 import { skins, defaultSkin } from '@/utils/pixi/Player/skins'
 import signal from '@/utils/signal'
+import { createClient } from '@/utils/supabase/client'
 
 type SkinMenuProps = {
     
@@ -16,6 +17,8 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
     const { modal, setModal } = useModal()
 
     const [skinIndex, setSkinIndex] = useState<number>(skins.indexOf(defaultSkin))
+
+    const supabase = createClient()
 
     function decrement() {
         setSkinIndex((prevIndex) => (prevIndex - 1 + skins.length) % skins.length)
@@ -37,8 +40,21 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
         }
     }, [])
 
-    function onClickSwitch() {
-        signal.emit('switchSkin', skins[skinIndex])
+    async function onClickSwitch() {
+        const newSkin = skins[skinIndex]
+        // update profile on supabase with different skin
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
+
+        const { error } = await supabase
+                .from('profiles')
+                .update({ skin: newSkin })
+                .eq('id', user.id)
+
+        console.log(error)
+        if (error) return
+
+        signal.emit('switchSkin', newSkin)
         setModal('None')
     }
     
