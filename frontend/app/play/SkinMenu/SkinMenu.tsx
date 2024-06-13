@@ -12,7 +12,9 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
     
     return (
         <Modal open={modal === 'Skin'} closeOnOutsideClick>
-            nice
+            <div className='w-96 h-96'>
+
+            </div>
         </Modal>
     )
 }
