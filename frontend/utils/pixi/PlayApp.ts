@@ -8,7 +8,7 @@ export class PlayApp extends App {
     private scale: number = 2
     private player: Player
     public blocked: Set<TilePoint> = new Set()
-    public keysDown: Set<string> = new Set()
+    public keysDown: string[] = []
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
@@ -94,6 +94,10 @@ export class PlayApp extends App {
         const x = this.player.parent.x - (this.app.screen.width / 2) / this.scale
         const y = this.player.parent.y - (this.app.screen.height / 2) / this.scale
         this.app.stage.pivot.set(x, y)
+        this.updateFadeOverlay(x, y)
+    }
+
+    private updateFadeOverlay = (x: number, y: number) => {
         this.fadeOverlay.clear()
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
@@ -107,7 +111,7 @@ export class PlayApp extends App {
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
-        this.fadeOverlay.eventMode = 'none'
+        // this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
 
@@ -144,13 +148,13 @@ export class PlayApp extends App {
     }
 
     private keydown = (event: KeyboardEvent) => {
-        if (this.keysDown.has(event.key)) return
+        if (this.keysDown.includes(event.key)) return
         this.player.keydown(event)
-        this.keysDown.add(event.key)
+        this.keysDown.push(event.key)
     }
 
     private keyup = (event: KeyboardEvent) => {
-        this.keysDown.delete(event.key)
+        this.keysDown = this.keysDown.filter((key) => key !== event.key)
     }
 
     public teleportIfOnTeleportSquare = (x: number, y: number) => {

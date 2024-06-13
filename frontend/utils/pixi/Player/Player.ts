@@ -222,14 +222,11 @@ export class Player {
         const movementInput = { x: 0, y: 0 }
         if (event.key === 'ArrowUp' || event.key === 'w') {
             movementInput.y -= 1
-        }
-        if (event.key === 'ArrowDown' || event.key === 's') {
+        } else if (event.key === 'ArrowDown' || event.key === 's') {
             movementInput.y += 1
-        }
-        if (event.key === 'ArrowLeft' || event.key === 'a') {
+        } else if (event.key === 'ArrowLeft' || event.key === 'a') {
             movementInput.x -= 1
-        }
-        if (event.key === 'ArrowRight' || event.key === 'd') {
+        } else if (event.key === 'ArrowRight' || event.key === 'd') {
             movementInput.x += 1
         }
 
@@ -242,16 +239,14 @@ export class Player {
 
     private getMovementInput = () => {
         const movementInput = { x: 0, y: 0 }
-        if (this.playApp.keysDown.has('ArrowUp') || this.playApp.keysDown.has('w')) {
+        const latestKey = this.playApp.keysDown[this.playApp.keysDown.length - 1]
+        if (latestKey === 'ArrowUp' || latestKey === 'w') {
             movementInput.y -= 1
-        }
-        if (this.playApp.keysDown.has('ArrowDown') || this.playApp.keysDown.has('s')) {
+        } else if (latestKey === 'ArrowDown' || latestKey === 's') {
             movementInput.y += 1
-        }
-        if (this.playApp.keysDown.has('ArrowLeft') || this.playApp.keysDown.has('a')) {
+        } else if (latestKey === 'ArrowLeft' || latestKey === 'a') {
             movementInput.x -= 1
-        }
-        if (this.playApp.keysDown.has('ArrowRight') || this.playApp.keysDown.has('d')) {
+        } else if (latestKey === 'ArrowRight' || latestKey === 'd') {
             movementInput.x += 1
         }
 
