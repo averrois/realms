@@ -43,7 +43,10 @@ export interface Player {
     y: number,
     room: number,
     socketId: string,
+    skin: string
 }
+
+export const defaultSkin = '009'
 
 export const Spawnpoint = z.object({
     roomIndex: z.number(),
@@ -72,8 +75,8 @@ export class SessionManager {
         return this.sessions[realmId]
     }
 
-    public async addPlayerToSession(socketId: string, realmId: string, uid: string, username: string) {
-        await this.sessions[realmId].addPlayer(socketId, uid, username)
+    public async addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
+        await this.sessions[realmId].addPlayer(socketId, uid, username, skin)
         this.playerIdToRealmId[uid] = realmId
     }
 
@@ -96,7 +99,7 @@ export class Session {
         this.id = id
     }
 
-    public async addPlayer(socketId: string, uid: string, username: string) {
+    public async addPlayer(socketId: string, uid: string, username: string, skin: string) {
         this.removePlayer(uid)
 
         const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id)
@@ -120,6 +123,7 @@ export class Session {
             y: spawnY,
             room: spawnIndex,
             socketId: socketId,
+            skin,
         }
 
         this.roomData[spawnIndex].add(uid)

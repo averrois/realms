@@ -3,7 +3,7 @@ import { JoinRealm, OnEventCallback } from './socket-types'
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
-import { sessionManager } from '../session'
+import { defaultSkin, sessionManager } from '../session'
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
@@ -98,7 +98,12 @@ export function sockets(io: Server) {
 
                 const uid = socket.handshake.query.uid as string
                 const username = users.getUser(uid)!.user_metadata.full_name
-                await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username)
+                const profile = await supabase.from('profiles').select('skin').eq('id', uid)
+                let skin = defaultSkin
+                if (profile.data && profile.data[0]) {
+                    skin = profile.data[0].skin
+                }
+                await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
                 const session = sessionManager.getPlayerSession(uid)
                 const player = session.getPlayer(uid)
 
@@ -156,6 +161,13 @@ export function sockets(io: Server) {
             } else {
                 emit('playerTeleported', { uid, x: player.x, y: player.y })
             }
+        })
+
+        on('changedSkin', ({ session, data }) => {
+            const uid = socket.handshake.query.uid as string
+            const player = session.getPlayer(uid)
+            player.skin = data
+            emit('playerChangedSkin', { uid, skin: player.skin })
         })
     })
 }

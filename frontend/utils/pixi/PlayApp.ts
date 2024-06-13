@@ -47,7 +47,7 @@ export class PlayApp extends App {
 
         for (const player of data.players) {
             if (player.uid === this.uid || player.uid in this.players) continue
-            await this.spawnPlayer(player.uid, defaultSkin, player.username, player.x, player.y)
+            await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
         }
 
         this.sortObjectsByY()
@@ -236,12 +236,11 @@ export class PlayApp extends App {
             this.players[uid].destroy()
             this.layers.object.removeChild(this.players[uid].parent)
             delete this.players[uid]
-            console.log('Player left room:', uid)
         }
     }
 
     private onPlayerJoinedRoom = (playerData: any) => {
-        this.spawnPlayer(playerData.uid, defaultSkin, playerData.username, playerData.x, playerData.y)
+        this.spawnPlayer(playerData.uid, playerData.skin, playerData.username, playerData.x, playerData.y)
     }
 
     private onPlayerMoved = (data: any) => {
@@ -260,9 +259,22 @@ export class PlayApp extends App {
         }
     }
 
+    private onPlayerChangedSkin = (data: any) => {
+        const player = this.players[data.uid]
+        console.log('skin change')
+        if (player) {
+            player.changeSkin(data.skin)
+        }
+    }
+
     private setUpSignalListeners = () => {
         signal.on('requestSkin', this.onRequestSkin)
         signal.on('switchSkin', this.onSwitchSkin)
+    }
+
+    private removeSignalListeners = () => {
+        signal.off('requestSkin', this.onRequestSkin)
+        signal.off('switchSkin', this.onSwitchSkin)
     }
 
     private onRequestSkin = () => {
@@ -271,6 +283,7 @@ export class PlayApp extends App {
 
     private onSwitchSkin = (skin: string) => {
         this.player.changeSkin(skin)
+        server.socket.emit('changedSkin', skin)
     }
 
     private setUpSocketEvents = () => {
@@ -278,6 +291,7 @@ export class PlayApp extends App {
         server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.on('playerMoved', this.onPlayerMoved)
         server.socket.on('playerTeleported', this.onPlayerTeleported)
+        server.socket.on('playerChangedSkin', this.onPlayerChangedSkin)
     }
 
     private removeSocketEvents = () => {
@@ -285,15 +299,17 @@ export class PlayApp extends App {
         server.socket.off('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.off('playerMoved', this.onPlayerMoved)
         server.socket.off('playerTeleported', this.onPlayerTeleported)
+        server.socket.off('playerChangedSkin', this.onPlayerChangedSkin)
     }
 
     public destroy() {
         this.removeSocketEvents()
         this.destroyPlayers()
         server.disconnect()
+
         PIXI.Ticker.shared.destroy()
-        signal.off('requestSkin', this.onRequestSkin)
-        signal.off('switchSkin', this.onSwitchSkin)
+
+        this.removeSignalListeners()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
 
