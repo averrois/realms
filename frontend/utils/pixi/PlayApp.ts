@@ -22,12 +22,13 @@ export class PlayApp extends App {
     }
 
     override async loadRoom(index: number) {
+        this.players = {}
         this.removeSocketEvents()
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
         this.setUpSocketEvents()
-        this.spawnOtherPlayers()
+        await this.spawnOtherPlayers()
     }
 
     private async loadAssets() {
@@ -36,7 +37,6 @@ export class PlayApp extends App {
     }
 
     private async spawnOtherPlayers() {
-        this.players = {}
         const {data, error} = await server.getPlayersInRoom(this.currentRoomIndex)
         if (error) {
             console.error('Failed to get player positions in room:', error)
@@ -44,7 +44,7 @@ export class PlayApp extends App {
         }
 
         for (const player of data.players) {
-            if (player.uid === this.uid) continue
+            if (player.uid === this.uid || player.uid in this.players) continue
             await this.spawnPlayer(player.uid, '009', player.username, player.x, player.y)
         }
 
