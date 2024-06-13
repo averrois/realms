@@ -3,7 +3,6 @@ import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultMapData } from '@/utils/pixi/types'
-import PixiApp from '../PixiApp'
 import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
 import PlayClient from '../Play'
 
