@@ -99,7 +99,6 @@ export function sockets(io: Server) {
                 const uid = socket.handshake.query.uid as string
                 const username = users.getUser(uid)!.user_metadata.full_name
                 await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username)
-
                 const session = sessionManager.getPlayerSession(uid)
                 const player = session.getPlayer(uid)
 
