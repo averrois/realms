@@ -3,6 +3,8 @@ import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 import { server } from './server'
+import { defaultSkin } from './Player/skins'
+import signal from '../signal'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -15,19 +17,20 @@ export class PlayApp extends App {
     private uid: string = ''
     private players: { [key: string]: Player } = {}
 
-    constructor(uid: string, realmData: RealmData, username: string, skin: string = '009') {
+    constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin) {
         super(realmData)
         this.uid = uid
         this.player = new Player(skin, this, username, true)
     }
 
     override async loadRoom(index: number) {
+        this.players = {}
         this.removeSocketEvents()
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
         this.setUpSocketEvents()
-        this.spawnOtherPlayers()
+        await this.spawnOtherPlayers()
     }
 
     private async loadAssets() {
@@ -36,7 +39,6 @@ export class PlayApp extends App {
     }
 
     private async spawnOtherPlayers() {
-        this.players = {}
         const {data, error} = await server.getPlayersInRoom(this.currentRoomIndex)
         if (error) {
             console.error('Failed to get player positions in room:', error)
@@ -44,8 +46,8 @@ export class PlayApp extends App {
         }
 
         for (const player of data.players) {
-            if (player.uid === this.uid) continue
-            await this.spawnPlayer(player.uid, '009', player.username, player.x, player.y)
+            if (player.uid === this.uid || player.uid in this.players) continue
+            await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
         }
 
         this.sortObjectsByY()
@@ -67,9 +69,11 @@ export class PlayApp extends App {
         this.app.stage.eventMode = 'static'
         this.setScale(this.scale)
         this.app.renderer.on('resize', this.resizeEvent)
-        this.clickMovement()
+        this.clickEvents()
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
+        this.setUpSignalListeners()
+
         this.fadeOut()
     }
 
@@ -111,7 +115,6 @@ export class PlayApp extends App {
     private setUpFadeOverlay = () => {
         this.fadeOverlay.rect(0, 0, this.app.screen.width * (1 / this.scale), this.app.screen.height * (1 / this.scale))
         this.fadeOverlay.fill(0x0F0F0F)
-        // this.fadeOverlay.eventMode = 'none'
         this.app.stage.addChild(this.fadeOverlay)
     }
 
@@ -131,7 +134,7 @@ export class PlayApp extends App {
         }
     }
 
-    private clickMovement = () => {
+    private clickEvents = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.player.frozen) return  
 
@@ -233,12 +236,11 @@ export class PlayApp extends App {
             this.players[uid].destroy()
             this.layers.object.removeChild(this.players[uid].parent)
             delete this.players[uid]
-            console.log('Player left room:', uid)
         }
     }
 
     private onPlayerJoinedRoom = (playerData: any) => {
-        this.spawnPlayer(playerData.uid, '009', playerData.username, playerData.x, playerData.y)
+        this.spawnPlayer(playerData.uid, playerData.skin, playerData.username, playerData.x, playerData.y)
     }
 
     private onPlayerMoved = (data: any) => {
@@ -257,11 +259,39 @@ export class PlayApp extends App {
         }
     }
 
+    private onPlayerChangedSkin = (data: any) => {
+        const player = this.players[data.uid]
+        console.log('skin change')
+        if (player) {
+            player.changeSkin(data.skin)
+        }
+    }
+
+    private setUpSignalListeners = () => {
+        signal.on('requestSkin', this.onRequestSkin)
+        signal.on('switchSkin', this.onSwitchSkin)
+    }
+
+    private removeSignalListeners = () => {
+        signal.off('requestSkin', this.onRequestSkin)
+        signal.off('switchSkin', this.onSwitchSkin)
+    }
+
+    private onRequestSkin = () => {
+        signal.emit('skin', this.player.skin)
+    }
+
+    private onSwitchSkin = (skin: string) => {
+        this.player.changeSkin(skin)
+        server.socket.emit('changedSkin', skin)
+    }
+
     private setUpSocketEvents = () => {
         server.socket.on('playerLeftRoom', this.onPlayerLeftRoom)
         server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.on('playerMoved', this.onPlayerMoved)
         server.socket.on('playerTeleported', this.onPlayerTeleported)
+        server.socket.on('playerChangedSkin', this.onPlayerChangedSkin)
     }
 
     private removeSocketEvents = () => {
@@ -269,13 +299,17 @@ export class PlayApp extends App {
         server.socket.off('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.off('playerMoved', this.onPlayerMoved)
         server.socket.off('playerTeleported', this.onPlayerTeleported)
+        server.socket.off('playerChangedSkin', this.onPlayerChangedSkin)
     }
 
     public destroy() {
         this.removeSocketEvents()
         this.destroyPlayers()
         server.disconnect()
+
         PIXI.Ticker.shared.destroy()
+
+        this.removeSignalListeners()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
 
