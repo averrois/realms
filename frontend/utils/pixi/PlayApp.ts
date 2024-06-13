@@ -8,7 +8,7 @@ export class PlayApp extends App {
     private scale: number = 2
     private player: Player
     public blocked: Set<TilePoint> = new Set()
-    public keysDown: Set<string> = new Set()
+    public keysDown: string[] = []
     private teleportLocation: Point | null = null
     private fadeOverlay: PIXI.Graphics = new PIXI.Graphics()
     private fadeDuration: number = 0.5
@@ -148,13 +148,13 @@ export class PlayApp extends App {
     }
 
     private keydown = (event: KeyboardEvent) => {
-        if (this.keysDown.has(event.key)) return
+        if (this.keysDown.includes(event.key)) return
         this.player.keydown(event)
-        this.keysDown.add(event.key)
+        this.keysDown.push(event.key)
     }
 
     private keyup = (event: KeyboardEvent) => {
-        this.keysDown.delete(event.key)
+        this.keysDown = this.keysDown.filter((key) => key !== event.key)
     }
 
     public teleportIfOnTeleportSquare = (x: number, y: number) => {
