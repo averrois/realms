@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { z } from 'zod'
 
 export const defaultMapData: RealmData = {
     spawnpoint: {
@@ -43,6 +44,12 @@ export interface Player {
     room: number,
     socketId: string,
 }
+
+export const Spawnpoint = z.object({
+    roomIndex: z.number(),
+    x: z.number(),
+    y: z.number(),
+})
 
 export type RoomData = { [key: number]: Player[] }
 
@@ -96,7 +103,8 @@ export class Session {
         let spawnIndex = 0
         let spawnX = 0
         let spawnY = 0
-        if (data && data[0]) {
+        // ensure that spawn point exists and that it is valid
+        if (data && data[0] && data[0].map_data && Spawnpoint.safeParse(data[0].map_data.spawnpoint).success) {
             const mapData: RealmData = data[0].map_data
             spawnIndex = mapData.spawnpoint.roomIndex
             spawnX = mapData.spawnpoint.x
