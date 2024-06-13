@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { defaultSkin } from '@/utils/pixi/Player/skins'
 
 type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect' | 'Skin'
 

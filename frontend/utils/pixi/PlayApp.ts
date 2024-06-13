@@ -3,6 +3,7 @@ import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 import { server } from './server'
+import { defaultSkin } from './Player/skins'
 import signal from '../signal'
 
 export class PlayApp extends App {
@@ -16,7 +17,7 @@ export class PlayApp extends App {
     private uid: string = ''
     private players: { [key: string]: Player } = {}
 
-    constructor(uid: string, realmData: RealmData, username: string, skin: string = '009') {
+    constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin) {
         super(realmData)
         this.uid = uid
         this.player = new Player(skin, this, username, true)
@@ -46,7 +47,7 @@ export class PlayApp extends App {
 
         for (const player of data.players) {
             if (player.uid === this.uid || player.uid in this.players) continue
-            await this.spawnPlayer(player.uid, '009', player.username, player.x, player.y)
+            await this.spawnPlayer(player.uid, defaultSkin, player.username, player.x, player.y)
         }
 
         this.sortObjectsByY()
@@ -71,6 +72,8 @@ export class PlayApp extends App {
         this.clickEvents()
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
+        this.setUpSignalListeners()
+
         this.fadeOut()
     }
 
@@ -238,7 +241,7 @@ export class PlayApp extends App {
     }
 
     private onPlayerJoinedRoom = (playerData: any) => {
-        this.spawnPlayer(playerData.uid, '009', playerData.username, playerData.x, playerData.y)
+        this.spawnPlayer(playerData.uid, defaultSkin, playerData.username, playerData.x, playerData.y)
     }
 
     private onPlayerMoved = (data: any) => {
@@ -255,6 +258,14 @@ export class PlayApp extends App {
         if (player) {
             player.setPosition(data.x, data.y)
         }
+    }
+
+    private setUpSignalListeners = () => {
+        signal.on('requestSkin', this.onRequestSkin)
+    }
+
+    private onRequestSkin = () => {
+        signal.emit('skin', this.player.skin)
     }
 
     private setUpSocketEvents = () => {
@@ -276,6 +287,7 @@ export class PlayApp extends App {
         this.destroyPlayers()
         server.disconnect()
         PIXI.Ticker.shared.destroy()
+        signal.off('requestSkin', this.onRequestSkin)
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
 

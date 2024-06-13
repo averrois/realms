@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { defaultMapData } from '@/utils/pixi/types'
 import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
 import PlayClient from '../Play'
+import { defaultSkin } from '@/utils/pixi/Player/skins'
 
 export default async function Play({ params, searchParams }: { params: { id: string }, searchParams: { shareId: string } }) {
 
@@ -24,7 +25,22 @@ export default async function Play({ params, searchParams }: { params: { id: str
     const realm = data[0] 
     const map_data = realm.map_data || defaultMapData
 
+    const profile = await supabase.from('profiles').select('skin').eq('id', user.id)
+    let skin = defaultSkin
+
+    if (profile.data && profile.data[0]) {
+        skin = profile.data[0].skin
+    }
+
     return (
-        <PlayClient mapData={map_data} username={user.user_metadata.full_name} access_token={session.access_token} realmId={params.id} uid={user.id} shareId={searchParams.shareId || ''}/>
+        <PlayClient 
+            mapData={map_data} 
+            username={user.user_metadata.full_name} 
+            access_token={session.access_token} 
+            realmId={params.id} 
+            uid={user.id} 
+            shareId={searchParams.shareId || ''} 
+            initialSkin={skin}
+        />
     )
 }

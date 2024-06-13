@@ -4,10 +4,11 @@ import { Point, Coordinate, AnimationState, Direction } from '../types'
 import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
 import { server } from '../server'
+import { defaultSkin } from './skins'
 
 export class Player {
 
-    private skin: string = '001'
+    public skin: string = defaultSkin
     private username: string = ''
 
     private animationState: AnimationState = 'idle_down'

@@ -11,13 +11,14 @@ type PlayProps = {
     realmId: string
     uid: string
     shareId: string
+    initialSkin: string
 }
 
-const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realmId, uid, shareId }) => {
+const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realmId, uid, shareId, initialSkin }) => {
 
     return (
         <div className='relative w-full h-screen flex flex-col'>
-            <PixiApp mapData={mapData} className='w-full grow sm:h-full sm:flex-grow-0' username={username} access_token={access_token} realmId={realmId} uid={uid} shareId={shareId}/>
+            <PixiApp mapData={mapData} className='w-full grow sm:h-full sm:flex-grow-0' username={username} access_token={access_token} realmId={realmId} uid={uid} shareId={shareId} initialSkin={initialSkin}/>
             <PlayNavbar />
         </div>
     )
