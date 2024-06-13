@@ -26,8 +26,8 @@ export class PlayApp extends App {
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
-        await this.spawnOtherPlayers()
         this.setUpSocketEvents()
+        this.spawnOtherPlayers()
     }
 
     private async loadAssets() {
