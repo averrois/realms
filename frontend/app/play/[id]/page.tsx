@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { defaultMapData } from '@/utils/pixi/types'
 import PixiApp from '../PixiApp'
 import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
+import PlayClient from '../Play'
 
 export default async function Play({ params, searchParams }: { params: { id: string }, searchParams: { shareId: string } }) {
 
@@ -25,8 +26,6 @@ export default async function Play({ params, searchParams }: { params: { id: str
     const map_data = realm.map_data || defaultMapData
 
     return (
-        <div className='relative w-full h-screen'>
-            <PixiApp mapData={map_data} className='absolute w-full h-full' username={user.user_metadata.full_name} access_token={session.access_token} realmId={params.id} uid={user.id} shareId={searchParams.shareId || ''}/>
-        </div>
+        <PlayClient mapData={map_data} username={user.user_metadata.full_name} access_token={session.access_token} realmId={params.id} uid={user.id} shareId={searchParams.shareId || ''}/>
     )
 }

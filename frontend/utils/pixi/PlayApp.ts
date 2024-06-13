@@ -3,6 +3,7 @@ import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
 import { server } from './server'
+import signal from '../signal'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -67,7 +68,7 @@ export class PlayApp extends App {
         this.app.stage.eventMode = 'static'
         this.setScale(this.scale)
         this.app.renderer.on('resize', this.resizeEvent)
-        this.clickMovement()
+        this.clickEvents()
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
         this.fadeOut()
@@ -131,14 +132,19 @@ export class PlayApp extends App {
         }
     }
 
-    private clickMovement = () => {
+    private clickEvents = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
             if (this.player.frozen) return  
 
             const clickPosition = e.getLocalPosition(this.app.stage)
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
-            this.player.moveToTile(x, y)
-            this.player.setMovementMode('mouse')
+
+            if (this.player.currentTilePosition.x === x && this.player.currentTilePosition.y === y) {
+                signal.emit('showSkinMenu')
+            } else {
+                this.player.moveToTile(x, y)
+                this.player.setMovementMode('mouse')
+            }
         })
     }
 
