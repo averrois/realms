@@ -72,7 +72,6 @@ export class PlayApp extends App {
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
         this.fadeOut()
-        this.setUpMouseStyles()
     }
 
     private spawnLocalPlayer = async () => {
@@ -138,25 +137,8 @@ export class PlayApp extends App {
 
             const clickPosition = e.getLocalPosition(this.app.stage)
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
-
-            if (this.player.currentTilePosition.x === x && this.player.currentTilePosition.y === y) {
-                signal.emit('showSkinMenu')
-            } else {
-                this.player.moveToTile(x, y)
-                this.player.setMovementMode('mouse')
-            }
-        })
-    }
-
-    private setUpMouseStyles = () => {
-        this.app.stage.on('pointermove', (e: PIXI.FederatedPointerEvent) => {
-            const clickPosition = e.getLocalPosition(this.app.stage)
-            const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
-            if (this.player.currentTilePosition.x === x && this.player.currentTilePosition.y === y) {
-                this.app.canvas.style.cursor = 'pointer'
-            } else {
-                this.app.canvas.style.cursor = 'default'
-            }
+            this.player.moveToTile(x, y)
+            this.player.setMovementMode('mouse')
         })
     }
 
