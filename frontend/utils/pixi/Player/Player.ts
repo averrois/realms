@@ -4,16 +4,18 @@ import { Point, Coordinate, AnimationState, Direction } from '../types'
 import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
 import { server } from '../server'
-import { defaultSkin } from './skins'
+import { defaultSkin, skins } from './skins'
 
 export class Player {
 
     public skin: string = defaultSkin
     private username: string = ''
 
+    public parent: PIXI.Container = new PIXI.Container()
+    private body: PIXI.AnimatedSprite | null = null
+
     private animationState: AnimationState = 'idle_down'
     private direction: Direction = 'down'
-    public parent: PIXI.Container = new PIXI.Container()
     private animationSpeed: number = 0.1
     private movementSpeed: number = 3.5
     public currentTilePosition: Point = { x: 0, y: 0 }
@@ -47,7 +49,20 @@ export class Player {
         const animatedSprite = new PIXI.AnimatedSprite(this.sheet.animations['idle_down'])
         animatedSprite.animationSpeed = this.animationSpeed
         animatedSprite.play()
-        this.parent.addChild(animatedSprite)
+        this.body = animatedSprite
+
+        if (!this.initialized) {
+            this.parent.addChild(animatedSprite)
+        }
+    }
+
+    public changeSkin = async (skin: string) => {
+        if (!skins.includes(skin)) return
+
+        this.skin = skin
+        await this.loadAnimations()
+        // refresh animations
+        this.changeAnimationState(this.animationState, true)
     }
 
     private addUsername() {
@@ -207,8 +222,8 @@ export class Player {
         return false
     }
 
-    public changeAnimationState = (state: AnimationState) => {
-        if (this.animationState === state) return
+    public changeAnimationState = (state: AnimationState, force: boolean = false) => {
+        if (this.animationState === state && !force) return
 
         this.animationState = state
         const animatedSprite = this.parent.children[0] as PIXI.AnimatedSprite

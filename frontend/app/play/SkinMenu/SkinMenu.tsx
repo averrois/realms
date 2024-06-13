@@ -13,7 +13,7 @@ type SkinMenuProps = {
 
 const SkinMenu:React.FC<SkinMenuProps> = () => {
 
-    const { modal } = useModal()
+    const { modal, setModal } = useModal()
 
     const [skinIndex, setSkinIndex] = useState<number>(skins.indexOf(defaultSkin))
 
@@ -36,6 +36,11 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
             signal.off('skin', onGotSkin)
         }
     }, [])
+
+    function onClickSwitch() {
+        signal.emit('switchSkin', skins[skinIndex])
+        setModal('None')
+    }
     
     return (
         <Modal open={modal === 'Skin'} closeOnOutsideClick>
@@ -45,7 +50,7 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                     <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
-                    <BasicButton className='font-bold'>
+                    <BasicButton className='font-bold' onClick={onClickSwitch}>
                         Switch
                     </BasicButton>
                     <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1' onClick={increment}>

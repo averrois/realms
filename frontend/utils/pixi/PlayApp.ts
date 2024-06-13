@@ -262,10 +262,15 @@ export class PlayApp extends App {
 
     private setUpSignalListeners = () => {
         signal.on('requestSkin', this.onRequestSkin)
+        signal.on('switchSkin', this.onSwitchSkin)
     }
 
     private onRequestSkin = () => {
         signal.emit('skin', this.player.skin)
+    }
+
+    private onSwitchSkin = (skin: string) => {
+        this.player.changeSkin(skin)
     }
 
     private setUpSocketEvents = () => {
@@ -288,6 +293,7 @@ export class PlayApp extends App {
         server.disconnect()
         PIXI.Ticker.shared.destroy()
         signal.off('requestSkin', this.onRequestSkin)
+        signal.off('switchSkin', this.onSwitchSkin)
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
 
