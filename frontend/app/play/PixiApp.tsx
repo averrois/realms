@@ -20,7 +20,7 @@ type PixiAppProps = {
 const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_token, realmId, uid, shareId, initialSkin }) => {
 
     const appRef = useRef<PlayApp | null>(null)
-    const { setModal, setLoadingText } = useModal()
+    const { setModal, setLoadingText, setFailedConnectionMessage } = useModal()
 
     useEffect(() => {
         const mount = async () => {
@@ -28,9 +28,10 @@ const PixiApp:React.FC<PixiAppProps> = ({ className, mapData, username, access_t
             appRef.current = app
             setModal('Loading')
             setLoadingText('Connecting to server...')
-            const connected = await server.connect(realmId, uid, shareId, access_token)
-            if (!connected) {
+            const { success, errorMessage } = await server.connect(realmId, uid, shareId, access_token)
+            if (!success) {
                 setModal('Failed To Connect')
+                setFailedConnectionMessage(errorMessage)
                 return
             }
 

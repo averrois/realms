@@ -26,6 +26,8 @@ type ModalContextType = {
     setRealmToDelete: (value: RealmToDelete) => void,
     loadingText: string,
     setLoadingText: (value: string) => void
+    failedConnectionMessage: string,
+    setFailedConnectionMessage: (value: string) => void
 }
 
 const ModalContext = createContext<ModalContextType>({
@@ -45,6 +47,8 @@ const ModalContext = createContext<ModalContextType>({
     setRealmToDelete: () => {},
     loadingText: '',
     setLoadingText: () => {},
+    failedConnectionMessage: '',
+    setFailedConnectionMessage: () => {}
 })
 
 type ModalProviderProps = {
@@ -63,9 +67,10 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
         id: ''
     })
     const [loadingText, setLoadingText] = useState<string>('')
+    const [failedConnectionMessage, setFailedConnectionMessage] = useState<string>('')
     const pathname = usePathname()
 
-    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText }
+    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage}
 
     useEffect(() => {
         if (modal !== 'None') {

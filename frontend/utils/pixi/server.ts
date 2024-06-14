@@ -1,6 +1,11 @@
 import io, { Socket } from 'socket.io-client'
 import { request } from '../backend/requests'
 
+type ConnectionResponse = {
+    success: boolean
+    errorMessage: string
+}
+
 const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
 class Server {
@@ -22,7 +27,7 @@ class Server {
         )
         this.access_token = access_token
 
-        return new Promise<boolean>((resolve, reject) => {
+        return new Promise<ConnectionResponse>((resolve, reject) => {
             this.socket.connect()
 
             this.socket.on('connect', () => {
@@ -35,16 +40,25 @@ class Server {
             })
 
             this.socket.on('joinedRealm', () => {
-                resolve(true)
+                resolve({
+                    success: true,
+                    errorMessage: ''
+                })
             })
 
-            this.socket.on('failedToJoinRoom', () => {
-                resolve(false)
+            this.socket.on('failedToJoinRoom', (reason: string) => {
+                resolve({
+                    success: false,
+                    errorMessage: reason
+                })
             })
 
             this.socket.on('connect_error', (err: any) => {
                 console.error('Connection error:', err)
-                resolve(false)
+                resolve({
+                    success: false,
+                    errorMessage: err.message
+                })
             })
         })
     }

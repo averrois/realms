@@ -11,29 +11,61 @@ function protectConnection(io: Server) {
         const uid = socket.handshake.query.uid as string
         if (!access_token || !uid) {
             // Reject the connection by calling next with an error.
-            const error = new Error("Invalid access token or uid")
+            const error = new Error("Invalid access token or uid.")
             return next(error)
         } else {
             // If clientId is provided, check if valid user
             const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
             if (error) {
-                return next(new Error("Invalid access token"))
+                return next(new Error("Invalid access token."))
             }
 
             // reject connection if the uid does not match the access token
             if (!user || user.user.id !== uid) {
-                return next(new Error("Invalid uid"))
+                return next(new Error("Invalid uid."))
             }
 
-            if (users.getUser(uid)) {
-                return next(new Error("User already connected"))
+            const session = sessionManager.getPlayerSession(uid)
+            // TODO: instead of returning error, kick the current user 
+            // have some function to sign out player WITHOUT regard to socket synching, just remove them from data
+            // disconnect them from socket manually on backend
+            // have them leave the room manually on backend
+            // have frontend detect they are disconnected and show a message
+            if (session) {
+                const player = session.getPlayer(uid)
+                const socketId = player.socketId
+                logOutPlayer(io, uid)
+
+                if (socketId) {
+                    io.to(socketId).emit('kicked', 'You have logged in from another location.')
+                    const socket = io.sockets.sockets.get(socketId)
+                    if (socket) {
+                        socket.disconnect(true)
+                    }
+                }
             }
 
             users.addUser(uid, user.user)
             next()
         }
     })
+}
+
+function logOutPlayer(io: Server, uid: string) {
+    const session = sessionManager.getPlayerSession(uid)
+    if (!session) return
+    const room = session.getPlayerRoom(uid)
+    const players = session.getPlayersInRoom(room)
+
+    for (const player of players) {
+        if (player.uid === uid) continue
+
+        io.to(player.socketId).emit('playerLeftRoom', uid)
+    }
+
+    sessionManager.logOutPlayer(uid)
+    users.removeUser(uid)
 }
 
 export function sockets(io: Server) {
@@ -70,19 +102,19 @@ export function sockets(io: Server) {
 
         socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
 
-            const rejectJoin = () => {
-                socket.emit('failedToJoinRoom')
+            const rejectJoin = (reason: string) => {
+                socket.emit('failedToJoinRoom', reason)
             }
 
             if (JoinRealm.safeParse(realmData).success === false) {
-                rejectJoin()
+                rejectJoin('Invalid request data.')
                 return
             }
 
             const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId)
 
             if (error || !data || data.length === 0) {
-                rejectJoin()
+                rejectJoin('Realm not found.')
                 return
             }
 
@@ -97,12 +129,15 @@ export function sockets(io: Server) {
 
                 const uid = socket.handshake.query.uid as string
                 const username = users.getUser(uid)!.user_metadata.full_name
+
                 const profile = await supabase.from('profiles').select('skin').eq('id', uid)
                 let skin = defaultSkin
                 if (profile.data && profile.data[0]) {
                     skin = profile.data[0].skin
                 }
+
                 await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
+
                 const session = sessionManager.getPlayerSession(uid)
                 const player = session.getPlayer(uid)
 
@@ -117,7 +152,7 @@ export function sockets(io: Server) {
 
             if (realm.privacy_level === 'discord') {
                 // TODO: Check if they are in discord 
-                rejectJoin()
+                rejectJoin('User is not in the Discord server.')
                 return
             } else if (realm.privacy_level === 'anyone') {
                 if (realm.share_id === realmData.shareId) {
@@ -126,15 +161,13 @@ export function sockets(io: Server) {
                 }
             }
 
-            rejectJoin()
+            rejectJoin('Unknown.')
         })
 
         // Handle a disconnection
         on('disconnect', ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
-            emit('playerLeftRoom', uid)
-            sessionManager.logOutPlayer(uid)
-            users.removeUser(uid)
+            logOutPlayer(io, uid)
         })
 
         on('movePlayer', ({ session, data }) => {  

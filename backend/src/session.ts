@@ -101,7 +101,6 @@ export class Session {
 
     public async addPlayer(socketId: string, uid: string, username: string, skin: string) {
         this.removePlayer(uid)
-
         const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id)
         let spawnIndex = 0
         let spawnX = 0
