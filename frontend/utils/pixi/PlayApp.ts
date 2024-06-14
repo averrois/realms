@@ -28,7 +28,7 @@ export class PlayApp extends App {
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
-        await this.spawnOtherPlayers()
+        await this.syncOtherPlayers()
     }
 
     private async loadAssets() {
@@ -36,7 +36,7 @@ export class PlayApp extends App {
         await PIXI.Assets.load('/fonts/nunito.ttf')
     }
 
-    private async spawnOtherPlayers() {
+    private async syncOtherPlayers() {
         const {data, error} = await server.getPlayersInRoom(this.currentRoomIndex)
         if (error) {
             console.error('Failed to get player positions in room:', error)
@@ -44,8 +44,17 @@ export class PlayApp extends App {
         }
 
         for (const player of data.players) {
-            if (player.uid === this.uid || player.uid in this.players) continue
-            await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
+            if (player.uid === this.uid) continue
+            if (player.uid in this.players) {
+                if (this.player.currentTilePosition.x !== player.x || this.player.currentTilePosition.y !== player.y) {
+                    this.players[player.uid].setPosition(player.x, player.y)
+                }
+                if (this.players[player.uid].skin !== player.skin) {
+                    await this.players[player.uid].changeSkin(player.skin)
+                }
+            } else {
+                await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
+            }
         }
 
         this.sortObjectsByY()
