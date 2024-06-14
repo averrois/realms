@@ -8,6 +8,7 @@ import TeleportModal from './TeleportModal'
 import DeleteRealmModal from './DeleteRealmModal'
 import FailedToConnectModal from './FailedToConnectModal'
 import SkinMenu from '@/app/play/SkinMenu/SkinMenu'
+import DisconnectedModal from './DisconnectedModal'
 
 const ModalParent:React.FC = () => {
     return (
@@ -20,6 +21,7 @@ const ModalParent:React.FC = () => {
             <DeleteRealmModal />
             <FailedToConnectModal />
             <SkinMenu />
+            <DisconnectedModal />
         </div>
     )
 }
