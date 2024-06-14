@@ -25,11 +25,9 @@ export class PlayApp extends App {
 
     override async loadRoom(index: number) {
         this.players = {}
-        this.removeSocketEvents()
         await super.loadRoom(index)
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
-        this.setUpSocketEvents()
         await this.spawnOtherPlayers()
     }
 
@@ -73,6 +71,7 @@ export class PlayApp extends App {
         this.setUpKeyboardEvents()
         this.setUpFadeOverlay()
         this.setUpSignalListeners()
+        this.setUpSocketEvents()
 
         this.fadeOut()
     }

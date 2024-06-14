@@ -90,7 +90,6 @@ export function sockets(io: Server) {
 
             const join = async () => {
                 socket.join(realmData.realmId)
-                socket.emit('joinedRealm')
 
                 if (!sessionManager.getSession(realmData.realmId)) {
                     sessionManager.createSession(realmData.realmId)
@@ -107,6 +106,7 @@ export function sockets(io: Server) {
                 const session = sessionManager.getPlayerSession(uid)
                 const player = session.getPlayer(uid)
 
+                socket.emit('joinedRealm')
                 emit('playerJoinedRoom', player)
             }
 
