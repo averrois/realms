@@ -261,7 +261,6 @@ export class PlayApp extends App {
 
     private onPlayerChangedSkin = (data: any) => {
         const player = this.players[data.uid]
-        console.log('skin change')
         if (player) {
             player.changeSkin(data.skin)
         }
