@@ -3,7 +3,7 @@ import { createContext, useContext, useState, ReactNode, FC, useEffect } from 'r
 import { usePathname } from 'next/navigation'
 import { defaultSkin } from '@/utils/pixi/Player/skins'
 
-type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect' | 'Skin'
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect' | 'Skin' | 'Disconnected'
 
 type RoomToDelete = {
     name: string,
@@ -28,6 +28,8 @@ type ModalContextType = {
     setLoadingText: (value: string) => void
     failedConnectionMessage: string,
     setFailedConnectionMessage: (value: string) => void
+    disconnectedMessage: string,
+    setDisconnectedMessage: (value: string) => void
 }
 
 const ModalContext = createContext<ModalContextType>({
@@ -48,7 +50,9 @@ const ModalContext = createContext<ModalContextType>({
     loadingText: '',
     setLoadingText: () => {},
     failedConnectionMessage: '',
-    setFailedConnectionMessage: () => {}
+    setFailedConnectionMessage: () => {},
+    disconnectedMessage: '',
+    setDisconnectedMessage: () => {},
 })
 
 type ModalProviderProps = {
@@ -68,9 +72,10 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     })
     const [loadingText, setLoadingText] = useState<string>('')
     const [failedConnectionMessage, setFailedConnectionMessage] = useState<string>('')
+    const [disconnectedMessage, setDisconnectedMessage] = useState<string>('')
     const pathname = usePathname()
 
-    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage}
+    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage, disconnectedMessage, setDisconnectedMessage}
 
     useEffect(() => {
         if (modal !== 'None') {

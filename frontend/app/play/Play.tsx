@@ -18,12 +18,12 @@ type PlayProps = {
 
 const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realmId, uid, shareId, initialSkin }) => {
 
-    const { setModal, setFailedConnectionMessage } = useModal()
+    const { setModal, setDisconnectedMessage } = useModal()
 
     useEffect(() => {
-        const onKicked = () => { 
-            setModal('Failed To Connect')
-            setFailedConnectionMessage('You have been kicked from the server.')
+        const onKicked = (message: string) => { 
+            setModal('Disconnected')
+            setDisconnectedMessage(message)
         }
 
         signal.on('kicked', onKicked)

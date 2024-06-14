@@ -293,8 +293,8 @@ export class PlayApp extends App {
         server.socket.emit('changedSkin', skin)
     }
 
-    private onKicked = () => {
-        signal.emit('kicked')
+    private onKicked = (message: string) => {
+        signal.emit('kicked', message)
     }
 
     private setUpSocketEvents = () => {
