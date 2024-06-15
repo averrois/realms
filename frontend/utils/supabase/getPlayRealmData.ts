@@ -14,13 +14,13 @@ export async function getPlayRealmData(accessToken: string, shareId: string) {
         return { data: null, error: userError }
     }
 
-    const { data, error } = await supabase.from('realms').select('map_data, privacy_level, owner_id').eq('share_id', shareId)
+    const { data, error } = await supabase.from('realms').select('map_data, privacy_level, owner_id').eq('share_id', shareId).single()
 
-    if (!data || !data[0] || error) {
+    if (!data || error) {
         return { data: null, error }
     }
 
-    const realm = data[0]
+    const realm = data
 
     // if we are the owner, always return the data
     if (realm.owner_id === user.user.id) {

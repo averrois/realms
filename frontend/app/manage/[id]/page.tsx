@@ -13,13 +13,13 @@ export default async function Manage({ params }: { params: { id: string } }) {
         return redirect('/signin')
     }
 
-    const { data, error } = await supabase.from('realms').select('id, name, owner_id, map_data, privacy_level, share_id').eq('id', params.id)
+    const { data, error } = await supabase.from('realms').select('id, name, owner_id, map_data, privacy_level, share_id').eq('id', params.id).single()
 
     // Show not found page if no data is returned
-    if (!data || !data[0]) {
+    if (!data) {
         return <NotFound />
     }
-    const realm = data[0]
+    const realm = data
 
     return (
         <div>

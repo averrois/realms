@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 type Realm = {
     id: string,
     name: string,
+    share_id?: string
 }
 
 type RealmsMenuProps = {
@@ -17,7 +18,7 @@ type RealmsMenuProps = {
 
 const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
 
-    const [selectedRealm, setSelectedRealm] = useState<string>('')
+    const [selectedRealm, setSelectedRealm] = useState<Realm | null>(null)
     const router = useRouter()
 
     useEffect(() => {
@@ -26,6 +27,14 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
         }
     }, [errorMessage])
 
+    function getLink() {
+        if (selectedRealm?.share_id) {
+            return `/play/${selectedRealm.id}?shareId=${selectedRealm.share_id}`
+        } else {
+            return `/play/${selectedRealm?.id}`
+        }
+    }
+
     return (
         <>
             {/* Mobile View */}
@@ -33,17 +42,17 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                 {realms.map((realm) => {
 
                     function selectRealm() {
-                        setSelectedRealm(realm.id)
+                        setSelectedRealm(realm)
                     }
 
                     return (
-                        <button key={realm.id} className={`w-full h-12 bg-quaternary pl-2 hover:bg-quaternaryhover cursor-pointer rounded-md border-4 border-transparent ${selectedRealm === realm.id ? 'border-white' : ''}`} onClick={selectRealm}>
+                        <button key={realm.id} className={`w-full h-12 bg-quaternary pl-2 hover:bg-quaternaryhover cursor-pointer rounded-md border-4 border-transparent ${selectedRealm?.id === realm.id ? 'border-white' : ''}`} onClick={selectRealm}>
                             <p className='text-white text-xl text-left'>{realm.name}</p>
                         </button>
                     )
                 })}
                 <div className='fixed bottom-0 w-full bg-primary grid place-items-center p-2'>
-                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === ''} onClick={() => router.push(`/play/${selectedRealm}`)}>
+                     <BasicButton className='w-[90%] h-12 text-xl' disabled={selectedRealm === null} onClick={() => router.push(getLink())}>
                         Join Realm
                     </BasicButton>
                 </div>
@@ -54,7 +63,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                 <div className='hidden sm:grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-8 w-full'>
                     {realms.map((realm) => {
                         return (
-                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id}/>
+                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id}/>
                         )
                     })}
                 </div>

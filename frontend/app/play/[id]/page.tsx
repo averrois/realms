@@ -6,6 +6,7 @@ import { defaultMapData } from '@/utils/pixi/types'
 import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
 import PlayClient from '../Play'
 import { defaultSkin } from '@/utils/pixi/Player/skins'
+import { updateVisitedRealms } from '@/utils/supabase/updateVisitedRealms'
 
 export default async function Play({ params, searchParams }: { params: { id: string }, searchParams: { shareId: string } }) {
 
@@ -17,19 +18,23 @@ export default async function Play({ params, searchParams }: { params: { id: str
         return redirect('/signin')
     }
 
-    const { data, error } = !searchParams.shareId ? await supabase.from('realms').select('map_data').eq('id', params.id) : await getPlayRealmData(session.access_token, searchParams.shareId)
+    const { data, error } = !searchParams.shareId ? await supabase.from('realms').select('map_data, owner_id').eq('id', params.id).single() : await getPlayRealmData(session.access_token, searchParams.shareId)
     // Show not found page if no data is returned
-    if (!data || !data[0]) {
+    if (!data) {
         return <NotFound />
     }
-    const realm = data[0] 
+    const realm = data
     const map_data = realm.map_data || defaultMapData
 
-    const profile = await supabase.from('profiles').select('skin').eq('id', user.id)
+    const profile = await supabase.from('profiles').select('skin').eq('id', user.id).single()
     let skin = defaultSkin
 
-    if (profile.data && profile.data[0]) {
-        skin = profile.data[0].skin
+    if (profile.data) {
+        skin = profile.data.skin
+    }
+
+    if (searchParams.shareId && realm.owner_id !== user.id) {
+        updateVisitedRealms(session.access_token, params.id, searchParams.shareId)
     }
 
     return (

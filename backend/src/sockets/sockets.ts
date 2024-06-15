@@ -82,14 +82,14 @@ export function sockets(io: Server) {
                 return
             }
 
-            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId)
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId).single()
 
-            if (error || !data || data.length === 0) {
+            if (error || !data) {
                 rejectJoin('Realm not found.')
                 return
             }
 
-            const realm = data[0]
+            const realm = data
 
             const join = async () => {
                 socket.join(realmData.realmId)
@@ -101,10 +101,10 @@ export function sockets(io: Server) {
                 const uid = socket.handshake.query.uid as string
                 const username = users.getUser(uid)!.user_metadata.full_name
 
-                const profile = await supabase.from('profiles').select('skin').eq('id', uid)
+                const profile = await supabase.from('profiles').select('skin').eq('id', uid).single()
                 let skin = defaultSkin
-                if (profile.data && profile.data[0]) {
-                    skin = profile.data[0].skin
+                if (profile.data) {
+                    skin = profile.data.skin
                 }
 
                 await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
@@ -128,6 +128,9 @@ export function sockets(io: Server) {
             } else if (realm.privacy_level === 'anyone') {
                 if (realm.share_id === realmData.shareId) {
                     join()
+                    return
+                } else {
+                    rejectJoin('The share link has been changed.')
                     return
                 }
             }

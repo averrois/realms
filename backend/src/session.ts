@@ -101,13 +101,13 @@ export class Session {
 
     public async addPlayer(socketId: string, uid: string, username: string, skin: string) {
         this.removePlayer(uid)
-        const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id)
+        const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id).single()
         let spawnIndex = 0
         let spawnX = 0
         let spawnY = 0
         // ensure that spawn point exists and that it is valid
-        if (data && data[0] && data[0].map_data && Spawnpoint.safeParse(data[0].map_data.spawnpoint).success) {
-            const mapData: RealmData = data[0].map_data
+        if (data && data.map_data && Spawnpoint.safeParse(data.map_data.spawnpoint).success) {
+            const mapData: RealmData = data.map_data
             spawnIndex = mapData.spawnpoint.roomIndex
             spawnX = mapData.spawnpoint.x
             spawnY = mapData.spawnpoint.y
