@@ -34,7 +34,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
     }
 
     if (searchParams.shareId && realm.owner_id !== user.id) {
-        updateVisitedRealms(session.access_token, params.id, searchParams.shareId)
+        updateVisitedRealms(session.access_token, searchParams.shareId)
     }
 
     return (

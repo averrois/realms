@@ -18,14 +18,12 @@ export async function getVisitedRealms(access_token: string) {
 
     const visitedRealms = []
     const realmsToRemove: string[] = []
-    for (const realm of profile.visited_realms) {
-        const [realmId, shareId] = realm.split(':')
-        const { data, error } = await supabase.from('realms').select('id, name, share_id').eq('id', realmId).single()
-        if (!data) continue
-        if (data.share_id === shareId) {
+    for (const shareId of profile.visited_realms) {
+        const { data, error } = await supabase.from('realms').select('id, name, share_id').eq('share_id', shareId).single()
+        if (data) {
             visitedRealms.push(data)
         } else {
-            realmsToRemove.push(realm)
+            realmsToRemove.push(shareId)
         }
     }
 
@@ -33,7 +31,7 @@ export async function getVisitedRealms(access_token: string) {
         await supabase
             .from('profiles')
             .update({ 
-                visited_realms: profile.visited_realms.filter((realm: string) => !realmsToRemove.includes(realm))
+                visited_realms: profile.visited_realms.filter((shareId: string) => !realmsToRemove.includes(shareId))
             })
             .eq('id', user.user.id)
     }
