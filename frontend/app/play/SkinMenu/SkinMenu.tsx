@@ -63,13 +63,13 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                 <p>{skinIndex + 1} / {skins.length}</p>
                 <AnimatedCharacter src={`/sprites/characters/Character_${skins[skinIndex]}.png`} className='w-48'/>
                 <div className='flex flex-row items-center justify-center gap-4 mb-12'>
-                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
+                    <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
                     <BasicButton className='font-bold' onClick={onClickSwitch}>
                         Switch
                     </BasicButton>
-                    <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
+                    <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
                         <ArrowFatRight className='h-12 w-12'/>
                     </button>
                 </div>

@@ -60,12 +60,12 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
     return (
         <div 
             onClick={onRoomClick} 
-            className={`${selectedRoomIndex === roomIndex ? 'bg-secondaryhover' : 'bg-secondaryhoverdark cursor-pointer'} hover:bg-secondaryhover w-full p-1 px-2 rounded-md flex flex-row items-center justify-between`} 
+            className={`${selectedRoomIndex === roomIndex ? 'bg-lightblue' : 'bg-darkblue cursor-pointer'} hover:bg-lightblue w-full p-1 px-2 rounded-md flex flex-row items-center justify-between`} 
         >
             <input type='text' value={rooms[roomIndex]} className={`${inputDisabled ? 'pointer-events-none' : ''} bg-transparent outline-none`} ref={inputRef} onChange={onInputChange}/>
             <div className='flex flex-row items-center gap-1'>
-                <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px]' onClick={onPencilClick}/>
-                <Trash className={`h-5 w-5 cursor-pointer hover:bg-secondaryhoverdark rounded-md p-[2px] ${rooms.length <= 1 ? 'hidden' : ''}`} onClick={onTrashClick}/>
+                <PencilSquareIcon className='h-5 w-5 cursor-pointer hover:bg-darkblue rounded-md p-[2px]' onClick={onPencilClick}/>
+                <Trash className={`h-5 w-5 cursor-pointer hover:bg-darkblue rounded-md p-[2px] ${rooms.length <= 1 ? 'hidden' : ''}`} onClick={onTrashClick}/>
             </div>
         </div>
     )

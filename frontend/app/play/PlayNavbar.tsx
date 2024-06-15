@@ -20,10 +20,10 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
     
     return (
         <div className='bg-secondary w-full sm:w-[600px] md:w-[750px] lg:w-[950px] h-14 sm:absolute sm:bottom-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-row items-center px-2 justify-between'>
-            <Link href='/app' className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 border-2 outline-none'>
+            <Link href='/app' className='aspect-square grid place-items-center rounded-lg p-1 outline-none bg-darkblue hover:bg-lightblue'>
                 <ArrowLeftEndOnRectangleIcon className='h-8 w-8'/>
             </Link>
-            <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 border-2 outline-none' onClick={onClickSkinButton}>
+            <button className='aspect-square grid place-items-center rounded-lg p-1 outline-none bg-darkblue hover:bg-lightblue' onClick={onClickSkinButton}>
                 <TShirt className='h-8 w-8'/>
             </button>
         </div>
