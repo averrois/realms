@@ -6,10 +6,11 @@ import Link from 'next/link'
 
 type DesktopRealmItemProps = {
     name: string,
-    id: string
+    id: string,
+    shareId?: string,
 }
 
-const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
+const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId }) => {
     
     const [showMenu, setShowMenu] = useState<boolean>(false)  
     const router = useRouter()
@@ -39,9 +40,17 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
         setModal('Delete Realm')
     }
 
+    function getLink() {
+        if (shareId) {
+            return `/play/${id}?shareId=${shareId}`
+        } else {
+            return `/play/${id}`
+        }
+    }
+
     return (
         <div className='relative select-none'>
-            <Link href={`/play/${id}`}>
+            <Link href={getLink()}>
                 <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
                     <img src='/pixel-screenshot.jpg' />
                     <div className='animate-pulse w-full h-full bg-secondary'/>
@@ -49,9 +58,11 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id }) => {
             </Link>
             <div className='mt-1 flex flex-row justify-between'>
                 <p>{name}</p>
-                <div ref={dotsRef}>
-                    <DotsThreeVertical className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={handleDotsClick}/>
-                </div>
+                {!shareId && (
+                    <div ref={dotsRef}>
+                        <DotsThreeVertical className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={handleDotsClick}/>
+                    </div>
+                )}
             </div>
             {showMenu && (
                 <div className='absolute w-36 h-24 rounded-lg bg-secondary right-0 flex flex-col z-10' ref={menuRef}>
