@@ -1,5 +1,5 @@
 import { Server } from 'socket.io'
-import { JoinRealm, OnEventCallback } from './socket-types'
+import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSkin } from './socket-types'
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
@@ -42,8 +42,11 @@ export function sockets(io: Server) {
     // Handle a connection
     io.on('connection', (socket) => {
 
-        function on(eventName: string, callback: OnEventCallback) {
+        function on(eventName: string, schema: z.ZodTypeAny, callback: OnEventCallback) {
             socket.on(eventName, (data: any) => {
+                const success = schema.safeParse(data).success
+                if (!success) return
+
                 const session = sessionManager.getPlayerSession(socket.handshake.query.uid as string)
                 if (!session) {
                     return
@@ -133,14 +136,14 @@ export function sockets(io: Server) {
         })
 
         // Handle a disconnection
-        on('disconnect', ({ session, data }) => {
+        on('disconnect', Disconnect, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
             emit('playerLeftRoom', uid)
             sessionManager.logOutPlayer(uid)
             users.removeUser(uid)
         })
 
-        on('movePlayer', ({ session, data }) => {  
+        on('movePlayer', MovePlayer, ({ session, data }) => {  
             const player = session.getPlayer(socket.handshake.query.uid as string)
             player.x = data.x
             player.y = data.y
@@ -151,7 +154,7 @@ export function sockets(io: Server) {
             })
         })  
 
-        on('teleport', ({ session, data }) => {
+        on('teleport', Teleport, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
             const player = session.getPlayer(uid)
             player.x = data.x
@@ -166,7 +169,7 @@ export function sockets(io: Server) {
             }
         })
 
-        on('changedSkin', ({ session, data }) => {
+        on('changedSkin', ChangedSkin, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
             const player = session.getPlayer(uid)
             player.skin = data
