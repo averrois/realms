@@ -60,8 +60,9 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
     return (
         <Modal open={modal === 'Skin'} closeOnOutsideClick>
             <div className='w-96 h-96 flex flex-col items-center justify-between pt-8'>
+                <p>{skinIndex + 1} / {skins.length}</p>
                 <AnimatedCharacter src={`/sprites/characters/Character_${skins[skinIndex]}.png`} className='w-48'/>
-                <div className='flex flex-row items-center justify-center gap-4 mb-16'>
+                <div className='flex flex-row items-center justify-center gap-4 mb-12'>
                     <button className='hover:bg-secondaryhover aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
