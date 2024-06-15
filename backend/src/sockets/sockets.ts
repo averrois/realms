@@ -26,46 +26,14 @@ function protectConnection(io: Server) {
                 return next(new Error("Invalid uid."))
             }
 
-            const session = sessionManager.getPlayerSession(uid)
-            // TODO: instead of returning error, kick the current user 
-            // have some function to sign out player WITHOUT regard to socket synching, just remove them from data
-            // disconnect them from socket manually on backend
-            // have them leave the room manually on backend
-            // have frontend detect they are disconnected and show a message
-            if (session) {
-                const player = session.getPlayer(uid)
-                const socketId = player.socketId
-                logOutPlayer(io, uid)
-
-                if (socketId) {
-                    io.to(socketId).emit('kicked', 'You have logged in from another location.')
-                    const socket = io.sockets.sockets.get(socketId)
-                    if (socket) {
-                        socket.disconnect(true)
-                    }
-                }
+            if (users.getUser(uid)) {
+                return next(new Error("User already connected."))
             }
 
             users.addUser(uid, user.user)
             next()
         }
     })
-}
-
-function logOutPlayer(io: Server, uid: string) {
-    const session = sessionManager.getPlayerSession(uid)
-    if (!session) return
-    const room = session.getPlayerRoom(uid)
-    const players = session.getPlayersInRoom(room)
-
-    for (const player of players) {
-        if (player.uid === uid) continue
-
-        io.to(player.socketId).emit('playerLeftRoom', uid)
-    }
-
-    sessionManager.logOutPlayer(uid)
-    users.removeUser(uid)
 }
 
 export function sockets(io: Server) {
@@ -167,7 +135,9 @@ export function sockets(io: Server) {
         // Handle a disconnection
         on('disconnect', ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
-            logOutPlayer(io, uid)
+            emit('playerLeftRoom', uid)
+            sessionManager.logOutPlayer(uid)
+            users.removeUser(uid)
         })
 
         on('movePlayer', ({ session, data }) => {  

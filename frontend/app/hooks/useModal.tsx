@@ -75,13 +75,21 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     const [disconnectedMessage, setDisconnectedMessage] = useState<string>('')
     const pathname = usePathname()
 
-    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage, disconnectedMessage, setDisconnectedMessage}
+    const value: ModalContextType = { modal, setModal: handleSetModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage, disconnectedMessage, setDisconnectedMessage}
 
     useEffect(() => {
         if (modal !== 'None') {
             setModal('None')   
         }
     }, [pathname])
+
+    function handleSetModal(value: Modal) {
+        if (modal === 'Disconnected' || modal === 'Failed To Connect') {
+            return
+        }
+
+        setModal(value)
+    }
 
     return (
         <ModalContext.Provider value={value}>

@@ -51,7 +51,6 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                 .update({ skin: newSkin })
                 .eq('id', user.id)
 
-        console.log(error)
         if (error) return
 
         signal.emit('switchSkin', newSkin)
