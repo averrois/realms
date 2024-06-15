@@ -13,7 +13,7 @@ const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-64 justify-between bg-secondaryhoverdark px-3 text-sm font-semibold text-white shadow-sm capitalize">
+        <Menu.Button className="inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize">
           {selectedItem}
           <ChevronDownIcon className="-mr-1 h-5 w-5 text-white" aria-hidden="true" />
         </Menu.Button>
@@ -33,7 +33,7 @@ const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem
                 <Menu.Item key={item}>
                     {() => (
                         <div
-                            className={'block px-3 text-sm capitalize cursor-pointer text-white bg-secondaryhoverdark hover:bg-secondaryhover'}
+                            className={'block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue'}
                             onClick={() => setSelectedItem(item)}
                         >
                             {item}

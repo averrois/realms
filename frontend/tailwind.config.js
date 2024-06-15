@@ -9,8 +9,8 @@ module.exports = {
       colors: {
         primary: "#0F0F0F",
         secondary: "#232D3F",
-        secondaryhoverdark: "#2e3b52",
-        secondaryhover: "#465b82",
+        darkblue: "#2e3b52",
+        lightblue: "#465b82",
         tertiary: "#005B41",
         quaternary: "#008170",
         quaternaryhover: "#029c87",

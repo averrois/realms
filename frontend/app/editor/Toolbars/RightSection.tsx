@@ -29,19 +29,19 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
         <div className='min-w-[420px] bg-secondary flex flex-col select-none'>
             <div className='flex flex-row h-10 px-2 pt-[4px]'>
                 <div 
-                    className={`grow bg-secondary hover:bg-secondaryhoverdark rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-secondaryhover' : ''}`}
+                    className={`grow bg-secondary hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-lightblue' : ''}`}
                     onClick={() => setTab('Tile')}
                 >
                     Tiles
                 </div>
                 <div 
-                    className={`grow bg-secondary hover:bg-secondaryhoverdark rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Special Tiles' ? 'pointer-events-none bg-secondaryhover' : ''}`}
+                    className={`grow bg-secondary hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Special Tiles' ? 'pointer-events-none bg-lightblue' : ''}`}
                     onClick={() => setTab('Special Tiles')}
                 >
                     Special Tiles
                 </div>
             </div>
-            <div className='bg-secondaryhover h-[4px]'/>
+            <div className='bg-lightblue h-[4px]'/>
         <div>
                 {tab === 'Tile' && (
                     <TileMenu 

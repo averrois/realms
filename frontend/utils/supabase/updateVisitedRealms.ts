@@ -7,8 +7,6 @@ export async function updateVisitedRealms(accessToken: string, shareId: string) 
         process.env.SERVICE_ROLE!,
     )
 
-    console.log('updating')
-
     // get user data
     const { data: user, error: userError } = await supabase.auth.getUser(accessToken)
     if (!user || !user.user) {
@@ -18,19 +16,16 @@ export async function updateVisitedRealms(accessToken: string, shareId: string) 
     // get profile
     const { data: profile, error: profileError } = await supabase.from('profiles').select('visited_realms').eq('id', user.user.id).single()
     if (!profile) {
-        console.log('no profile')
         return
     }
 
     const visitedRealms = profile.visited_realms || []
     if (visitedRealms.includes(shareId)) {
-        console.log('already saved')
         return
     }
 
     visitedRealms.push(shareId)
 
-    console.log('inserting')
     // update profile with new visited realms
     await supabase
         .from('profiles')

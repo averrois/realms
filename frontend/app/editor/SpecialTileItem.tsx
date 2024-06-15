@@ -26,7 +26,7 @@ const SpecialTileItem:React.FC<SpecialTileItemProps> = ({ children, iconColor, t
     }
 
     return (
-        <div className={`${selected ? 'bg-secondaryhover' : ''} w-full hover:bg-secondaryhover cursor-pointer`} onClick={onClick}>
+        <div className={`${selected ? 'bg-lightblue' : ''} w-full hover:bg-lightblue cursor-pointer`} onClick={onClick}>
             <div className='flex flex-row items-center gap-4 p-8 h-24 w-[400px]'>
                 <div className={`${getColorClassName()} rounded-md`}>
                     {children}

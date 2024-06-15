@@ -66,10 +66,10 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId })
             </div>
             {showMenu && (
                 <div className='absolute w-36 h-24 rounded-lg bg-secondary right-0 flex flex-col z-10' ref={menuRef}>
-                    <button className='grow w-full hover:bg-secondaryhover rounded-t-lg text-left pl-4' onClick={() => router.push(`/editor/${id}`)}>
+                    <button className='grow w-full hover:bg-lightblue rounded-t-lg text-left pl-4' onClick={() => router.push(`/editor/${id}`)}>
                         Edit Map
                     </button>
-                    <button className='grow w-full hover:bg-secondaryhover text-left pl-4' onClick={() => router.push(`/manage/${id}`)}>Manage</button>
+                    <button className='grow w-full hover:bg-lightblue text-left pl-4' onClick={() => router.push(`/manage/${id}`)}>Manage</button>
                     <button className='grow w-full hover:bg-red-500 rounded-b-lg text-left pl-4' onClick={handleDelete}>Delete</button>
                 </div>
             )}
