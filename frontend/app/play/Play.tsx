@@ -3,9 +3,9 @@ import React, { useEffect } from 'react'
 import PixiApp from './PixiApp'
 import { RealmData } from '@/utils/pixi/types'
 import PlayNavbar from './PlayNavbar'
-import signal from '@/utils/signal'
 import { useModal } from '../hooks/useModal'
 import { server } from '@/utils/pixi/server'
+import signal from '@/utils/signal'
 
 type PlayProps = {
     mapData: RealmData
@@ -19,18 +19,25 @@ type PlayProps = {
 
 const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realmId, uid, shareId, initialSkin }) => {
 
-    const { setModal, setDisconnectedMessage } = useModal()
+    const { setErrorModal, setDisconnectedMessage } = useModal()
 
     useEffect(() => {
         const onKicked = (message: string) => { 
-            setModal('Disconnected')
+            setErrorModal('Disconnected')
             setDisconnectedMessage(message)
         }
 
+        const onDisconnect = () => {
+            setErrorModal('Disconnected')
+            setDisconnectedMessage('You have been disconnected from the server.')
+        }
+
         server.socket.on('kicked', onKicked)
+        signal.on('disconnect', onDisconnect)
 
         return () => {
             server.socket.off('kicked', onKicked)
+            signal.off('disconnect', onDisconnect)
         }
     }, [])
 

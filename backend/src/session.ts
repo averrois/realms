@@ -59,6 +59,7 @@ export type RoomData = { [key: number]: Player[] }
 export class SessionManager {
     private sessions: { [key: string]: Session } = {}
     private playerIdToRealmId: { [key: string]: string } = {}
+    private socketIdToPlayerId: { [key: string]: string } = {}
 
     public createSession(id: string): void {
         const realm = new Session(id)
@@ -78,6 +79,7 @@ export class SessionManager {
     public async addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
         await this.sessions[realmId].addPlayer(socketId, uid, username, skin)
         this.playerIdToRealmId[uid] = realmId
+        this.socketIdToPlayerId[socketId] = uid
     }
 
     public logOutPlayer(uid: string) {
@@ -85,8 +87,18 @@ export class SessionManager {
         // If the player is not in a realm, do nothing
         if (!realmId) return
 
-        this.sessions[realmId].removePlayer(uid)
+        const player = this.sessions[realmId].getPlayer(uid)
+        delete this.socketIdToPlayerId[player.socketId]
         delete this.playerIdToRealmId[uid]
+        this.sessions[realmId].removePlayer(uid)
+    }
+
+    public logOutBySocketId(socketId: string) {
+        const uid = this.socketIdToPlayerId[socketId]
+        if (!uid) return false
+
+        this.logOutPlayer(uid)
+        return true
     }
 }
 

@@ -8,14 +8,14 @@ type FailedToConnectModalProps = {
 
 const FailedToConnectModal:React.FC<FailedToConnectModalProps> = () => {
     
-    const { modal, failedConnectionMessage } = useModal()
+    const { errorModal, failedConnectionMessage } = useModal()
 
     const onRetry = () => {
         window.location.reload()
     }
 
     return (
-        <Modal open={modal === 'Failed To Connect'}>
+        <Modal open={errorModal === 'Failed To Connect'}>
             <div className='flex flex-col items-center gap-2 p-4 bg-secondary'>
                 <h1 className='text-red-500'>Failed to connect to server.</h1>
                 <h1 className='text-red-500'>{failedConnectionMessage}</h1>

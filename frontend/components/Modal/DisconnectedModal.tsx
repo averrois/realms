@@ -9,10 +9,10 @@ type DisconnectedModalProps = {
 
 const DisconnectedModal:React.FC<DisconnectedModalProps> = () => {
     
-    const { modal, disconnectedMessage } = useModal()
+    const { errorModal, disconnectedMessage } = useModal()
 
     return (
-        <Modal open={modal === 'Disconnected'}>
+        <Modal open={errorModal === 'Disconnected'}>
             <div className='flex flex-col items-center gap-2 p-4 bg-secondary'>
                 <h1 className='text-red-500'>Failed to connect to server.</h1>
                 <h1 className='text-red-500'>{disconnectedMessage}</h1>

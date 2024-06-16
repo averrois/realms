@@ -9,18 +9,26 @@ import DeleteRealmModal from './DeleteRealmModal'
 import FailedToConnectModal from './FailedToConnectModal'
 import SkinMenu from '@/app/play/SkinMenu/SkinMenu'
 import DisconnectedModal from './DisconnectedModal'
+import { useModal } from '@/app/hooks/useModal'
 
 const ModalParent:React.FC = () => {
+
+    const { errorModal } = useModal()
+
     return (
         <div>
-            <CreateRealmModal />
-            <AccountDropdown />
-            <LoadingModal />
-            <DeleteRoomModal />
-            <TeleportModal />
-            <DeleteRealmModal />
+            {errorModal === 'None' && (
+                <>
+                    <CreateRealmModal />
+                    <AccountDropdown />
+                    <LoadingModal />
+                    <DeleteRoomModal />
+                    <TeleportModal />
+                    <DeleteRealmModal />
+                    <SkinMenu />
+                </>
+            )}
             <FailedToConnectModal />
-            <SkinMenu />
             <DisconnectedModal />
         </div>
     )

@@ -1,9 +1,10 @@
 'use client'
 import { createContext, useContext, useState, ReactNode, FC, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { defaultSkin } from '@/utils/pixi/Player/skins'
 
-type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Failed To Connect' | 'Skin' | 'Disconnected'
+type Modal = 'None' | 'Create Realm' | 'Account Dropdown' | 'Loading' | 'Delete Room' | 'Teleport' | 'Delete Realm' | 'Skin' 
+
+type ErrorModal = 'None' | 'Failed To Connect' | 'Disconnected'
 
 type RoomToDelete = {
     name: string,
@@ -30,6 +31,8 @@ type ModalContextType = {
     setFailedConnectionMessage: (value: string) => void
     disconnectedMessage: string,
     setDisconnectedMessage: (value: string) => void
+    errorModal: ErrorModal,
+    setErrorModal: (value: ErrorModal) => void
 }
 
 const ModalContext = createContext<ModalContextType>({
@@ -53,6 +56,8 @@ const ModalContext = createContext<ModalContextType>({
     setFailedConnectionMessage: () => {},
     disconnectedMessage: '',
     setDisconnectedMessage: () => {},
+    errorModal: 'None',
+    setErrorModal: () => {}
 })
 
 type ModalProviderProps = {
@@ -73,13 +78,34 @@ export const ModalProvider: FC<ModalProviderProps> = ({ children }) => {
     const [loadingText, setLoadingText] = useState<string>('')
     const [failedConnectionMessage, setFailedConnectionMessage] = useState<string>('')
     const [disconnectedMessage, setDisconnectedMessage] = useState<string>('')
+    const [errorModal, setErrorModal] = useState<ErrorModal>('None')
     const pathname = usePathname()
 
-    const value: ModalContextType = { modal, setModal, roomToDelete, setRoomToDelete, roomList, setRoomList, realmToDelete, setRealmToDelete, loadingText, setLoadingText, failedConnectionMessage, setFailedConnectionMessage, disconnectedMessage, setDisconnectedMessage}
+    const value: ModalContextType = { 
+        modal, 
+        setModal, 
+        roomToDelete, 
+        setRoomToDelete, 
+        roomList, setRoomList, 
+        realmToDelete, 
+        setRealmToDelete, 
+        loadingText, 
+        setLoadingText, 
+        failedConnectionMessage, 
+        setFailedConnectionMessage, 
+        disconnectedMessage, 
+        setDisconnectedMessage,
+        errorModal,
+        setErrorModal,
+    }
 
     useEffect(() => {
         if (modal !== 'None') {
             setModal('None')   
+        }
+
+        if (errorModal !== 'None') {
+            setErrorModal('None')
         }
     }, [pathname])
 
