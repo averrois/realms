@@ -5,6 +5,8 @@ import { supabase } from '../supabase'
 import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 
+const joiningInProgress = new Set<string>()
+
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
         const access_token = socket.handshake.query.access_token as string
@@ -24,10 +26,6 @@ function protectConnection(io: Server) {
             // reject connection if the uid does not match the access token
             if (!user || user.user.id !== uid) {
                 return next(new Error("Invalid uid."))
-            }
-
-            if (users.getUser(uid)) {
-                return next(new Error("User already connected."))
             }
 
             users.addUser(uid, user.user)
@@ -71,35 +69,55 @@ export function sockets(io: Server) {
             }
         }
 
-        socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
+        function kickPlayer(uid: string, reason: string) {
+            const session = sessionManager.getPlayerSession(uid)
+            const room = session.getPlayerRoom(uid)
+            const players = session.getPlayersInRoom(room)
 
+            for (const player of players) {
+                if (player.uid === uid) {
+                    io.to(player.socketId).emit('kicked', reason)
+                } else {
+                    io.to(player.socketId).emit('playerLeftRoom', uid)
+                }
+            }
+            // player is already in session, kick them
+            sessionManager.logOutPlayer(uid)
+        }
+
+        socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
             const rejectJoin = (reason: string) => {
                 socket.emit('failedToJoinRoom', reason)
+                joiningInProgress.delete(socket.handshake.query.uid as string)
             }
 
             if (JoinRealm.safeParse(realmData).success === false) {
-                rejectJoin('Invalid request data.')
-                return
+                return rejectJoin('Invalid request data.')
             }
+
+            if (joiningInProgress.has(socket.handshake.query.uid as string)) {
+                rejectJoin('Already joining a realm.')
+            }
+            joiningInProgress.add(socket.handshake.query.uid as string)
 
             const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId).single()
 
             if (error || !data) {
-                rejectJoin('Realm not found.')
-                return
+                return rejectJoin('Realm not found.')
             }
 
             const realm = data
 
             const join = async () => {
-                socket.join(realmData.realmId)
-
                 if (!sessionManager.getSession(realmData.realmId)) {
                     sessionManager.createSession(realmData.realmId)
                 }
 
                 const uid = socket.handshake.query.uid as string
-                const username = users.getUser(uid)!.user_metadata.full_name
+                const currentSession = sessionManager.getPlayerSession(uid)
+                if (currentSession) {
+                    kickPlayer(uid, 'You have logged in from another location.')
+                }
 
                 const profile = await supabase.from('profiles').select('skin').eq('id', uid).single()
                 let skin = defaultSkin
@@ -107,43 +125,43 @@ export function sockets(io: Server) {
                     skin = profile.data.skin
                 }
 
+                const username = users.getUser(uid)!.user_metadata.full_name
                 await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
+                const newSession = sessionManager.getPlayerSession(uid)
+                const player = newSession.getPlayer(uid)   
 
-                const session = sessionManager.getPlayerSession(uid)
-                const player = session.getPlayer(uid)
-
+                socket.join(realmData.realmId)
                 socket.emit('joinedRealm')
                 emit('playerJoinedRoom', player)
+                joiningInProgress.delete(uid)
             }
 
             if (realm.owner_id === socket.handshake.query.uid) {
-                join()
-                return
+                return join()
             }
 
             if (realm.privacy_level === 'discord') {
                 // TODO: Check if they are in discord 
-                rejectJoin('User is not in the Discord server.')
-                return
+                return rejectJoin('User is not in the Discord server.')
             } else if (realm.privacy_level === 'anyone') {
                 if (realm.share_id === realmData.shareId) {
-                    join()
-                    return
+                    return join()
                 } else {
-                    rejectJoin('The share link has been changed.')
-                    return
+                    return rejectJoin('The share link has been changed.')
                 }
             }
 
-            rejectJoin('Unknown.')
+           return rejectJoin('Unknown.')
         })
 
         // Handle a disconnection
         on('disconnect', Disconnect, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
-            emit('playerLeftRoom', uid)
-            sessionManager.logOutPlayer(uid)
-            users.removeUser(uid)
+            const success = sessionManager.logOutBySocketId(socket.id)
+            if (success) {
+                emit('playerLeftRoom', uid)
+                users.removeUser(uid)
+            }
         })
 
         on('movePlayer', MovePlayer, ({ session, data }) => {  
