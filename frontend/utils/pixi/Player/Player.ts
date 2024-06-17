@@ -18,6 +18,7 @@ export class Player {
 
     public parent: PIXI.Container = new PIXI.Container()
     private textMessage: PIXI.Text = new PIXI.Text({})
+    private textTimeout: NodeJS.Timeout | null = null
 
     private animationState: AnimationState = 'idle_down'
     private direction: Direction = 'down'
@@ -85,6 +86,10 @@ export class Player {
     }
 
     public setMessage(message: string) {
+        if (this.textTimeout) {
+            clearTimeout(this.textTimeout)
+        }
+
         if (this.textMessage) {
             this.parent.removeChild(this.textMessage)
         }
@@ -98,17 +103,17 @@ export class Player {
                 fontSize: 128,
                 fill: 0xFFFFFF,
                 wordWrap: true,
-                wordWrapWidth: 200,
+                wordWrapWidth: 3000,
                 align: 'center'
             }
         })
         text.anchor.set(0.5)
         text.scale.set(0.07)
-        text.y = -48
+        text.y = -text.height - 32
         this.parent.addChild(text)
         this.textMessage = text
 
-        setTimeout(() => {
+        this.textTimeout = setTimeout(() => {
             if (this.textMessage) {
                 this.parent.removeChild(this.textMessage)
             }
