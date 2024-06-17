@@ -52,6 +52,7 @@ const Editor:React.FC<EditorProps> = ({ realmData }) => {
         if (gameLoaded === false) return
 
         setSpecialTile(specialTile)
+        setSelectedTile({ name: '', palette: selectedPalette })
         setTool('Tile')
         signal.emit('selectSpecialTile', specialTile)
     }
