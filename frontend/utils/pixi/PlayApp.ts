@@ -16,6 +16,7 @@ export class PlayApp extends App {
     private fadeDuration: number = 0.5
     private uid: string = ''
     private players: { [key: string]: Player } = {}
+    private disableInput: boolean = false
 
     constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin) {
         super(realmData)
@@ -144,7 +145,7 @@ export class PlayApp extends App {
 
     private clickEvents = () => {
         this.app.stage.on('pointerdown', (e: PIXI.FederatedPointerEvent) => {
-            if (this.player.frozen) return  
+            if (this.player.frozen || this.disableInput) return  
 
             const clickPosition = e.getLocalPosition(this.app.stage)
             const { x, y } = this.convertScreenToTileCoordinates(clickPosition.x, clickPosition.y)
@@ -159,7 +160,7 @@ export class PlayApp extends App {
     }
 
     private keydown = (event: KeyboardEvent) => {
-        if (this.keysDown.includes(event.key)) return
+        if (this.keysDown.includes(event.key) || this.disableInput) return
         this.player.keydown(event)
         this.keysDown.push(event.key)
     }
@@ -277,11 +278,13 @@ export class PlayApp extends App {
     private setUpSignalListeners = () => {
         signal.on('requestSkin', this.onRequestSkin)
         signal.on('switchSkin', this.onSwitchSkin)
+        signal.on('disableInput', this.onDisableInput)
     }
 
     private removeSignalListeners = () => {
         signal.off('requestSkin', this.onRequestSkin)
         signal.off('switchSkin', this.onSwitchSkin)
+        signal.off('disableInput', this.onDisableInput)
     }
 
     private onRequestSkin = () => {
@@ -291,6 +294,11 @@ export class PlayApp extends App {
     private onSwitchSkin = (skin: string) => {
         this.player.changeSkin(skin)
         server.socket.emit('changedSkin', skin)
+    }
+
+    private onDisableInput = (disable: boolean) => {
+        this.disableInput = disable
+        this.keysDown = []
     }
 
     private onKicked = () => {
