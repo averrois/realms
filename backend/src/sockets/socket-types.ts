@@ -21,4 +21,6 @@ export const Teleport = z.object({
 
 export const ChangedSkin = z.string()
 
+export const NewMessage = z.string()
+
 export type OnEventCallback = (args: { session: Session, data?: any }) => void

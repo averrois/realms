@@ -1,5 +1,5 @@
 import { Server } from 'socket.io'
-import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSkin } from './socket-types'
+import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSkin, NewMessage } from './socket-types'
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
@@ -195,6 +195,11 @@ export function sockets(io: Server) {
             const player = session.getPlayer(uid)
             player.skin = data
             emit('playerChangedSkin', { uid, skin: player.skin })
+        })
+
+        on('sendMessage', NewMessage, ({ session, data }) => {
+            const uid = socket.handshake.query.uid as string
+            emit('receiveMessage', { uid, message: data })
         })
     })
 }

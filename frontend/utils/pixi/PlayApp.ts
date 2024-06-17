@@ -46,19 +46,23 @@ export class PlayApp extends App {
 
         for (const player of data.players) {
             if (player.uid === this.uid) continue
-            if (player.uid in this.players) {
-                if (this.player.currentTilePosition.x !== player.x || this.player.currentTilePosition.y !== player.y) {
-                    this.players[player.uid].setPosition(player.x, player.y)
-                }
-                if (this.players[player.uid].skin !== player.skin) {
-                    await this.players[player.uid].changeSkin(player.skin)
-                }
-            } else {
-                await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
-            }
+            this.updatePlayer(player.uid, player)
         }
 
         this.sortObjectsByY()
+    }
+
+    private async updatePlayer(uid: string, player: any) {
+        if (uid in this.players) {
+            if (this.players[uid].skin !== player.skin) {
+                await this.players[uid].changeSkin(player.skin)
+            }
+            if (this.players[uid].currentTilePosition.x !== player.x || this.players[uid].currentTilePosition.y !== player.y) {
+                this.players[uid].setPosition(player.x, player.y)
+            }
+        } else {
+            await this.spawnPlayer(player.uid, player.skin, player.username, player.x, player.y)
+        }
     }
 
     private async spawnPlayer(uid: string, skin: string, username: string, x: number, y: number) {
@@ -203,7 +207,6 @@ export class PlayApp extends App {
         return this.realmData.rooms[this.currentRoomIndex].tilemap[tile]?.teleporter
     }
 
-
     private fadeIn = () => {
         PIXI.Ticker.shared.remove(this.fadeOutTicker)
         this.fadeOverlay.alpha = 0
@@ -249,7 +252,7 @@ export class PlayApp extends App {
     }
 
     private onPlayerJoinedRoom = (playerData: any) => {
-        this.spawnPlayer(playerData.uid, playerData.skin, playerData.username, playerData.x, playerData.y)
+        this.updatePlayer(playerData.uid, playerData)
     }
 
     private onPlayerMoved = (data: any) => {
@@ -279,12 +282,14 @@ export class PlayApp extends App {
         signal.on('requestSkin', this.onRequestSkin)
         signal.on('switchSkin', this.onSwitchSkin)
         signal.on('disableInput', this.onDisableInput)
+        signal.on('message', this.onMessage)
     }
 
     private removeSignalListeners = () => {
         signal.off('requestSkin', this.onRequestSkin)
         signal.off('switchSkin', this.onSwitchSkin)
         signal.off('disableInput', this.onDisableInput)
+        signal.off('message', this.onMessage)
     }
 
     private onRequestSkin = () => {
@@ -309,6 +314,18 @@ export class PlayApp extends App {
         this.removeEvents()
     }
 
+    private onMessage = (message: string) => {
+        this.player.setMessage(message)
+        server.socket.emit('sendMessage', message)
+    }
+
+    private onReceiveMessage = (data: any) => {
+        const player = this.players[data.uid]
+        if (player) {
+            player.setMessage(data.message)
+        }
+    }
+
     private setUpSocketEvents = () => {
         server.socket.on('playerLeftRoom', this.onPlayerLeftRoom)
         server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
@@ -317,6 +334,7 @@ export class PlayApp extends App {
         server.socket.on('playerChangedSkin', this.onPlayerChangedSkin)
         server.socket.on('kicked', this.onKicked)
         server.socket.on('disconnect', this.onDisconnect)
+        server.socket.on('receiveMessage', this.onReceiveMessage)
     }
 
     private removeSocketEvents = () => {
@@ -327,6 +345,7 @@ export class PlayApp extends App {
         server.socket.off('playerChangedSkin', this.onPlayerChangedSkin)
         server.socket.off('kicked', this.onKicked)
         server.socket.off('disconnect', this.onDisconnect)
+        server.socket.off('receiveMessage', this.onReceiveMessage)
     }
 
     private removeEvents = () => {

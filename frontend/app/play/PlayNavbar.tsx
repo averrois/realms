@@ -32,6 +32,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
         e.preventDefault()
         // unfocus the input
         e.currentTarget.querySelector('input')?.blur()
+        signal.emit('message', input)
         setInput('')
     }
 
