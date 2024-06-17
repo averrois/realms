@@ -435,14 +435,16 @@ export class EditorApp extends App {
                 // cannot place a tile with collider on top of another collider
                 if (this.collidersFromSpritesMap[key] === true) return true
 
-                if (
-                    this.realmData.rooms[this.currentRoomIndex].tilemap[key]?.teleporter?.x === colliderCoordinates.x && 
-                    this.realmData.rooms[this.currentRoomIndex].tilemap[key]?.teleporter?.y === colliderCoordinates.y) 
-                return true
+                if (this.isTeleporterAtPosition(colliderCoordinates.x, colliderCoordinates.y)) return true
 
                 if (this.realmData.spawnpoint.x === colliderCoordinates.x && this.realmData.spawnpoint.y === colliderCoordinates.y) return true
         }
         return false
+    }
+
+    private isTeleporterAtPosition = (x: number, y: number) => {
+        const key = `${x}, ${y}` as TilePoint
+        return this.realmData.rooms[this.currentRoomIndex].tilemap[key]?.teleporter
     }
 
     private rectangleEraserTool = () => {
@@ -640,7 +642,6 @@ export class EditorApp extends App {
             ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
             impassable: false,
             teleporter: undefined
-            // TODO: remove all other kinds of gizmos
         }
         this.updateRealmData(newRealmData)
     }
