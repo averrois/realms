@@ -94,7 +94,7 @@ export class Player {
             this.parent.removeChild(this.textMessage)
         }
 
-        // message = truncate(message, 100)
+        message = truncate(message, 300)
 
         const text = new PIXI.Text({
             text: message,

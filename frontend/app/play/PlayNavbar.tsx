@@ -55,6 +55,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
                     onBlur={onBlur} 
                     value={input} 
                     onChange={onChange}
+                    maxLength={300}
                 />
                 <button className='w-10 h-10 rounded-full bg-darkblue grid place-items-center hover:bg-lightblue border-2 border-white'>
                     <PaperPlaneRight className='w-6 h-6'/>

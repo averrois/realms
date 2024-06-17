@@ -205,6 +205,9 @@ export function sockets(io: Server) {
         })
 
         on('sendMessage', NewMessage, ({ session, data }) => {
+            // cannot exceed 300 characters
+            if (data.length > 300) return
+
             const uid = socket.handshake.query.uid as string
             emit('receiveMessage', { uid, message: data })
         })
