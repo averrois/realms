@@ -293,12 +293,22 @@ export class PlayApp extends App {
         server.socket.emit('changedSkin', skin)
     }
 
+    private onKicked = () => {
+        this.removeEvents()
+    }
+
+    private onDisconnect = () => {
+        this.removeEvents()
+    }
+
     private setUpSocketEvents = () => {
         server.socket.on('playerLeftRoom', this.onPlayerLeftRoom)
         server.socket.on('playerJoinedRoom', this.onPlayerJoinedRoom)
         server.socket.on('playerMoved', this.onPlayerMoved)
         server.socket.on('playerTeleported', this.onPlayerTeleported)
         server.socket.on('playerChangedSkin', this.onPlayerChangedSkin)
+        server.socket.on('kicked', this.onKicked)
+        server.socket.on('disconnect', this.onDisconnect)
     }
 
     private removeSocketEvents = () => {
@@ -307,9 +317,11 @@ export class PlayApp extends App {
         server.socket.off('playerMoved', this.onPlayerMoved)
         server.socket.off('playerTeleported', this.onPlayerTeleported)
         server.socket.off('playerChangedSkin', this.onPlayerChangedSkin)
+        server.socket.off('kicked', this.onKicked)
+        server.socket.off('disconnect', this.onDisconnect)
     }
 
-    public destroy() {
+    private removeEvents = () => {
         this.removeSocketEvents()
         this.destroyPlayers()
         server.disconnect()
@@ -319,7 +331,10 @@ export class PlayApp extends App {
         this.removeSignalListeners()
         document.removeEventListener('keydown', this.keydown)
         document.removeEventListener('keyup', this.keyup)
+    }
 
+    public destroy() {
+        this.removeEvents()
         super.destroy()
     }
 }
