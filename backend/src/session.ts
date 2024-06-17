@@ -93,6 +93,10 @@ export class SessionManager {
         this.sessions[realmId].removePlayer(uid)
     }
 
+    public getSocketIdsInRoom(realmId: string, roomIndex: number): string[] {
+        return this.sessions[realmId].getPlayersInRoom(roomIndex).map(player => player.socketId)
+    }
+
     public logOutBySocketId(socketId: string) {
         const uid = this.socketIdToPlayerId[socketId]
         if (!uid) return false
@@ -105,7 +109,7 @@ export class SessionManager {
 export class Session {
     private roomData: { [key: number]: Set<string> } = {}
     private players: { [key: string]: Player } = {}
-    private id: string
+    public id: string
 
     constructor(id: string) {
         this.id = id

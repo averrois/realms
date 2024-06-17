@@ -99,6 +99,7 @@ export class Player {
                 fill: 0xFFFFFF,
                 wordWrap: true,
                 wordWrapWidth: 200,
+                align: 'center'
             }
         })
         text.anchor.set(0.5)

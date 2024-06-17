@@ -69,6 +69,12 @@ export function sockets(io: Server) {
             }
         }
 
+        function emitToSocketIds(socketIds: string[], eventName: string, data: any) {
+            for (const socketId of socketIds) {
+                io.to(socketId).emit(eventName, data)
+            }
+        }
+
         function kickPlayer(uid: string, reason: string) {
             const session = sessionManager.getPlayerSession(uid)
             const room = session.getPlayerRoom(uid)
@@ -157,9 +163,10 @@ export function sockets(io: Server) {
         // Handle a disconnection
         on('disconnect', Disconnect, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
+            const socketIds = sessionManager.getSocketIdsInRoom(session.id, session.getPlayerRoom(uid))
             const success = sessionManager.logOutBySocketId(socket.id)
             if (success) {
-                emit('playerLeftRoom', uid)
+                emitToSocketIds(socketIds, 'playerLeftRoom', uid)
                 users.removeUser(uid)
             }
         })
