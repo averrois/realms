@@ -1,5 +1,5 @@
 import { Server } from 'socket.io'
-import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSkin } from './socket-types'
+import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSkin, NewMessage } from './socket-types'
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
@@ -66,6 +66,12 @@ export function sockets(io: Server) {
                 if (player.socketId === socket.id) continue
 
                 io.to(player.socketId).emit(eventName, data)
+            }
+        }
+
+        function emitToSocketIds(socketIds: string[], eventName: string, data: any) {
+            for (const socketId of socketIds) {
+                io.to(socketId).emit(eventName, data)
             }
         }
 
@@ -157,9 +163,10 @@ export function sockets(io: Server) {
         // Handle a disconnection
         on('disconnect', Disconnect, ({ session, data }) => {
             const uid = socket.handshake.query.uid as string
+            const socketIds = sessionManager.getSocketIdsInRoom(session.id, session.getPlayerRoom(uid))
             const success = sessionManager.logOutBySocketId(socket.id)
             if (success) {
-                emit('playerLeftRoom', uid)
+                emitToSocketIds(socketIds, 'playerLeftRoom', uid)
                 users.removeUser(uid)
             }
         })
@@ -195,6 +202,14 @@ export function sockets(io: Server) {
             const player = session.getPlayer(uid)
             player.skin = data
             emit('playerChangedSkin', { uid, skin: player.skin })
+        })
+
+        on('sendMessage', NewMessage, ({ session, data }) => {
+            // cannot exceed 300 characters
+            if (data.length > 300) return
+
+            const uid = socket.handshake.query.uid as string
+            emit('receiveMessage', { uid, message: data })
         })
     })
 }

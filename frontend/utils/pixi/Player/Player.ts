@@ -6,13 +6,19 @@ import { bfs } from '../pathfinding'
 import { server } from '../server'
 import { defaultSkin, skins } from './skins'
 
+function truncate(str: string, maxlength: number) {
+  return (str.length > maxlength) ?
+    str.slice(0, maxlength - 1) + '…' : str
+}
+
 export class Player {
 
     public skin: string = defaultSkin
     private username: string = ''
 
     public parent: PIXI.Container = new PIXI.Container()
-    private body: PIXI.AnimatedSprite | null = null
+    private textMessage: PIXI.Text = new PIXI.Text({})
+    private textTimeout: NodeJS.Timeout | null = null
 
     private animationState: AnimationState = 'idle_down'
     private direction: Direction = 'down'
@@ -49,7 +55,6 @@ export class Player {
         const animatedSprite = new PIXI.AnimatedSprite(this.sheet.animations['idle_down'])
         animatedSprite.animationSpeed = this.animationSpeed
         animatedSprite.play()
-        this.body = animatedSprite
 
         if (!this.initialized) {
             this.parent.addChild(animatedSprite)
@@ -78,6 +83,41 @@ export class Player {
         text.scale.set(0.07)
         text.y = 8
         this.parent.addChild(text)
+    }
+
+    public setMessage(message: string) {
+        if (this.textTimeout) {
+            clearTimeout(this.textTimeout)
+        }
+
+        if (this.textMessage) {
+            this.parent.removeChild(this.textMessage)
+        }
+
+        message = truncate(message, 300)
+
+        const text = new PIXI.Text({
+            text: message,
+            style: {
+                fontFamily: 'silkscreen',
+                fontSize: 128,
+                fill: 0xFFFFFF,
+                wordWrap: true,
+                wordWrapWidth: 3000,
+                align: 'center'
+            }
+        })
+        text.anchor.set(0.5)
+        text.scale.set(0.07)
+        text.y = -text.height - 32
+        this.parent.addChild(text)
+        this.textMessage = text
+
+        this.textTimeout = setTimeout(() => {
+            if (this.textMessage) {
+                this.parent.removeChild(this.textMessage)
+            }
+        }, 10000)
     }
 
     public async init() {
