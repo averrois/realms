@@ -7,6 +7,7 @@ import BasicButton from '@/components/BasicButton'
 import { skins, defaultSkin } from '@/utils/pixi/Player/skins'
 import signal from '@/utils/signal'
 import { createClient } from '@/utils/supabase/client'
+import revalidate from '@/utils/revalidate'
 
 type SkinMenuProps = {
     
@@ -53,6 +54,7 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
 
         if (error) return
 
+        revalidate('/play/[id]')
         signal.emit('switchSkin', newSkin)
         setModal('None')
     }

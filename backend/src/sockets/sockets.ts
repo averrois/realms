@@ -103,7 +103,7 @@ export function sockets(io: Server) {
             const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId).single()
 
             if (error || !data) {
-                return rejectJoin('Realm not found.')
+            return rejectJoin('Realm not found.')
             }
 
             const realm = data
