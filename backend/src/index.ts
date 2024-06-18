@@ -22,7 +22,11 @@ const io = new SocketIOServer(server, {
   }
 })
 
-client.login(process.env.BOT_TOKEN)
+if (process.env.LOGIN_BOT === 'true') {
+    client.login(process.env.BOT_TOKEN)
+} else {
+    console.log('Skipping bot login.')
+}
 
 app.use(routes())
 
