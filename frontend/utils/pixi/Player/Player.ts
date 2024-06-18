@@ -109,7 +109,7 @@ export class Player {
         })
         text.anchor.set(0.5)
         text.scale.set(0.07)
-        text.y = -text.height - 32
+        text.y = -text.height - 36
         this.parent.addChild(text)
         this.textMessage = text
 
