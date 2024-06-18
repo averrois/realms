@@ -1,5 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js'
 import ping from './commands/ping'
+import server from './commands/server'
+import user from './commands/user'
 
 export type Command = {
     data: SlashCommandBuilder,
@@ -7,5 +9,7 @@ export type Command = {
 }
 
 export const commands: Command[] = [
-    ping
+    ping,
+    server,
+    user,
 ]
