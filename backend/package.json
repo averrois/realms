@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node ./dist/index.js",
     "dev": "ts-node ./src/index.ts",
+    "deploy-commands": "ts-node ./src/discord/deploy-commands.ts",
     "build": "tsc",
     "heroku-postbuild": "npm run build"
   },

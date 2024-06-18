@@ -1,6 +1,7 @@
 import { Events, Interaction } from 'discord.js'
+import { Event } from '../events'
 
-module.exports = {
+const event: Event = {
 	name: Events.InteractionCreate,
 	async execute(interaction: any) {
 		if (!interaction.isChatInputCommand()) return
@@ -23,4 +24,6 @@ module.exports = {
 			}
 		}
 	},
-};
+}
+
+export default event
