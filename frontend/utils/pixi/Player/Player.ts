@@ -6,9 +6,30 @@ import { bfs } from '../pathfinding'
 import { server } from '../server'
 import { defaultSkin, skins } from './skins'
 
-function truncate(str: string, maxlength: number) {
-  return (str.length > maxlength) ?
-    str.slice(0, maxlength - 1) + '…' : str
+function formatTextWithLineBreaks(text: string, maxLength: number) {
+    let words = text.split(' ')
+    let result = ''
+    let line = ''
+
+    for (let word of words) {
+        while (word.length > maxLength) {
+            result += word.slice(0, maxLength) + '\n'
+            word = word.slice(maxLength)
+        }
+
+        if (line.length + word.length + 1 > maxLength) {
+            result += line.trim() + '\n'
+            line = ''
+        }
+
+        line += word + ' '
+    }
+
+    if (line.length > 0) {
+        result += line.trim()
+    }
+
+    return result
 }
 
 export class Player {
@@ -94,7 +115,7 @@ export class Player {
             this.parent.removeChild(this.textMessage)
         }
 
-        message = truncate(message, 300)
+        message = formatTextWithLineBreaks(message, 40)
 
         const text = new PIXI.Text({
             text: message,
