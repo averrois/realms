@@ -4,6 +4,7 @@ import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
 import { sockets } from './sockets/sockets'
 import routes from './sockets/routes/routes'
+import { client } from './discord/client'
 
 require('dotenv').config()
 
@@ -20,6 +21,8 @@ const io = new SocketIOServer(server, {
     origin: process.env.FRONTEND_URL
   }
 })
+
+client.login(process.env.BOT_TOKEN)
 
 app.use(routes())
 
