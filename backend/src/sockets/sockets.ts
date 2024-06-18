@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
+import { removeExtraSpaces } from '../utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -208,8 +209,10 @@ export function sockets(io: Server) {
             // cannot exceed 300 characters
             if (data.length > 300 || data === '') return
 
+            const message = removeExtraSpaces(data)
+
             const uid = socket.handshake.query.uid as string
-            emit('receiveMessage', { uid, message: data })
+            emit('receiveMessage', { uid, message })
         })
     })
 }

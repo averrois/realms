@@ -6,32 +6,6 @@ import { bfs } from '../pathfinding'
 import { server } from '../server'
 import { defaultSkin, skins } from './skins'
 
-function formatTextWithLineBreaks(text: string, maxLength: number) {
-    let words = text.split(' ')
-    let result = ''
-    let line = ''
-
-    for (let word of words) {
-        while (word.length > maxLength) {
-            result += word.slice(0, maxLength) + '\n'
-            word = word.slice(maxLength)
-        }
-
-        if (line.length + word.length + 1 > maxLength) {
-            result += line.trim() + '\n'
-            line = ''
-        }
-
-        line += word + ' '
-    }
-
-    if (line.length > 0) {
-        result += line.trim()
-    }
-
-    return result
-}
-
 export class Player {
 
     public skin: string = defaultSkin
@@ -114,8 +88,6 @@ export class Player {
         if (this.textMessage) {
             this.parent.removeChild(this.textMessage)
         }
-
-        message = formatTextWithLineBreaks(message, 40)
 
         const text = new PIXI.Text({
             text: message,
