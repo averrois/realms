@@ -6,10 +6,38 @@ import { bfs } from '../pathfinding'
 import { server } from '../server'
 import { defaultSkin, skins } from './skins'
 
-function truncate(str: string, maxlength: number) {
-  return (str.length > maxlength) ?
-    str.slice(0, maxlength - 1) + '…' : str
+function formatText(message: string, maxLength: number): string {
+    message = message.trim()
+    const words = message.split(' ')
+    const lines: string[] = []
+    let currentLine = ''
+
+    for (const word of words) {
+        if (word.length > maxLength) {
+            if (currentLine) {
+                lines.push(currentLine.trim());
+                currentLine = ''
+            }
+            for (let i = 0; i < word.length; i += maxLength) {
+                lines.push(word.substring(i, i + maxLength))
+            }
+        } else if (currentLine.length + word.length + 1 > maxLength) {
+            lines.push(currentLine.trim())
+            currentLine = word + ' '
+        } else {
+            currentLine += word + ' '
+        }
+    }
+
+    if (currentLine.trim()) {
+        lines.push(currentLine.trim())
+    }
+
+    const text = lines.join('\n')
+
+    return text
 }
+
 
 export class Player {
 
@@ -94,7 +122,7 @@ export class Player {
             this.parent.removeChild(this.textMessage)
         }
 
-        message = truncate(message, 300)
+        message = formatText(message, 40)
 
         const text = new PIXI.Text({
             text: message,
@@ -102,14 +130,13 @@ export class Player {
                 fontFamily: 'silkscreen',
                 fontSize: 128,
                 fill: 0xFFFFFF,
-                wordWrap: true,
-                wordWrapWidth: 3000,
                 align: 'center'
             }
         })
-        text.anchor.set(0.5)
+        text.anchor.x = 0.5
+        text.anchor.y = 0
         text.scale.set(0.07)
-        text.y = -text.height - 36
+        text.y = -text.height - 42
         this.parent.addChild(text)
         this.textMessage = text
 
