@@ -30,6 +30,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
 
     function onSubmit(e:React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
+        if (!input) return
         // unfocus the input
         e.currentTarget.querySelector('input')?.blur()
         signal.emit('message', input)
@@ -48,7 +49,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
             <form className='grow h-10 bg-lightblue rounded-full flex flex-row' autoComplete='off' onSubmit={onSubmit}>
                 <input 
                     type='text' 
-                    className='grow rounded-full bg-transparent outline-none p-2' 
+                    className='grow rounded-full bg-transparent outline-none p-2 pl-4' 
                     spellCheck='false' 
                     autoComplete='false' 
                     onFocus={onFocus} 
@@ -56,8 +57,9 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
                     value={input} 
                     onChange={onChange}
                     maxLength={300}
+                    placeholder='type a message...'
                 />
-                <button className='w-10 h-10 rounded-full bg-darkblue grid place-items-center hover:bg-lightblue border-2 border-white'>
+                <button className='w-10 h-10 rounded-full bg-darkblue grid place-items-center hover:bg-lightblue border-2 border-white outline-none'>
                     <PaperPlaneRight className='w-6 h-6'/>
                 </button>
             </form>
