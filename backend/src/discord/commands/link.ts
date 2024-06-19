@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild } from 'discord.js'
 import { Command } from '../commands'
 
 const command: Command = {
@@ -6,6 +6,13 @@ const command: Command = {
     .setName('link')
     .setDescription('Link your server to a realm.'),
   async execute(interaction: ChatInputCommandInteraction) {
+
+    const guild = interaction.guild as Guild
+    if (interaction.user.id !== guild.ownerId) {
+      await interaction.reply({ content: 'only the owner of this server can link it to a realm. sorry!', ephemeral: true })
+      return
+    }
+
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
@@ -14,7 +21,7 @@ const command: Command = {
           .setURL(process.env.FRONTEND_URL!)
       )
 
-    await interaction.reply({ content: '​\n\n**Click the button below to link this Discord server to a realm!**\n​', components: [row], ephemeral: true })
+    await interaction.reply({ content: '​\n\n**🚀 click the button below to link this server to a realm! 🚀**\n​', components: [row], ephemeral: true })
   },
 }
 

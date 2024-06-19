@@ -4,7 +4,7 @@ import http from 'http'
 import { Server as SocketIOServer } from 'socket.io'
 import { sockets } from './sockets/sockets'
 import routes from './sockets/routes/routes'
-import { client } from './discord/client'
+import { client, setUpClient } from './discord/client'
 
 require('dotenv').config()
 
@@ -23,6 +23,7 @@ const io = new SocketIOServer(server, {
 })
 
 if (process.env.LOGIN_BOT === 'true') {
+    setUpClient()
     client.login(process.env.BOT_TOKEN)
 } else {
     console.log('Skipping bot login.')

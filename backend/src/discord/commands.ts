@@ -3,6 +3,7 @@ import ping from './commands/ping'
 import server from './commands/server'
 import user from './commands/user'
 import link from './commands/link'
+import message from './commands/message'
 
 export type Command = {
     data: SlashCommandBuilder,
@@ -14,4 +15,5 @@ export const commands: Command[] = [
     server,
     user,
     link,
+    message,
 ]

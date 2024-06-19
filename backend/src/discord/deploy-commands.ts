@@ -7,6 +7,7 @@ const clientId = process.env.CLIENT_ID!
 const guildId = process.env.SERVER_ID!
 
 const commandJson = []
+
 for (const command of commands) {
     commandJson.push(command.data.toJSON())
 }
