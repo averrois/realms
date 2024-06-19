@@ -21,7 +21,7 @@ export async function saveRealm(access_token: string, realmData: RealmData, id: 
         if (roomNames.has(roomName)) {
             return { error: { message: 'Room names must be unique.' } }
         }
-        if (roomName === '') {
+        if (roomName.trim() === '') {
             return { error: { message: 'Room name cannot be empty.' } }
         }
         roomNames.add(roomName)

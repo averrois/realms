@@ -77,7 +77,7 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
             revertRoomName()
             toast.error('Room names must be unique.')
             return
-        } else if (rooms[roomIndex] === '') {
+        } else if (rooms[roomIndex].trim() === '') {
             revertRoomName()
             toast.error('Room name cannot be empty.')
             return
