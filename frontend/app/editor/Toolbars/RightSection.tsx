@@ -29,13 +29,13 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
         <div className='min-w-[420px] bg-secondary flex flex-col select-none'>
             <div className='flex flex-row h-10 px-2 pt-[4px]'>
                 <div 
-                    className={`grow bg-secondary hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-lightblue' : ''}`}
+                    className={`grow hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-lightblue' : 'bg-secondary'}`}
                     onClick={() => setTab('Tile')}
                 >
                     Tiles
                 </div>
                 <div 
-                    className={`grow bg-secondary hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Special Tiles' ? 'pointer-events-none bg-lightblue' : ''}`}
+                    className={`grow hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Special Tiles' ? 'pointer-events-none bg-lightblue' : 'bg-secondary'}`}
                     onClick={() => setTab('Special Tiles')}
                 >
                     Special Tiles
