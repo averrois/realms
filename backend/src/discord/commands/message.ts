@@ -7,8 +7,8 @@ const command: Command = {
     .setName('message')
     .setDescription('Get a message from the bot.'),
   async execute(interaction: ChatInputCommandInteraction) {
-    console.log('nice')
     await sendMessageToChannel(interaction.guildId!, interaction.channelId, 'Hey!')
+    await interaction.reply('Message sent!')
   },
 }
 
