@@ -1,3 +1,5 @@
+'use server'
+import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 
 export async function getVisitedRealms(access_token: string) {

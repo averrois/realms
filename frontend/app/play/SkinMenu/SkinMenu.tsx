@@ -8,6 +8,7 @@ import { skins, defaultSkin } from '@/utils/pixi/Player/skins'
 import signal from '@/utils/signal'
 import { createClient } from '@/utils/supabase/client'
 import revalidate from '@/utils/revalidate'
+import { toast } from 'react-toastify'
 
 type SkinMenuProps = {
     
@@ -52,7 +53,10 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                 .update({ skin: newSkin })
                 .eq('id', user.id)
 
-        if (error) return
+        if (error) {
+            toast.error(error.message)
+            return
+        }
 
         revalidate('/play/[id]')
         signal.emit('switchSkin', newSkin)

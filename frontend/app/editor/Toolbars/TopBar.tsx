@@ -11,6 +11,7 @@ import { useParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import revalidate from '@/utils/revalidate'
 import { FloppyDisk } from '@phosphor-icons/react'
+import { saveRealm } from '@/utils/supabase/saveRealm'
 
 type TopBarProps = {
     
@@ -31,10 +32,10 @@ const TopBar:React.FC<TopBarProps> = () => {
 
     useEffect(() => {
         const save = async (realmData: RealmData) => {
-            const { error } = await supabase
-                .from('realms')
-                .update({ map_data: realmData })
-                .eq('id', id)
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) return
+
+            const { error } = await saveRealm(session.access_token, realmData, id as string)
 
             if (error) {
                 toast.error(error.message)
