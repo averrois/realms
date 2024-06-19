@@ -33,12 +33,15 @@ const TopBar:React.FC<TopBarProps> = () => {
     useEffect(() => {
         const save = async (realmData: RealmData) => {
             const { data: { session } } = await supabase.auth.getSession()
-            if (!session) {
-                toast.error('You must be signed in to save.')
-                return
-            }
+            if (!session) return
 
             const { error } = await saveRealm(session.access_token, realmData, id as string)
+
+            if (error) {
+                toast.error(error.message)
+            } else {
+                toast.success('Saved!')
+            }
 
             revalidate('/editor/[id]')
             revalidate('/play/[id]')
