@@ -75,7 +75,7 @@ const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }
         <div className='flex flex-col items-center px-3 grow gap-2 w-full'>
                 <h1 className='w-full'>Rooms</h1>
                 <div className='flex flex-col items-center w-full overflow-y-auto max-h-[200px] gap-1 transparent-scrollbar' ref={roomsContainerRef}>
-                    {rooms.map((room, index) => <RoomItem rooms={rooms} selectedRoomIndex={roomIndex} roomIndex={index} roomName={room} key={index}/>)}
+                    {rooms.map((room, index) => <RoomItem rooms={rooms} selectedRoomIndex={roomIndex} roomIndex={index} roomName={room} setRooms={setRooms} key={index}/>)}
                 </div>
                 <BasicButton className='flex flex-row items-center gap-1 text-lg mb-4 w-full justify-center' onClick={onClickCreateRoom}>
                     Create Room

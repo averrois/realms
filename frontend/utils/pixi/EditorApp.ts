@@ -3,6 +3,7 @@ import { App } from './App'
 import signal from '../signal'
 import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
+import { formatForComparison } from '../removeExtraSpaces'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
@@ -953,9 +954,24 @@ export class EditorApp extends App {
         window.addEventListener('beforeunload', this.onBeforeUnload)
     }
 
+    private generateUniqueRoomName(rooms: Room[]): string {
+        const baseName = "New Room"
+        let name = baseName
+        let counter = 1
+
+        const roomNames = rooms.map((room) => formatForComparison(room.name))
+
+        while (roomNames.includes(formatForComparison(name))) {
+            name = `${baseName} (${counter})`
+            counter++
+        }
+
+        return name
+    }
+
     private onCreateRoom = () => {
         const newRoom: Room = {
-            name: 'New Room',
+            name: this.generateUniqueRoomName(this.realmData.rooms),
             tilemap: {}
         }
         const newRealmData = this.realmData

@@ -5,18 +5,12 @@ import signal from '@/utils/signal'
 import { ArrowLeftEndOnRectangleIcon } from '@heroicons/react/24/outline'
 import Link from 'next/link'
 import { PaperPlaneRight } from '@phosphor-icons/react'
+import { removeExtraSpaces } from '@/utils/removeExtraSpaces'
 
 type PlayNavbarProps = {
     
 }
 
-function removeExtraSpaces(text: string) {
-    let value = text.replace(/\s\s+/g, ' ')
-    if (value.startsWith(' ')) {
-        value = value.substring(1)
-    }
-    return value
-}
 
 const PlayNavbar:React.FC<PlayNavbarProps> = () => {
 
