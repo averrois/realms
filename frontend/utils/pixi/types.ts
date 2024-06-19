@@ -1,4 +1,6 @@
 import { Sprite } from 'pixi.js'
+import { RoomSchema, RealmDataSchema } from './zod'
+import { z } from 'zod'
 
 export const defaultMapData: RealmData = {
     spawnpoint: {
@@ -17,31 +19,9 @@ export type TileMode = 'Single' | 'Rectangle'
 
 export type TilePoint = `${number}, ${number}`
 
-export type RealmData = {
-    spawnpoint: {
-        roomIndex: number,
-        x: number,
-        y: number,
-    },
-    rooms: Room[],
-}
+export type RealmData = z.infer<typeof RealmDataSchema>
 
-export interface Room {
-    name: string,
-    tilemap: {
-        [key: `${number}, ${number}`]: {
-            floor?: string,
-            above_floor?: string,
-            object?: string,
-            impassable?: boolean
-            teleporter?: {
-                roomIndex: number,
-                x: number,
-                y: number,
-            }
-        }
-    }
-}
+export type Room = z.infer<typeof RoomSchema>
 
 export interface ColliderMap {
     [key: `${number}, ${number}`]: boolean

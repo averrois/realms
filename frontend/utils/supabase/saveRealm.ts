@@ -2,8 +2,14 @@
 import 'server-only'
 import { RealmData } from '../pixi/types'
 import { createClient } from '@supabase/supabase-js'
+import { RealmDataSchema } from '../pixi/zod'
 
 export async function saveRealm(access_token: string, realmData: RealmData, id: string) {
+    const result = RealmDataSchema.safeParse(realmData)
+    if (result.success === false) {
+        return { error: { message: 'Invalid realm data.' } }
+    }
+
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SERVICE_ROLE!,
