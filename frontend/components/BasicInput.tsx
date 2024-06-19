@@ -6,9 +6,10 @@ type BasicInputProps = {
     value?: string | number
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
     type?: 'number' | 'text'
+    maxLength?: number
 }
 
-const BasicInput:React.FC<BasicInputProps> = ({ label, className, value, onChange, type }) => {
+const BasicInput:React.FC<BasicInputProps> = ({ label, className, value, onChange, type, maxLength }) => {
     
     if (!type) {
         type = 'text'
@@ -22,11 +23,12 @@ const BasicInput:React.FC<BasicInputProps> = ({ label, className, value, onChang
         <div className="mt-1">
             <input
                 type={type}
-                className={`rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 text-md leading-6 ${className}`}
+                className={`rounded-md border-0 py-1.5 px-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 outline-none text-md leading-6 ${className}`}
                 autoComplete='off'
                 placeholder=""
                 value={value}
                 onChange={onChange}
+                maxLength={maxLength}
             />
         </div>
         </div>

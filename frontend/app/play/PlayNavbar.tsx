@@ -32,7 +32,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
 
     function onSubmit(e:React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
-        if (!input) return
+        if (input.trim() === '') return
         // unfocus the input
         e.currentTarget.querySelector('input')?.blur()
         signal.emit('message', input)
@@ -43,7 +43,6 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
         const value = removeExtraSpaces(e.target.value)
         setInput(value);
     }
-
     
     return (
         <div className='bg-secondary w-full sm:w-[600px] md:w-[750px] lg:w-[950px] h-14 sm:absolute sm:bottom-0 sm:left-1/2 sm:transform sm:-translate-x-1/2 sm:rounded-tl-2xl sm:rounded-tr-2xl flex flex-row items-center px-2 justify-between gap-4'>
