@@ -1016,11 +1016,10 @@ export class EditorApp extends App {
             await this.changeRoom(0)
         } else if (this.currentRoomIndex > index) {
             this.currentRoomIndex -= 1
-
-            // redraw the special tiles. this is for teleporters and spawn point mainly 
-            this.gizmoContainer.removeChildren()
-            this.drawSpecialTiles()
         }
+
+        this.gizmoContainer.removeChildren()
+        this.drawSpecialTiles()
 
         this.updateRealmData(newRealmData)
 
