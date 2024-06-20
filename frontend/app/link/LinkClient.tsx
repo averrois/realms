@@ -12,9 +12,7 @@ type LinkClientProps = {
 
 const LinkClient:React.FC<LinkClientProps> = ({ serverName, serverId, ownedRealms }) => {
     
-    
     const [showEndScreen, setShowEndScreen] = useState(false)
-
 
     return (
         <div className='pt-36 place-items-center grid px-12'>

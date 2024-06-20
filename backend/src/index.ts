@@ -47,14 +47,22 @@ function onRealmUpdate(payload: any) {
     if (payload.new.privacy_level !== payload.old.privacy_level) {
         changeMade = true
     }
+    if (payload.new.share_id !== payload.old.share_id) {
+        changeMade = true
+    }
     if (changeMade) {
         sessionManager.terminateSession(io, id, "This realm has been changed by the owner. Refresh to see what's new!")
     }
 }
 
+function onRealmDelete(payload: any) {
+    sessionManager.terminateSession(io, payload.old.id, "This realm is no longer available.")
+}
+
 supabase
     .channel('realms')
     .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'realms' }, onRealmUpdate)
+    .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'realms' }, onRealmDelete)
     .subscribe()
 
 const PORT = process.env.PORT || 3001
