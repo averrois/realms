@@ -33,5 +33,15 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
         return { error }
     }
 
+    const { error: linkError } = await supabase
+        .from('realms')
+        .update({ discord_server_id })
+        .eq('id', realm_id)
+        .eq('owner_id', user.user.id)
+
+    if (linkError) {
+        return { error: linkError }
+    }
+
     return { error: null }
 }
