@@ -5,6 +5,7 @@ import LinkRealmDropdown from '@/components/LinkRealmDropdown'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'react-toastify'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import { linkDiscordServer } from '@/utils/supabase/linkDiscordServer'
 
 type LinkClientProps = {
     serverName: string,
@@ -17,6 +18,8 @@ const LinkClient:React.FC<LinkClientProps> = ({ serverName, serverId, ownedRealm
     const [selectedRealm, setSelectedRealm] = useState(ownedRealms?.[0] ?? null)
     const [loading, setLoading] = useState(false)
 
+    const supabase = createClient()
+
     function getRealmTitle() {
         if (selectedRealm) {
             return <span className='text-3xl font-bold text-quaternaryhover'>{selectedRealm.name}</span>
@@ -26,11 +29,13 @@ const LinkClient:React.FC<LinkClientProps> = ({ serverName, serverId, ownedRealm
     }
 
     async function onLink() {
-        const supabase = createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+            return toast.error('You must be signed in to link a realm to a server.')
+        }
 
-        const { error } = await supabase.from('realms').update({
-            discord_server_id: serverId
-        }).eq('id', selectedRealm.id)
+        const { error } = await linkDiscordServer(session.access_token, serverId)
+        console.log({ error })
 
         if (error) {
             toast.error(error.message)
