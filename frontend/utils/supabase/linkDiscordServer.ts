@@ -23,9 +23,25 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
         return { error: { message: 'You must be the owner of the server to link it to a realm!' } }
     }
 
+    // Check if the realm already has the specified discord_server_id
+    const { data: existingRealms, error: existingRealmError } = await supabase
+        .from('realms')
+        .select('id')
+        .eq('discord_server_id', discord_server_id)
+        .eq('id', realm_id)
+        .eq('owner_id', user.user.id)
+    
+    if (existingRealmError) {
+        return { error: existingRealmError }
+    }
+
+    if (existingRealms && existingRealms[0]) {
+        return { error: { message: 'This realm is already linked to this server!' } }
+    }
+
     const { error } = await supabase
         .from('realms')
-        .update({ discord_server_id: null })
+        .update({ discord_server_id: null, realm_channel_mapping: null })
         .eq('discord_server_id', discord_server_id)
         .eq('owner_id', user.user.id)
 
@@ -35,7 +51,7 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
 
     const { error: linkError } = await supabase
         .from('realms')
-        .update({ discord_server_id })
+        .update({ discord_server_id, realm_channel_mapping: null })
         .eq('id', realm_id)
         .eq('owner_id', user.user.id)
 
