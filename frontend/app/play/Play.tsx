@@ -4,7 +4,7 @@ import PixiApp from './PixiApp'
 import { RealmData } from '@/utils/pixi/types'
 import PlayNavbar from './PlayNavbar'
 import { useModal } from '../hooks/useModal'
-import { server } from '@/utils/pixi/server'
+import { server } from '@/utils/backend/server'
 
 type PlayProps = {
     mapData: RealmData

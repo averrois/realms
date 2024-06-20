@@ -3,7 +3,7 @@ import playerSpriteSheetData from './PlayerSpriteSheetData'
 import { Point, Coordinate, AnimationState, Direction } from '../types'
 import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
-import { server } from '../server'
+import { server } from '../../backend/server'
 import { defaultSkin, skins } from './skins'
 
 function formatText(message: string, maxLength: number): string {

@@ -2,7 +2,7 @@ import { App } from './App'
 import { Player } from './Player/Player'
 import { Point, RealmData, TilePoint } from './types'
 import * as PIXI from 'pixi.js'
-import { server } from './server'
+import { server } from '../backend/server'
 import { defaultSkin } from './Player/skins'
 import signal from '../signal'
 

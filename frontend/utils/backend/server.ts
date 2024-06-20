@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client'
-import { request } from '../backend/requests'
+import { request } from './requests'
 
 type ConnectionResponse = {
     success: boolean
