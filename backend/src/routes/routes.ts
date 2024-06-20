@@ -8,7 +8,6 @@ export default function routes(): Router {
     const router = Router()
 
     router.get('/getPlayersInRoom', async (req, res) => {
-        console.log('running')
         const params = req.query as unknown as z.infer<typeof GetPlayersInRoom>
         if (!GetPlayersInRoom.safeParse(params).success) {
             return res.status(400).json({ error: 'Invalid parameters' })
