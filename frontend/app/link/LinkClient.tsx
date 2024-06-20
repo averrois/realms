@@ -36,7 +36,7 @@ const LinkClient:React.FC<LinkClientProps> = ({ serverName, serverId, ownedRealm
             return toast.error('You must be signed in to link a realm to a server.')
         }
 
-        const { error } = await linkDiscordServer(session.access_token, serverId)
+        const { error } = await linkDiscordServer(session.access_token, '1253457108012236931', selectedRealm.id)
         if (error) {
             toast.error(error.error)
         }

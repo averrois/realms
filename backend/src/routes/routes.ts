@@ -46,10 +46,14 @@ export default function routes(): Router {
         try {
             const guild = await client.guilds.fetch(params.serverId)
             if (!guild) {
+                console.log('no guild')
                 return res.status(400).json({ error: 'Invalid server ID.' })
             }
             return res.json({ isOwner: guild.ownerId === userId })
-        } catch {
+        } catch (err: any) {
+            if (err.rawError?.message === 'Unknown Guild') {
+                return res.status(400).json({ error: 'Please add the realms bot to your server before linking!' })
+            }
             return res.status(400).json({ error: 'Invalid server ID.' })
         }
         

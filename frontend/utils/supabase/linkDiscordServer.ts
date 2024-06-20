@@ -3,7 +3,7 @@ import 'server-only'
 import { createClient } from '@supabase/supabase-js'
 import { request } from '../backend/requests'
 
-export async function linkDiscordServer(access_token: string, discord_server_id: string) {
+export async function linkDiscordServer(access_token: string, discord_server_id: string, realm_id: string) {
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.SERVICE_ROLE!,
@@ -14,13 +14,13 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
         return { error: userError }
     }
 
-    const { data, error } = await request('/isOwnerOfServer', { access_token, serverId: discord_server_id })
-    if (error) {
-        return { error }
+    const { data: ownerData, error: isOwnerError } = await request('/isOwnerOfServer', { access_token, serverId: discord_server_id })
+    if (isOwnerError) {
+        return { error: isOwnerError }
     }
 
-    if (!data || !data.isOwner) {
-        return { error: 'You are not the owner of this server! You can only link servers that you own.' }
+    if (!ownerData || !ownerData.isOwner) {
+        return { error: { error: 'You must be the owner of the server to link it to a realm!' } }
     }
 
     return { error: null }
