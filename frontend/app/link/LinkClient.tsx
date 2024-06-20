@@ -36,16 +36,16 @@ const LinkClient:React.FC<LinkClientProps> = ({ serverName, serverId, ownedRealm
             return toast.error('You must be signed in to link a realm to a server.')
         }
 
-        const { error } = await linkDiscordServer(session.access_token, '1253457108012236931', selectedRealm.id)
+        const { error } = await linkDiscordServer(session.access_token, serverId, selectedRealm.id)
         if (error) {
-            toast.error(error.error)
+            toast.error(error.message)
         }
 
         setLoading(false)
     }
 
     return (
-        <div className='pt-36 place-items-center grid'>
+        <div className='pt-36 place-items-center grid px-12'>
             <div className='flex flex-col items-center gap-12'>
                 <h1 className='text-xl text-center'>link <span className='font-bold text-3xl text-[#5764F2]'>{serverName}</span> to {getRealmTitle()}</h1>
                 {!ownedRealms || ownedRealms.length === 0 && (

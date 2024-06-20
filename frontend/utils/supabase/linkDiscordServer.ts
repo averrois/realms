@@ -20,7 +20,17 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
     }
 
     if (!ownerData || !ownerData.isOwner) {
-        return { error: { error: 'You must be the owner of the server to link it to a realm!' } }
+        return { error: { message: 'You must be the owner of the server to link it to a realm!' } }
+    }
+
+    const { error } = await supabase
+        .from('realms')
+        .update({ discord_server_id: null })
+        .eq('discord_server_id', discord_server_id)
+        .eq('owner_id', user.user.id)
+
+    if (error) {
+        return { error }
     }
 
     return { error: null }
