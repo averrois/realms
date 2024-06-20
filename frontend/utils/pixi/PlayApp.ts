@@ -285,6 +285,8 @@ export class PlayApp extends App {
         signal.on('switchSkin', this.onSwitchSkin)
         signal.on('disableInput', this.onDisableInput)
         signal.on('message', this.onMessage)
+        signal.on('kicked', this.onKicked)
+        signal.on('disconnected', this.onDisconnect)
     }
 
     private removeSignalListeners = () => {
@@ -292,6 +294,8 @@ export class PlayApp extends App {
         signal.off('switchSkin', this.onSwitchSkin)
         signal.off('disableInput', this.onDisableInput)
         signal.off('message', this.onMessage)
+        signal.off('kicked', this.onKicked)
+        signal.off('disconnected', this.onDisconnect)
     }
 
     private onRequestSkin = () => {
@@ -308,9 +312,8 @@ export class PlayApp extends App {
         this.keysDown = []
     }
 
-    private onKicked = (reason: string) => {
+    private onKicked = () => {
         this.kicked = true
-        signal.emit('showKickedModal', reason)
         this.removeEvents()
     }
 
@@ -339,8 +342,6 @@ export class PlayApp extends App {
         server.socket.on('playerMoved', this.onPlayerMoved)
         server.socket.on('playerTeleported', this.onPlayerTeleported)
         server.socket.on('playerChangedSkin', this.onPlayerChangedSkin)
-        server.socket.on('kicked', this.onKicked)
-        server.socket.on('disconnect', this.onDisconnect)
         server.socket.on('receiveMessage', this.onReceiveMessage)
     }
 
@@ -350,8 +351,6 @@ export class PlayApp extends App {
         server.socket.off('playerMoved', this.onPlayerMoved)
         server.socket.off('playerTeleported', this.onPlayerTeleported)
         server.socket.off('playerChangedSkin', this.onPlayerChangedSkin)
-        server.socket.off('kicked', this.onKicked)
-        server.socket.off('disconnect', this.onDisconnect)
         server.socket.off('receiveMessage', this.onReceiveMessage)
     }
 

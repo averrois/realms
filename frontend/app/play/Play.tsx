@@ -25,19 +25,21 @@ const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realm
         const onKicked = (message: string) => { 
             setErrorModal('Disconnected')
             setDisconnectedMessage(message)
+            signal.emit('kicked')
         }
 
         const onDisconnect = () => {
             setErrorModal('Disconnected')
             setDisconnectedMessage('You have been disconnected from the server.')
+            signal.emit('disconnected')
         }
 
-        signal.on('showKickedModal', onKicked)
-        signal.on('showDisconnectModal', onDisconnect)
+        server.socket.on('kicked', onKicked)
+        server.socket.on('disconnected', onDisconnect)
 
         return () => {
-            signal.off('showKickedModal', onKicked)
-            signal.off('showDisconnectModal', onDisconnect)
+            signal.off('kicked', onKicked)
+            signal.off('disconnected', onDisconnect)
         }
     }, [])
 
