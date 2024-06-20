@@ -18,6 +18,8 @@ export class PlayApp extends App {
     private players: { [key: string]: Player } = {}
     private disableInput: boolean = false
 
+    private kicked: boolean = false
+
     constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin) {
         super(realmData)
         this.uid = uid
@@ -306,12 +308,17 @@ export class PlayApp extends App {
         this.keysDown = []
     }
 
-    private onKicked = () => {
+    private onKicked = (reason: string) => {
+        this.kicked = true
+        signal.emit('showKickedModal', reason)
         this.removeEvents()
     }
 
     private onDisconnect = () => {
         this.removeEvents()
+        if (!this.kicked) {
+            signal.emit('showDisconnectModal')
+        }
     }
 
     private onMessage = (message: string) => {

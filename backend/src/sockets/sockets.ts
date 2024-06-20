@@ -5,6 +5,7 @@ import { supabase } from '../supabase'
 import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
+import { kickPlayer } from './kick'
 
 const joiningInProgress = new Set<string>()
 
@@ -76,22 +77,6 @@ export function sockets(io: Server) {
             }
         }
 
-        function kickPlayer(uid: string, reason: string) {
-            const session = sessionManager.getPlayerSession(uid)
-            const room = session.getPlayerRoom(uid)
-            const players = session.getPlayersInRoom(room)
-
-            for (const player of players) {
-                if (player.uid === uid) {
-                    io.to(player.socketId).emit('kicked', reason)
-                } else {
-                    io.to(player.socketId).emit('playerLeftRoom', uid)
-                }
-            }
-            // player is already in session, kick them
-            sessionManager.logOutPlayer(uid)
-        }
-
         socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
             const rejectJoin = (reason: string) => {
                 socket.emit('failedToJoinRoom', reason)
@@ -123,7 +108,7 @@ export function sockets(io: Server) {
                 const uid = socket.handshake.query.uid as string
                 const currentSession = sessionManager.getPlayerSession(uid)
                 if (currentSession) {
-                    kickPlayer(uid, 'You have logged in from another location.')
+                    kickPlayer(io, uid, 'You have logged in from another location.')
                 }
 
                 const profile = await supabase.from('profiles').select('skin').eq('id', uid).single()

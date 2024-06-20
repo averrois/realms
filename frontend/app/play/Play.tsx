@@ -5,6 +5,7 @@ import { RealmData } from '@/utils/pixi/types'
 import PlayNavbar from './PlayNavbar'
 import { useModal } from '../hooks/useModal'
 import { server } from '@/utils/backend/server'
+import signal from '@/utils/signal'
 
 type PlayProps = {
     mapData: RealmData
@@ -31,12 +32,12 @@ const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realm
             setDisconnectedMessage('You have been disconnected from the server.')
         }
 
-        server.socket.on('kicked', onKicked)
-        server.socket.on('disconnect', onDisconnect)
+        signal.on('showKickedModal', onKicked)
+        signal.on('showDisconnectModal', onDisconnect)
 
         return () => {
-            server.socket.off('kicked', onKicked)
-            server.socket.off('disconnect', onDisconnect)
+            signal.off('showKickedModal', onKicked)
+            signal.off('showDisconnectModal', onDisconnect)
         }
     }, [])
 
