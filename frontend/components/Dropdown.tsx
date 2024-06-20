@@ -6,14 +6,23 @@ type DropdownProps = {
     items: any[]
     selectedItem: any
     setSelectedItem: (item: any) => void
+    alternateStyle?: boolean
 }
 
-const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem }) => {
+const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem, alternateStyle }) => {
+
+    function getAlternateStyles() {
+        if (alternateStyle) {
+            return 'p-2'
+        } else {
+            return ''
+        }
+    }
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize">
+        <Menu.Button className={`inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize ${getAlternateStyles()}`}>
           {selectedItem}
           <ChevronDownIcon className="-mr-1 h-5 w-5 text-white" aria-hidden="true" />
         </Menu.Button>
@@ -33,7 +42,7 @@ const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem
                 <Menu.Item key={item}>
                     {() => (
                         <div
-                            className={'block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue'}
+                            className={`block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue ${getAlternateStyles()}`}
                             onClick={() => setSelectedItem(item)}
                         >
                             {item}
