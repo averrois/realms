@@ -1,5 +1,7 @@
 import { supabase } from './supabase'
 import { z } from 'zod'
+import { kickPlayer } from './sockets/kick'
+import { Server } from 'socket.io'
 
 export const defaultMapData: RealmData = {
     spawnpoint: {
@@ -104,11 +106,23 @@ export class SessionManager {
         this.logOutPlayer(uid)
         return true
     }
+
+    public terminateSession(io: Server, id: string, reason: string) {
+        const session = this.sessions[id]
+        if (!session) return
+
+        const players = session.getPlayerIds()
+        players.forEach(player => {
+            kickPlayer(io, player, reason)
+        })
+
+        delete this.sessions[id]
+    }
 }
 
 export class Session {
     private roomData: { [key: number]: Set<string> } = {}
-    private players: { [key: string]: Player } = {}
+    public players: { [key: string]: Player } = {}
     public id: string
 
     constructor(id: string) {
@@ -176,6 +190,10 @@ export class Session {
 
     public getPlayer(uid: string): Player {
         return this.players[uid]
+    }
+
+    public getPlayerIds(): string[] {
+        return Object.keys(this.players)
     }
 
     public getPlayerRoom(uid: string): number {
