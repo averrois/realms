@@ -15,6 +15,13 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
     }
 
     const { data, error } = await request('/isOwnerOfServer', { access_token, serverId: discord_server_id })
+    if (error) {
+        return { error }
+    }
 
-    return { error }
+    if (!data || !data.isOwner) {
+        return { error: 'You are not the owner of this server! You can only link servers that you own.' }
+    }
+
+    return { error: null }
 }

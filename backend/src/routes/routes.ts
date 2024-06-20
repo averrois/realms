@@ -3,6 +3,7 @@ import { GetPlayersInRoom, IsOwnerOfServer } from './route-types'
 import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
+import { client } from '../discord/client'
 
 export default function routes(): Router {
     const router = Router()
@@ -29,7 +30,6 @@ export default function routes(): Router {
     })
 
     router.get('/isOwnerOfServer', async (req, res) => {
-        console.log('running')
         const params = req.query as unknown as z.infer<typeof IsOwnerOfServer>
         if (!IsOwnerOfServer.safeParse(params).success) {
             return res.status(400).json({ error: 'Invalid parameters' })
@@ -41,7 +41,19 @@ export default function routes(): Router {
             return res.status(401).json({ error: 'Invalid access token' })
         }
 
-        return res.json({ id: user.user.user_metadata.provider_id })
+        const userId = user.user.user_metadata.provider_id
+
+        try {
+            const guild = await client.guilds.fetch(params.serverId)
+            if (!guild) {
+                return res.status(400).json({ error: 'Invalid server ID.' })
+            }
+            return res.json({ isOwner: guild.ownerId === userId })
+        } catch {
+            return res.status(400).json({ error: 'Invalid server ID.' })
+        }
+        
+
     })
 
     return router
