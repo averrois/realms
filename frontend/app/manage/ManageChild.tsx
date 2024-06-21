@@ -8,11 +8,13 @@ import revalidate from '@/utils/revalidate'
 import { useModal } from '../hooks/useModal'
 import { Copy } from '@phosphor-icons/react'
 import { v4 as uuidv4 } from 'uuid'
+import Toggle from '@/components/Toggle'
 
 type ManageChildProps = {
     realmId: string
     privacyLevel: 'anyone' | 'discord'
     startingShareId: string
+    startingOnlyOwner: boolean
 }
 
 const privacyOptions = [
@@ -20,11 +22,12 @@ const privacyOptions = [
     'anyone in the discord server'
 ]
 
-const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId }) => {
+const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId, startingOnlyOwner }) => {
 
     const [selectedTab, setSelectedTab] = useState(0)
     const [privacy, setPrivacy] = useState(getDropdownValue())
     const [shareId, setShareId] = useState(startingShareId)
+    const [onlyOwner, setOnlyOwner] = useState(startingOnlyOwner)
     const { setModal, setLoadingText } = useModal()
 
     const supabase = createClient()
@@ -52,7 +55,8 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
         const { error } = await supabase
             .from('realms')
             .update({ 
-                privacy_level: getPrivacyLevel()
+                    privacy_level: getPrivacyLevel(),
+                    only_owner: onlyOwner,
                 })
             .eq('id', realmId)
 
@@ -110,6 +114,10 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                             Who can join this realm?
                             <div>
                                 <Dropdown items={privacyOptions} selectedItem={privacy} setSelectedItem={setPrivacy}/>
+                            </div>
+                            <div className='flex flex-row gap-2'>
+                                <h1>Only owner can join</h1>
+                                <Toggle enabled={onlyOwner} setEnabled={setOnlyOwner}/>
                             </div>
                             <BasicButton className='flex flex-row items-center gap-2 text-sm max-w-max' onClick={copyLink}>
                                 Copy Link <Copy />

@@ -92,10 +92,10 @@ export function sockets(io: Server) {
             }
             joiningInProgress.add(socket.handshake.query.uid as string)
 
-            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data, discord_server_id').eq('id', realmData.realmId).single()
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data, discord_server_id, only_owner').eq('id', realmData.realmId).single()
 
             if (error || !data) {
-            return rejectJoin('Realm not found.')
+                return rejectJoin('Realm not found.')
             }
 
             const realm = data
@@ -130,6 +130,10 @@ export function sockets(io: Server) {
 
             if (realm.owner_id === socket.handshake.query.uid) {
                 return join()
+            }
+
+            if (realm.only_owner) {
+                return rejectJoin('This realm is private right now. Come back later!')
             }
 
             if (realm.privacy_level === 'discord') {

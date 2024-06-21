@@ -21,7 +21,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
     const { data, error } = !searchParams.shareId ? await supabase.from('realms').select('map_data, owner_id').eq('id', params.id).single() : await getPlayRealmData(session.access_token, searchParams.shareId)
     // Show not found page if no data is returned
     if (!data) {
-        return <NotFound />
+        return <NotFound specialMessage={error.message}/>
     }
     const realm = data
     const map_data = realm.map_data || defaultMapData
