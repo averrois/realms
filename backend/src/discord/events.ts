@@ -1,5 +1,6 @@
 import ready from './events/ready'
 import interactionCreate from './events/interactionCreate'
+import onMessage from './events/onMessage'
 
 export type Event = {
     name: string,
@@ -10,4 +11,5 @@ export type Event = {
 export const events: Event[] = [
     ready,
     interactionCreate,
+    onMessage
 ]
