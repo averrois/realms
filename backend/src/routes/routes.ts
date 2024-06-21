@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GetPlayersInRoom, IsOwnerOfServer } from './route-types'
+import { GetPlayersInRoom, GetServerName, IsOwnerOfServer } from './route-types'
 import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
@@ -56,8 +56,23 @@ export default function routes(): Router {
             }
             return res.status(400).json({ message: 'Invalid server ID.' })
         }
-        
+    })
 
+    router.get('/getServerName', async (req, res) => {
+        const params = req.query as unknown as z.infer<typeof GetServerName>
+        if (!GetServerName.safeParse(params).success) {
+            return res.status(400).json({ message: 'Invalid parameters' })
+        }
+        
+        try {
+            const guild = await client.guilds.fetch(params.serverId)
+            if (!guild) {
+                return res.status(400).json({ message: 'Invalid server ID.' })
+            }
+            return res.json({ name: guild.name })
+        } catch (err: any) {
+            return res.status(400).json({ message: 'Something went wrong.' })
+        }
     })
 
     return router

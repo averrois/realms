@@ -37,23 +37,26 @@ sockets(io)
 
 function onRealmUpdate(payload: any) {
     const id = payload.new.id
-    let changeMade = false
+    let refresh = false
     if (JSON.stringify(payload.new.map_data) !== JSON.stringify(payload.old.map_data)) {
-        changeMade = true
+        refresh = true
     }
     if (payload.new.discord_server_id !== payload.old.discord_server_id) {
-        changeMade = true
+        refresh = true
+    }
+    if (JSON.stringify(payload.new.realm_channel_mapping) !== JSON.stringify(payload.old.realm_channel_mapping)) {
+        refresh = true
     }
     if (payload.new.privacy_level !== payload.old.privacy_level) {
-        changeMade = true
+        refresh = true
     }
     if (payload.new.share_id !== payload.old.share_id) {
-        changeMade = true
+        refresh = true
     }
     if (payload.new.only_owner) {
-        changeMade = true
+        refresh = true
     }
-    if (changeMade) {
+    if (refresh) {
         sessionManager.terminateSession(io, id, "This realm has been changed by the owner.")
     }
 }

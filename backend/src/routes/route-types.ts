@@ -9,3 +9,7 @@ export const IsOwnerOfServer = z.object({
     access_token: z.string(),
     serverId: z.string(),
 })
+
+export const GetServerName = z.object({
+    serverId: z.string(),
+})

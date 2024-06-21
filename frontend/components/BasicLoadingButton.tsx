@@ -5,12 +5,13 @@ type BasicLoadingButtonProps = {
     onClick?: () => void
     loading: boolean
     children?: React.ReactNode
+    className?: string
 }
 
-const BasicLoadingButton:React.FC<BasicLoadingButtonProps> = ({ onClick, loading, children }) => {
+const BasicLoadingButton:React.FC<BasicLoadingButtonProps> = ({ onClick, loading, children, className }) => {
     
     return (
-        <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl relative ${loading ? 'pointer-events-none' : ''}`} onClick={onClick}>
+        <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl relative ${className} ${loading ? 'pointer-events-none' : ''}`} onClick={onClick}>
             <div className={`${loading ? 'opacity-0' : ''} `}>
                 {children}
             </div>

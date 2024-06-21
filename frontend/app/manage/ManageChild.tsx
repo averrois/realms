@@ -9,12 +9,17 @@ import { useModal } from '../hooks/useModal'
 import { Copy } from '@phosphor-icons/react'
 import { v4 as uuidv4 } from 'uuid'
 import Toggle from '@/components/Toggle'
+import BasicLoadingButton from '@/components/BasicLoadingButton'
+import { unlinkFromDiscord } from '@/utils/supabase/unlinkFromDiscord'
 
 type ManageChildProps = {
     realmId: string
     privacyLevel: 'anyone' | 'discord'
     startingShareId: string
     startingOnlyOwner: boolean
+    starting_discord_id: string
+    discord_server_name: string
+    discord_error: boolean
 }
 
 const privacyOptions = [
@@ -22,12 +27,14 @@ const privacyOptions = [
     'anyone in the discord server'
 ]
 
-const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId, startingOnlyOwner }) => {
+const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId, startingOnlyOwner, starting_discord_id, discord_server_name, discord_error }) => {
 
     const [selectedTab, setSelectedTab] = useState(0)
     const [privacy, setPrivacy] = useState(getDropdownValue())
     const [shareId, setShareId] = useState(startingShareId)
     const [onlyOwner, setOnlyOwner] = useState(startingOnlyOwner)
+    const [unlinkButtonLoading, setUnlinkButtonLoading] = useState(false)
+    const [discordId, setDiscordId] = useState(starting_discord_id)
     const { setModal, setLoadingText } = useModal()
 
     const supabase = createClient()
@@ -101,6 +108,26 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
         setModal('None')
     }
 
+    async function onClickUnlink() {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) {
+            return
+        }
+
+        setUnlinkButtonLoading(true)
+        const { error } = await unlinkFromDiscord(session.access_token, realmId)
+        if (error) {
+            toast.error(error.message)
+        }
+        setUnlinkButtonLoading(false)
+
+        if (!error) {
+            setDiscordId('')
+            toast.success('Unlinked from Discord!')
+            revalidate('/manage/[id]')
+        }
+    }
+
     return (
         <div className='flex flex-col items-center pt-24'>
             <div className='flex flex-row gap-8 relative'>
@@ -125,6 +152,33 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                             <BasicButton className='flex flex-row items-center gap-2 text-sm max-w-max' onClick={generateNewLink}>
                                 Generate New Link <Copy />
                             </BasicButton>
+                        </div>
+                    )}
+                    {selectedTab === 1 && (
+                        <div className='flex flex-col gap-2'>
+                            {!discordId && (
+                                <div className='flex flex-col gap-1'>
+                                    <h1>This realm is not linked to a Discord server.</h1>
+                                    <BasicButton className='max-w-max'>
+                                        Link to Discord
+                                    </BasicButton>
+                                </div>
+                            )}
+                            {discordId && (
+                                <div>
+                                    {discord_error && (
+                                        <h1 className='text-red-500'>There was an error fetching your server's data.</h1>
+                                    )}
+                                    {!discord_error && (
+                                        <div className='flex flex-col gap-2'>
+                                            <h1>Linked to server: <span className='font-bold'>{discord_server_name}</span></h1>
+                                            <BasicLoadingButton loading={unlinkButtonLoading} className='max-w-max' onClick={onClickUnlink}>
+                                                Unlink from Discord
+                                            </BasicLoadingButton>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     )}
                     </div>
