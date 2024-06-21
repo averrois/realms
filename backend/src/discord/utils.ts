@@ -15,5 +15,4 @@ export async function sendMessageToChannel(guildId: string, channelId: string, m
         await channel.send(message)
     } catch (err) {
     }
-    
 }

@@ -6,6 +6,7 @@ import link from './commands/link'
 import message from './commands/message'
 import play from './commands/play'
 import pair from './commands/pair'
+import unpair from './commands/unpair'
 
 export type Command = {
     data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
@@ -20,4 +21,5 @@ export const commands: Command[] = [
     message,
     play,
     pair,
+    unpair,
 ]
