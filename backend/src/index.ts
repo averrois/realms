@@ -50,8 +50,11 @@ function onRealmUpdate(payload: any) {
     if (payload.new.share_id !== payload.old.share_id) {
         changeMade = true
     }
+    if (payload.new.only_owner) {
+        changeMade = true
+    }
     if (changeMade) {
-        sessionManager.terminateSession(io, id, "This realm has been changed by the owner. Refresh to see what's new!")
+        sessionManager.terminateSession(io, id, "This realm has been changed by the owner.")
     }
 }
 
