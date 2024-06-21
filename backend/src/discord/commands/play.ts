@@ -9,16 +9,17 @@ const command: Command = {
   async execute(interaction: ChatInputCommandInteraction) {
 
     const guildId = interaction.guildId
-    const { data: realm, error: getRealmError } = await supabase.from('realms').select('share_id, id').eq('discord_server_id', guildId).single()
+    const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id').eq('discord_server_id', guildId)
     if (getRealmError) {
         await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
         return
     }
-    if (!realm) {
-        await interaction.reply({ content: 'This server is not linked to a realm! Link it to start playing.', ephemeral: true })
+    if (realms.length === 0) {
+        await interaction.reply({ content: "This server is not linked to a realm! Link it with the `/link` command!", ephemeral: true })
         return
     }
 
+    const realm = realms[0]
     const link = new URL(process.env.FRONTEND_URL! + `/play/${realm.id}`)
     const params = new URLSearchParams({
         shareId: realm.share_id,
