@@ -63,9 +63,11 @@ const TopBar:React.FC<TopBarProps> = () => {
                     <ArrowLeftEndOnRectangleIcon className='h-8 w-8 text-white'/>
                 </Link>
             </div>
-            <BasicButton onClick={beginSave} className='flex flex-row gap-2 items-center text-lg'>
-                Save
-                <FloppyDisk className='h-6 w-6'/>
+            <BasicButton onClick={beginSave}>
+                <div className='flex flex-row gap-2 items-center text-lg'>
+                    Save
+                    <FloppyDisk className='h-6 w-6'/>
+                </div>
             </BasicButton>
             <p className='text-xs italic'>Saving will kick any players that are online.</p>
         </div>

@@ -5,6 +5,7 @@ import { toast } from 'react-toastify'
 import LinkRealmDropdown from '@/components/LinkRealmDropdown'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { linkDiscordServer } from '@/utils/supabase/linkDiscordServer'
+import BasicButton from '@/components/BasicButton'
 
 type LinkScreenProps = {
     ownedRealms: any,
@@ -63,16 +64,9 @@ const LinkScreen:React.FC<LinkScreenProps> = ({ ownedRealms, serverName, serverI
                     <h1 className='mt-12'>Choose a realm to link to your server!</h1>
                     <h1 className='max-w-[350px] text-center'></h1>
                     <LinkRealmDropdown realms={ownedRealms} setSelectedRealm={setSelectedRealm} selectedRealm={selectedRealm} />
-                    <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl relative ${loading ? 'pointer-events-none' : ''}`} onClick={onLink}>
-                        <div className={`${loading ? 'opacity-0' : ''} `}>
-                            Link 🚀
-                        </div>
-                        {loading && (
-                            <div className='grid place-items-center absolute w-full h-full top-0 left-0'>
-                                <LoadingSpinner small/>
-                            </div>
-                        )}
-                    </button>
+                    <BasicButton onClick={onLink} loading={loading}>
+                        Link 🚀
+                    </BasicButton>
                 </div>
             )}
         </div>

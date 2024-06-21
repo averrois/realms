@@ -80,16 +80,9 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
-                    <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl relative ${loading ? 'pointer-events-none' : ''}`} onClick={handleSwitchSkinsClick}>
-                        <div className={`${loading ? 'opacity-0' : ''} `}>
-                            Switch
-                        </div>
-                        {loading && (
-                            <div className='grid place-items-center absolute w-full h-full top-0 left-0'>
-                                <LoadingSpinner small/>
-                            </div>
-                        )}
-                    </button>
+                    <BasicButton onClick={handleSwitchSkinsClick} loading={loading}>
+                        Switch
+                    </BasicButton>
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
                         <ArrowFatRight className='h-12 w-12'/>
                     </button>
