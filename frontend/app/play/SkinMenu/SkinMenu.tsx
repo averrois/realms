@@ -9,6 +9,7 @@ import signal from '@/utils/signal'
 import { createClient } from '@/utils/supabase/client'
 import revalidate from '@/utils/revalidate'
 import { toast } from 'react-toastify'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 type SkinMenuProps = {
     
@@ -19,6 +20,7 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
     const { modal, setModal } = useModal()
 
     const [skinIndex, setSkinIndex] = useState<number>(skins.indexOf(defaultSkin))
+    const [loading, setLoading] = useState(false)
 
     const supabase = createClient()
 
@@ -42,7 +44,7 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
         }
     }, [])
 
-    async function onClickSwitch() {
+    async function switchSkins() {
         const newSkin = skins[skinIndex]
         // update profile on supabase with different skin
         const { data: { user } } = await supabase.auth.getUser()
@@ -62,6 +64,12 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
         signal.emit('switchSkin', newSkin)
         setModal('None')
     }
+
+    async function handleSwitchSkinsClick() {
+        setLoading(true)
+        await switchSkins()
+        setLoading(false)
+    }
     
     return (
         <Modal open={modal === 'Skin'} closeOnOutsideClick>
@@ -72,9 +80,16 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
-                    <BasicButton className='font-bold' onClick={onClickSwitch}>
-                        Switch
-                    </BasicButton>
+                    <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl relative ${loading ? 'pointer-events-none' : ''}`} onClick={handleSwitchSkinsClick}>
+                        <div className={`${loading ? 'opacity-0' : ''} `}>
+                            Switch
+                        </div>
+                        {loading && (
+                            <div className='grid place-items-center absolute w-full h-full top-0 left-0'>
+                                <LoadingSpinner small/>
+                            </div>
+                        )}
+                    </button>
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
                         <ArrowFatRight className='h-12 w-12'/>
                     </button>

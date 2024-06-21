@@ -92,7 +92,7 @@ export function sockets(io: Server) {
             }
             joiningInProgress.add(socket.handshake.query.uid as string)
 
-            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id').eq('id', realmData.realmId).single()
+            const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data, discord_server_id').eq('id', realmData.realmId).single()
 
             if (error || !data) {
             return rejectJoin('Realm not found.')
@@ -102,7 +102,7 @@ export function sockets(io: Server) {
 
             const join = async () => {
                 if (!sessionManager.getSession(realmData.realmId)) {
-                    sessionManager.createSession(realmData.realmId)
+                    sessionManager.createSession(realmData.realmId, data.map_data, data.discord_server_id)
                 }
 
                 const uid = socket.handshake.query.uid as string
@@ -118,7 +118,7 @@ export function sockets(io: Server) {
                 }
 
                 const username = users.getUser(uid)!.user_metadata.full_name
-                await sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
+                sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   
 
