@@ -13,12 +13,19 @@ const command: Command = {
       return
     }
 
+    const link = new URL(process.env.FRONTEND_URL! + '/link')
+    const params = new URLSearchParams({
+        id: guild.id,
+        name: guild.name,
+    })
+    link.search = params.toString()
+
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
           .setLabel('Click Here')
           .setStyle(ButtonStyle.Link)
-          .setURL(process.env.FRONTEND_URL!)
+          .setURL(link.toString())
       )
 
     await interaction.reply({ content: '​\n\n**🚀 click the button below to link this server to a realm! 🚀**\n​', components: [row], ephemeral: true })

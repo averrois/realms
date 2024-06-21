@@ -2,28 +2,19 @@ import { Fragment } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
-type DropdownProps = {
-    items: any[]
-    selectedItem: any
-    setSelectedItem: (item: any) => void
-    alternateStyle?: boolean
+type LinkRealmDropdownProps = {
+    realms: any[]
+    selectedRealm: any
+    setSelectedRealm: (item: any) => void
 }
 
-const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem, alternateStyle }) => {
-
-    function getAlternateStyles() {
-        if (alternateStyle) {
-            return 'p-2'
-        } else {
-            return ''
-        }
-    }
+const LinkRealmDropdown:React.FC<LinkRealmDropdownProps> = ({ realms, selectedRealm, setSelectedRealm }) => {
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className={`inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize ${getAlternateStyles()}`}>
-          {selectedItem}
+        <Menu.Button className={`inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize p-2`}>
+          {selectedRealm.name}
           <ChevronDownIcon className="-mr-1 h-5 w-5 text-white" aria-hidden="true" />
         </Menu.Button>
       </div>
@@ -38,14 +29,14 @@ const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem
       >
         <Menu.Items className="absolute right-0 z-10 w-64 origin-top-right bg-secondary shadow-lg focus:outline-none">
           <div>
-            {items.map((item) => (
-                <Menu.Item key={item}>
+            {realms.map((realm) => (
+                <Menu.Item key={realm.id}>
                     {() => (
                         <div
-                            className={`block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue ${getAlternateStyles()}`}
-                            onClick={() => setSelectedItem(item)}
+                            className={`block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue p-2`}
+                            onClick={() => setSelectedRealm(realm)}
                         >
-                            {item}
+                            {realm.name}
                         </div>
                     )}
                 </Menu.Item>
@@ -57,4 +48,4 @@ const Dropdown:React.FC<DropdownProps> = ({ items, selectedItem, setSelectedItem
   )
 }
 
-export default Dropdown
+export default LinkRealmDropdown

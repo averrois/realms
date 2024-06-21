@@ -4,7 +4,7 @@ import { PlayApp } from '@/utils/pixi/PlayApp'
 import { useEffect } from 'react'
 import { RealmData } from '@/utils/pixi/types'
 import { useModal } from '../hooks/useModal'
-import { server } from '@/utils/pixi/server'
+import { server } from '@/utils/backend/server'
 
 type PixiAppProps = {
     className?: string

@@ -67,6 +67,7 @@ const TopBar:React.FC<TopBarProps> = () => {
                 Save
                 <FloppyDisk className='h-6 w-6'/>
             </BasicButton>
+            <p className='text-xs italic'>Saving will kick any players that are online.</p>
         </div>
     )
 }
