@@ -3,9 +3,8 @@ import React, { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import { toast } from 'react-toastify'
 import LinkRealmDropdown from '@/components/LinkRealmDropdown'
-import LoadingSpinner from '@/components/LoadingSpinner'
 import { linkDiscordServer } from '@/utils/supabase/linkDiscordServer'
-import BasicButton from '@/components/BasicButton'
+import BasicLoadingButton from '@/components/BasicLoadingButton'
 
 type LinkScreenProps = {
     ownedRealms: any,
@@ -64,9 +63,9 @@ const LinkScreen:React.FC<LinkScreenProps> = ({ ownedRealms, serverName, serverI
                     <h1 className='mt-12'>Choose a realm to link to your server!</h1>
                     <h1 className='max-w-[350px] text-center'></h1>
                     <LinkRealmDropdown realms={ownedRealms} setSelectedRealm={setSelectedRealm} selectedRealm={selectedRealm} />
-                    <BasicButton onClick={onLink} loading={loading}>
+                    <BasicLoadingButton onClick={onLink} loading={loading}>
                         Link 🚀
-                    </BasicButton>
+                    </BasicLoadingButton>
                 </div>
             )}
         </div>

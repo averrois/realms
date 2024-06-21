@@ -3,13 +3,12 @@ import Modal from '@/components/Modal/Modal'
 import { useModal } from '@/app/hooks/useModal'
 import AnimatedCharacter from './AnimatedCharacter'
 import { ArrowFatLeft, ArrowFatRight } from '@phosphor-icons/react'
-import BasicButton from '@/components/BasicButton'
+import BasicLoadingButton from '@/components/BasicLoadingButton'
 import { skins, defaultSkin } from '@/utils/pixi/Player/skins'
 import signal from '@/utils/signal'
 import { createClient } from '@/utils/supabase/client'
 import revalidate from '@/utils/revalidate'
 import { toast } from 'react-toastify'
-import LoadingSpinner from '@/components/LoadingSpinner'
 
 type SkinMenuProps = {
     
@@ -80,9 +79,9 @@ const SkinMenu:React.FC<SkinMenuProps> = () => {
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={decrement}>
                         <ArrowFatLeft className='h-12 w-12'/>
                     </button>
-                    <BasicButton onClick={handleSwitchSkinsClick} loading={loading}>
+                    <BasicLoadingButton onClick={handleSwitchSkinsClick} loading={loading}>
                         Switch
-                    </BasicButton>
+                    </BasicLoadingButton>
                     <button className='hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 outline-none' onClick={increment}>
                         <ArrowFatRight className='h-12 w-12'/>
                     </button>
