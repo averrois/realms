@@ -16,3 +16,21 @@ export async function sendMessageToChannel(guildId: string, channelId: string, m
     } catch (err) {
     }
 }
+
+export async function userIsInGuild(userId: string, guildId: string) {
+    try {
+        const guild = await client.guilds.fetch(guildId)
+        if (!guild) {
+            return false
+        }
+
+        const member = await guild.members.fetch(userId)
+        if (!member) {
+            return false
+        }
+
+        return true
+    } catch {
+        return false
+    }
+}

@@ -1,9 +1,10 @@
 import { Router } from 'express'
-import { GetPlayersInRoom, GetServerName, IsOwnerOfServer } from './route-types'
+import { GetPlayersInRoom, GetServerName, IsOwnerOfServer, UserIsInGuild } from './route-types'
 import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
 import { client } from '../discord/client'
+import { userIsInGuild } from '../discord/utils'
 
 export default function routes(): Router {
     const router = Router()
@@ -73,6 +74,22 @@ export default function routes(): Router {
         } catch (err: any) {
             return res.status(400).json({ message: 'Something went wrong.' })
         }
+    })
+
+    router.get('/userIsInGuild', async (req, res) => {
+        const params = req.query as unknown as z.infer<typeof UserIsInGuild>
+        if (!UserIsInGuild.safeParse(params).success) {
+            return res.status(400).json({ message: 'Invalid parameters' })
+        }
+
+        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+
+        if (error) {
+            return res.status(401).json({ message: 'Invalid access token' })
+        }
+
+        const isInGuild = await userIsInGuild(user.user.user_metadata.provider_id, params.guildId)
+        return res.json({ isInGuild })
     })
 
     return router

@@ -7,6 +7,7 @@ import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
 import { kickPlayer } from './kick'
 import { sendMessageToChannel } from '../discord/utils'
+import { userIsInGuild } from '../discord/utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -138,8 +139,14 @@ export function sockets(io: Server) {
             }
 
             if (realm.privacy_level === 'discord') {
-                // TODO: Check if they are in discord 
-                return rejectJoin('User is not in the Discord server.')
+                const discordId = users.getUser(socket.handshake.query.uid as string)!.user_metadata.provider_id
+                const isInGuild = await userIsInGuild(discordId, realm.discord_server_id)
+
+                if (isInGuild) {
+                    return join()
+                } else {
+                    return rejectJoin('User is not in the Discord server.')
+                }
             } else if (realm.privacy_level === 'anyone') {
                 if (realm.share_id === realmData.shareId) {
                     return join()
@@ -209,7 +216,7 @@ export function sockets(io: Server) {
             const channelId = session.map_data.rooms[roomIndex].channelId   
             if (channelId && session.discord_id) {
                 const username = session.getPlayer(uid).username
-                const discordMessage = `from **${username}**: ${message}`
+                const discordMessage = `**${username}** ${message}`
                 sendMessageToChannel(session.discord_id, channelId, discordMessage)
             }
         })
