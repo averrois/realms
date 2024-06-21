@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { RealmData } from '@/utils/pixi/types'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import BasicButton from '@/components/BasicButton'
 import signal from '@/utils/signal'
@@ -77,11 +76,9 @@ const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }
                 <div className='flex flex-col items-center w-full overflow-y-auto max-h-[200px] gap-1 transparent-scrollbar' ref={roomsContainerRef}>
                     {rooms.map((room, index) => <RoomItem rooms={rooms} selectedRoomIndex={roomIndex} roomIndex={index} roomName={room} setRooms={setRooms} key={index}/>)}
                 </div>
-                <BasicButton className='w-full' onClick={onClickCreateRoom}>
-                    <div className='flex flex-row items-center gap-1 text-lg w-full justify-center'>
-                        Create Room
-                        <PlusCircleIcon className='h-5 cursor-pointer hover:bg-darkblue'/>
-                    </div>
+                <BasicButton className='flex flex-row items-center gap-1 text-lg mb-4 w-full justify-center' onClick={onClickCreateRoom}>
+                    Create Room
+                    <PlusCircleIcon className='h-5 cursor-pointer hover:bg-darkblue'/>
                 </BasicButton>
         </div>
     )
