@@ -28,7 +28,7 @@ const command: Command = {
     const row = new ActionRowBuilder<ButtonBuilder>()
       .addComponents(
         new ButtonBuilder()
-          .setLabel('Play')
+          .setLabel('🕹️ PLAY!')
           .setStyle(ButtonStyle.Link)
           .setURL(link.toString())
       )
