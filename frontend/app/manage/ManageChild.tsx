@@ -111,24 +111,18 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                             <div>
                                 <Dropdown items={privacyOptions} selectedItem={privacy} setSelectedItem={setPrivacy}/>
                             </div>
-                            <BasicButton className='max-w-max' onClick={copyLink}>
-                                <div className='flex flex-row items-center gap-2 text-sm'>
-                                    Copy Link <Copy />
-                                </div>
+                            <BasicButton className='flex flex-row items-center gap-2 text-sm max-w-max' onClick={copyLink}>
+                                Copy Link <Copy />
                             </BasicButton>
-                            <BasicButton className='max-w-max' onClick={generateNewLink}>
-                                <div className='flex flex-row items-center gap-2 text-sm '>
-                                    Generate New Link <Copy />
-                                </div>
+                            <BasicButton className='flex flex-row items-center gap-2 text-sm max-w-max' onClick={generateNewLink}>
+                                Generate New Link <Copy />
                             </BasicButton>
                         </div>
                     )}
                     </div>
-                <div className='absolute bottom-[-50px] right-0'>
-                    <BasicButton onClick={save}>
-                        Save
-                    </BasicButton>
-                </div>
+                <BasicButton className='absolute bottom-[-50px] right-0' onClick={save}>
+                    Save
+                </BasicButton>
             </div>
         </div>
     )
