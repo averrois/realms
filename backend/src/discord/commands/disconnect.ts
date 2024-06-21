@@ -1,16 +1,16 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, Guild } from 'discord.js'
 import { Command } from '../commands'
-import { getRoomFromName, getRoomNames, getRoomNamesWithChannelId } from '../../utils'
+import { getRoomFromName, getRoomNamesWithChannelId } from '../../utils'
 import { supabase } from '../../supabase'
 
 const command: Command = {
   data: new SlashCommandBuilder()
-    .setName('unpair')
-    .setDescription('Unpair this channel from a room in your realm.')
+    .setName('disconnect')
+    .setDescription('disconnect this channel from a room in your realm.')
     .addStringOption(option => 
         option
             .setName('room_name')
-            .setDescription('The name of the room you want to unpair with.')
+            .setDescription('the name of the room you want to disconnect with.')
             .setRequired(true)),
   async execute(interaction: ChatInputCommandInteraction) {
     const guild = interaction.guild as Guild
@@ -38,7 +38,7 @@ const command: Command = {
     }
 
     if (profileData.id !== realm.owner_id) {
-        return await interaction.reply({ content: 'You must be the owner of the realm to unpair a room!', ephemeral: true })
+        return await interaction.reply({ content: 'You must be the owner of the realm to disconnect a room!', ephemeral: true })
     }
 
     const mapData = realm.map_data
@@ -46,7 +46,7 @@ const command: Command = {
 
     if (!room) {
         const roomNames = getRoomNamesWithChannelId(mapData, interaction.channelId)
-        const message = `No room with that name is paired with this channel. Here are the rooms this channel is paired with: ${roomNames.map(name => '`' + name + '`').join(', ')}`
+        const message = `No room with that name is connected to this channel. Here are the rooms this channel is connected to: ${roomNames.map(name => '`' + name + '`').join(', ')}`
         return await interaction.reply({ content: message, ephemeral: true })
     }
 
@@ -57,7 +57,7 @@ const command: Command = {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }
 
-    await interaction.reply({ content: `${interaction.channel} has been unpaired with ` + '`' + room.name + '`' + '!', ephemeral: true })
+    await interaction.reply({ content: `${interaction.channel} has been disconnected with ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 

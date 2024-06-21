@@ -5,12 +5,12 @@ import { supabase } from '../../supabase'
 
 const command: Command = {
   data: new SlashCommandBuilder()
-    .setName('pair')
-    .setDescription('Pair this channel with a room from your realm.')
+    .setName('connect')
+    .setDescription('connect this channel with a room from your realm.')
     .addStringOption(option => 
         option
             .setName('room_name')
-            .setDescription('The name of the room you want to pair with.')
+            .setDescription('the name of the room you want to connect with.')
             .setRequired(true)),
   async execute(interaction: ChatInputCommandInteraction) {
     const guild = interaction.guild as Guild
@@ -38,7 +38,7 @@ const command: Command = {
     }
 
     if (profileData.id !== realm.owner_id) {
-        return await interaction.reply({ content: 'You must be the owner of the realm to pair a room!', ephemeral: true })
+        return await interaction.reply({ content: 'You must be the owner of the realm to connect a room!', ephemeral: true })
     }
 
     const mapData = realm.map_data
@@ -57,7 +57,7 @@ const command: Command = {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }
 
-    await interaction.reply({ content: `${interaction.channel} has been paired with ` + '`' + room.name + '`' + '!', ephemeral: true })
+    await interaction.reply({ content: `${interaction.channel} has been connected with ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 
