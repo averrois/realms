@@ -209,7 +209,7 @@ export function sockets(io: Server) {
             const channelId = session.map_data.rooms[roomIndex].channelId   
             if (channelId && session.discord_id) {
                 const username = session.getPlayer(uid).username
-                const discordMessage = `**${username}**: ${message}`
+                const discordMessage = `from **${username}**: ${message}`
                 sendMessageToChannel(session.discord_id, channelId, discordMessage)
             }
         })
