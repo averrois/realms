@@ -4,6 +4,7 @@ import server from './commands/server'
 import user from './commands/user'
 import link from './commands/link'
 import message from './commands/message'
+import play from './commands/play'
 
 export type Command = {
     data: SlashCommandBuilder,
@@ -16,4 +17,5 @@ export const commands: Command[] = [
     user,
     link,
     message,
+    play,
 ]
