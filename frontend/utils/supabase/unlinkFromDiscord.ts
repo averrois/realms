@@ -15,7 +15,7 @@ export async function unlinkFromDiscord(access_token: string, realm_id: string) 
 
     const { error } = await supabase
         .from('realms')
-        .update({ discord_server_id: null, realm_channel_mapping: null })
+        .update({ discord_server_id: null })
         .eq('id', realm_id)
         .eq('owner_id', user.user.id)
 

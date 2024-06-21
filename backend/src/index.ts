@@ -44,9 +44,6 @@ function onRealmUpdate(payload: any) {
     if (payload.new.discord_server_id !== payload.old.discord_server_id) {
         refresh = true
     }
-    if (JSON.stringify(payload.new.realm_channel_mapping) !== JSON.stringify(payload.old.realm_channel_mapping)) {
-        refresh = true
-    }
     if (payload.new.privacy_level !== payload.old.privacy_level) {
         refresh = true
     }

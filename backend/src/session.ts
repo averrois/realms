@@ -1,4 +1,3 @@
-import { supabase } from './supabase'
 import { z } from 'zod'
 import { kickPlayer } from './sockets/kick'
 import { Server } from 'socket.io'
@@ -36,6 +35,7 @@ export interface Room {
             }
         }
     }
+    channelId?: string
 }
 
 export interface Player {
