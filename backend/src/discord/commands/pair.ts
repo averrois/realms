@@ -50,8 +50,14 @@ const command: Command = {
         return await interaction.reply({ content: message, ephemeral: true })
     }
 
-    await interaction.reply({ content: 'You passed the room name: ' + room.name + '!', ephemeral: true })
+    room.channelId = interaction.channelId
 
+    const { error: updateError } = await supabase.from('realms').update({ map_data: mapData }).eq('id', realm.id).eq('owner_id', realm.owner_id)
+    if (updateError) {
+        return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
+    }
+
+    await interaction.reply({ content: `${interaction.channel} has been paired with ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 

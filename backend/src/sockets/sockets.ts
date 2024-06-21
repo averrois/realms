@@ -6,6 +6,7 @@ import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
 import { kickPlayer } from './kick'
+import { sendMessageToChannel } from '../discord/utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -202,6 +203,15 @@ export function sockets(io: Server) {
 
             const uid = socket.handshake.query.uid as string
             emit('receiveMessage', { uid, message })
+
+            // send message to discord 
+            const roomIndex = session.getPlayerRoom(uid)
+            const channelId = session.map_data.rooms[roomIndex].channelId   
+            if (channelId && session.discord_id) {
+                const username = session.getPlayer(uid).username
+                const discordMessage = `**${username}**: ${message}`
+                sendMessageToChannel(session.discord_id, channelId, discordMessage)
+            }
         })
     })
 }
