@@ -63,8 +63,8 @@ export class SessionManager {
     private playerIdToRealmId: { [key: string]: string } = {}
     private socketIdToPlayerId: { [key: string]: string } = {}
 
-    public createSession(id: string): void {
-        const realm = new Session(id)
+    public createSession(id: string, mapData: RealmData | null, discord_id: string | null): void {
+        const realm = new Session(id, mapData, discord_id)
 
         this.sessions[id] = realm
     }
@@ -78,8 +78,8 @@ export class SessionManager {
         return this.sessions[realmId]
     }
 
-    public async addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
-        await this.sessions[realmId].addPlayer(socketId, uid, username, skin)
+    public addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
+        this.sessions[realmId].addPlayer(socketId, uid, username, skin)
         this.playerIdToRealmId[uid] = realmId
         this.socketIdToPlayerId[socketId] = uid
     }
@@ -124,25 +124,20 @@ export class Session {
     private roomData: { [key: number]: Set<string> } = {}
     public players: { [key: string]: Player } = {}
     public id: string
+    private map_data: RealmData 
+    private discord_id: string | null
 
-    constructor(id: string) {
+    constructor(id: string, mapData: RealmData | null, discord_id: string | null) {
         this.id = id
+        this.map_data = mapData || defaultMapData
+        this.discord_id = discord_id
     }
 
-    public async addPlayer(socketId: string, uid: string, username: string, skin: string) {
+    public addPlayer(socketId: string, uid: string, username: string, skin: string) {
         this.removePlayer(uid)
-        const { data, error } = await supabase.from('realms').select('map_data').eq('id', this.id).single()
-        let spawnIndex = 0
-        let spawnX = 0
-        let spawnY = 0
-        // ensure that spawn point exists and that it is valid
-        if (data && data.map_data && Spawnpoint.safeParse(data.map_data.spawnpoint).success) {
-            const mapData: RealmData = data.map_data
-            spawnIndex = mapData.spawnpoint.roomIndex
-            spawnX = mapData.spawnpoint.x
-            spawnY = mapData.spawnpoint.y
-        }
-
+        const spawnIndex = this.map_data.spawnpoint.roomIndex
+        const spawnX = this.map_data.spawnpoint.x
+        const spawnY = this.map_data.spawnpoint.y
         if (!this.roomData[spawnIndex]) this.roomData[spawnIndex] = new Set<string>()
 
         const player: Player = {
