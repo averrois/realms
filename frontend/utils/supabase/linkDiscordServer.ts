@@ -41,7 +41,7 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
 
     const { error } = await supabase
         .from('realms')
-        .update({ discord_server_id: null, realm_channel_mapping: null })
+        .update({ discord_server_id: null })
         .eq('discord_server_id', discord_server_id)
         .eq('owner_id', user.user.id)
 
@@ -51,7 +51,7 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
 
     const { error: linkError } = await supabase
         .from('realms')
-        .update({ discord_server_id, realm_channel_mapping: null })
+        .update({ discord_server_id })
         .eq('id', realm_id)
         .eq('owner_id', user.user.id)
 

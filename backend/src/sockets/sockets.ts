@@ -6,6 +6,8 @@ import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
 import { kickPlayer } from './kick'
+import { sendMessageToChannel } from '../discord/utils'
+import { userIsInGuild } from '../discord/utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -118,6 +120,7 @@ export function sockets(io: Server) {
                 }
 
                 const username = users.getUser(uid)!.user_metadata.full_name
+                const discordId = users.getUser(uid)!.user_metadata.provider_id
                 sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   
@@ -137,8 +140,14 @@ export function sockets(io: Server) {
             }
 
             if (realm.privacy_level === 'discord') {
-                // TODO: Check if they are in discord 
-                return rejectJoin('User is not in the Discord server.')
+                const discordId = users.getUser(socket.handshake.query.uid as string)!.user_metadata.provider_id
+                const isInGuild = await userIsInGuild(discordId, realm.discord_server_id)
+
+                if (isInGuild) {
+                    return join()
+                } else {
+                    return rejectJoin('User is not in the Discord server.')
+                }
             } else if (realm.privacy_level === 'anyone') {
                 if (realm.share_id === realmData.shareId) {
                     return join()
@@ -202,6 +211,16 @@ export function sockets(io: Server) {
 
             const uid = socket.handshake.query.uid as string
             emit('receiveMessage', { uid, message })
+
+            // send message to discord 
+            const roomIndex = session.getPlayerRoom(uid)
+            const channelId = session.map_data.rooms[roomIndex].channelId   
+            if (channelId && session.discord_id) {
+                const username = session.getPlayer(uid).username
+                const discordMessage = `**${username}** ${message}`
+                const senderId = users.getUser(uid)!.user_metadata.provider_id
+                sendMessageToChannel(senderId, session.discord_id, channelId, discordMessage)
+            }
         })
     })
 }

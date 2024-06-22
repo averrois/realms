@@ -1,6 +1,7 @@
 'use server'
 import 'server-only'
 import { createClient } from '@supabase/supabase-js'
+import { request } from '../backend/requests'
 
 export async function getPlayRealmData(accessToken: string, shareId: string) {
     const supabase = createClient(
@@ -14,7 +15,7 @@ export async function getPlayRealmData(accessToken: string, shareId: string) {
         return { data: null, error: userError }
     }
 
-    const { data, error } = await supabase.from('realms').select('map_data, privacy_level, owner_id, only_owner').eq('share_id', shareId).single()
+    const { data, error } = await supabase.from('realms').select('map_data, privacy_level, owner_id, only_owner, discord_server_id').eq('share_id', shareId).single()
 
     if (!data || error) {
         return { data: null, error }
@@ -34,7 +35,11 @@ export async function getPlayRealmData(accessToken: string, shareId: string) {
     if (realm.privacy_level === 'anyone') {
         return { data, error }
     } else if (realm.privacy_level === 'discord') {
-        // TODO: check if they are in discord 
+        const { data: guildData, error: guildError } = await request('/userIsInGuild', { access_token: accessToken, guildId: realm.discord_server_id})
+        if (guildError || guildData.isInGuild === false) {
+            return { data: null, error: { message: 'not in discord' }}
+        }
+        return { data, error }
     }
 
     return { data: null, error: { message: 'Realm not found!' }}

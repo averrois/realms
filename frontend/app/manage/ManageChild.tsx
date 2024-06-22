@@ -156,7 +156,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                     )}
                     {selectedTab === 1 && (
                         <div className='flex flex-col gap-2'>
-                            {!discordId && (
+                            {!discordId || discord_error && (
                                 <div className='flex flex-col gap-1'>
                                     <h1>This realm is not linked to a Discord server.</h1>
                                     <BasicButton className='max-w-max'>
@@ -164,19 +164,12 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                                     </BasicButton>
                                 </div>
                             )}
-                            {discordId && (
-                                <div>
-                                    {discord_error && (
-                                        <h1 className='text-red-500'>There was an error fetching your server's data.</h1>
-                                    )}
-                                    {!discord_error && (
-                                        <div className='flex flex-col gap-2'>
-                                            <h1>Linked to server: <span className='font-bold'>{discord_server_name}</span></h1>
-                                            <BasicLoadingButton loading={unlinkButtonLoading} className='max-w-max' onClick={onClickUnlink}>
-                                                Unlink from Discord
-                                            </BasicLoadingButton>
-                                        </div>
-                                    )}
+                            {discordId && !discord_error && (
+                                <div className='flex flex-col gap-2'>
+                                    <h1>Linked to server: <span className='font-bold'>{discord_server_name}</span></h1>
+                                    <BasicLoadingButton loading={unlinkButtonLoading} className='max-w-max' onClick={onClickUnlink}>
+                                        Unlink from Discord
+                                    </BasicLoadingButton>
                                 </div>
                             )}
                         </div>

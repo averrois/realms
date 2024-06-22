@@ -1,4 +1,3 @@
-import { supabase } from './supabase'
 import { z } from 'zod'
 import { kickPlayer } from './sockets/kick'
 import { Server } from 'socket.io'
@@ -36,6 +35,7 @@ export interface Room {
             }
         }
     }
+    channelId?: string
 }
 
 export interface Player {
@@ -124,8 +124,8 @@ export class Session {
     private roomData: { [key: number]: Set<string> } = {}
     public players: { [key: string]: Player } = {}
     public id: string
-    private map_data: RealmData 
-    private discord_id: string | null
+    public map_data: RealmData 
+    public discord_id: string | null
 
     constructor(id: string, mapData: RealmData | null, discord_id: string | null) {
         this.id = id

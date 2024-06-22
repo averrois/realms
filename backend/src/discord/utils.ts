@@ -1,22 +1,41 @@
 import { client } from './client'
 
-export async function sendMessageToChannel(guildId: string, channelId: string, message: string) {
+export async function sendMessageToChannel(senderId: string, guildId: string, channelId: string, message: string) {
     try {
         const guild = await client.guilds.fetch(guildId)
         if (!guild) {
-            console.log('No guild with this ID found.')
             return
         }
 
         const channel = await guild.channels.fetch(channelId)
         if (!channel || !channel.isTextBased()) {
-            console.log('No channel with this ID found.')
+            return
+        }
+
+        const member = await guild.members.fetch(senderId)
+        if (!member) {
             return
         }
 
         await channel.send(message)
     } catch (err) {
-        console.log('Error sending message:', err)
     }
-    
+}
+
+export async function userIsInGuild(userId: string, guildId: string) {
+    try {
+        const guild = await client.guilds.fetch(guildId)
+        if (!guild) {
+            return false
+        }
+
+        const member = await guild.members.fetch(userId)
+        if (!member) {
+            return false
+        }
+
+        return true
+    } catch {
+        return false
+    }
 }

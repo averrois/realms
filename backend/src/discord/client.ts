@@ -6,7 +6,7 @@ interface ExtendedClient extends Client {
   commands?: Collection<unknown, unknown>;
 }
 
-const client: ExtendedClient = new Client({ intents: [GatewayIntentBits.Guilds]  })
+const client: ExtendedClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]  })
 
 function setUpClient() {
     client.commands = new Collection()
@@ -20,7 +20,6 @@ function setUpClient() {
         } else {
             client.on(event.name, (...args) => event.execute(...args))
         }
-
     }
 }
 

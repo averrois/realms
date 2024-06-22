@@ -4,7 +4,7 @@ import { Command } from '../commands'
 const command: Command = {
   data: new SlashCommandBuilder()
     .setName('link')
-    .setDescription('Link your server to a realm.'),
+    .setDescription('link your server to a realm.'),
   async execute(interaction: ChatInputCommandInteraction) {
 
     const guild = interaction.guild as Guild

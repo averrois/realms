@@ -13,3 +13,8 @@ export const IsOwnerOfServer = z.object({
 export const GetServerName = z.object({
     serverId: z.string(),
 })
+
+export const UserIsInGuild = z.object({
+    access_token: z.string(),
+    guildId: z.string(),
+})

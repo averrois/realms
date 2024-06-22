@@ -5,7 +5,7 @@ import { supabase } from '../../supabase'
 const command: Command = {
   data: new SlashCommandBuilder()
     .setName('play')
-    .setDescription('Join the realm!'),
+    .setDescription('join the realm!'),
   async execute(interaction: ChatInputCommandInteraction) {
 
     const guildId = interaction.guildId

@@ -1,21 +1,21 @@
-import { SlashCommandBuilder } from 'discord.js'
-import ping from './commands/ping'
-import server from './commands/server'
-import user from './commands/user'
+import { SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js'
 import link from './commands/link'
-import message from './commands/message'
 import play from './commands/play'
+import connect from './commands/connect'
+import disconnect from './commands/disconnect'
+import help from './commands/help'
+import rooms from './commands/rooms'
 
 export type Command = {
-    data: SlashCommandBuilder,
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
     execute: Function
 }
 
 export const commands: Command[] = [
-    ping,
-    server,
-    user,
     link,
-    message,
     play,
+    connect,
+    disconnect,
+    help,
+    rooms
 ]
