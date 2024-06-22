@@ -47,9 +47,16 @@ const ChatLog: React.FC<ChatLogProps> = () => {
                 </div>
             )}
             {expanded && (
-                <div className='bg-secondary w-[400px] h-[200px] rounded-br-lg transparent-scrollbar relative'>
-                    <div className='cursor-pointer absolute bottom-0 right-0 rounded-br-lg rounded-tl-lg hover:bg-lightblue p-2'>
-                        <ArrowUpLeft className='h-4 w-4' onClick={collapse} />
+                <div className='bg-secondary w-[400px] h-[200px] rounded-br-lg transparent-scrollbar relative p-1 border-b-8 border-r-8 border-darkblue'>
+                    <div className='cursor-pointer absolute bottom-[-8px] right-[-8px] rounded-tl-lg rounded-br-lg bg-darkblue hover:bg-lightblue p-2' onClick={collapse}>
+                        <ArrowUpLeft className='h-4 w-4' />
+                    </div>
+                    <div className='w-full h-full flex flex-col-reverse overflow-y-scroll'>
+                        {messages.map((message, index) => (
+                            <div key={index}>
+                                <span className='font-bold'>{message.username}:</span> {message.content}
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
