@@ -7,13 +7,13 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             return
         }
 
-        const member = await guild.members.fetch(senderId)
-        if (!member) {
+        const channel = await guild.channels.fetch(channelId)
+        if (!channel || !channel.isTextBased()) {
             return
         }
 
-        const channel = await guild.channels.fetch(channelId)
-        if (!channel || !channel.isTextBased()) {
+        const member = await guild.members.fetch(senderId)
+        if (!member) {
             return
         }
 
