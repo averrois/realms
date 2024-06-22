@@ -1,9 +1,14 @@
 import { client } from './client'
 
-export async function sendMessageToChannel(guildId: string, channelId: string, message: string) {
+export async function sendMessageToChannel(senderId: string, guildId: string, channelId: string, message: string) {
     try {
         const guild = await client.guilds.fetch(guildId)
         if (!guild) {
+            return
+        }
+
+        const member = await guild.members.fetch(senderId)
+        if (!member) {
             return
         }
 

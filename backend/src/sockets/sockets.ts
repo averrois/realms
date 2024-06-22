@@ -121,9 +121,7 @@ export function sockets(io: Server) {
 
                 const username = users.getUser(uid)!.user_metadata.full_name
                 const discordId = users.getUser(uid)!.user_metadata.provider_id
-                const inGuild = await userIsInGuild(discordId, realm.discord_server_id)
-                const realmOnlyMessages = !inGuild
-                sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin, realmOnlyMessages)
+                sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   
 
@@ -217,11 +215,11 @@ export function sockets(io: Server) {
             // send message to discord 
             const roomIndex = session.getPlayerRoom(uid)
             const channelId = session.map_data.rooms[roomIndex].channelId   
-            const realmOnlyMessages = session.getPlayer(uid).realmOnlyMessages
-            if (channelId && session.discord_id && !realmOnlyMessages) {
+            if (channelId && session.discord_id) {
                 const username = session.getPlayer(uid).username
                 const discordMessage = `**${username}** ${message}`
-                sendMessageToChannel(session.discord_id, channelId, discordMessage)
+                const senderId = users.getUser(uid)!.user_metadata.provider_id
+                sendMessageToChannel(senderId, session.discord_id, channelId, discordMessage)
             }
         })
     })
