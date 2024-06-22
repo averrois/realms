@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { GetPlayersInRoom, GetServerName, IsOwnerOfServer, UserIsInGuild } from './route-types'
+import { GetPlayersInRoom, GetServerName, IsOwnerOfServer, UserIsInGuild, GetChannelName } from './route-types'
 import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
@@ -70,6 +70,34 @@ export default function routes(): Router {
                 return res.status(400).json({ message: 'Invalid server ID.' })
             }
             return res.json({ name: guild.name })
+        } catch (err: any) {
+            return res.status(400).json({ message: 'Something went wrong.' })
+        }
+    })
+
+    router.get('/getChannelName', async (req, res) => {
+        const params = req.query as unknown as z.infer<typeof GetChannelName>
+        if (!GetChannelName.safeParse(params).success) {
+            return res.status(400).json({ message: 'Invalid parameters' })
+        }
+
+        try {
+            const guild = await client.guilds.fetch(params.serverId)
+            if (!guild) {
+                return res.status(400).json({ message: 'Invalid server ID.' })
+            }
+
+            await guild.members.fetch({
+                force: true,
+                user: params.userId,
+            })
+
+            const channel = await guild.channels.fetch(params.channelId)
+            if (!channel) {
+                return res.status(400).json({ message: 'Invalid channel ID.' })
+            }
+
+            return res.json({ name: channel.name })
         } catch (err: any) {
             return res.status(400).json({ message: 'Something went wrong.' })
         }

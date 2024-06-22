@@ -5,6 +5,7 @@ import * as PIXI from 'pixi.js'
 import { server } from '../backend/server'
 import { defaultSkin } from './Player/skins'
 import signal from '../signal'
+import { request } from '../backend/requests'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -17,13 +18,17 @@ export class PlayApp extends App {
     private uid: string = ''
     private players: { [key: string]: Player } = {}
     private disableInput: boolean = false
+    private serverId: string
+    private discordId: string
 
     private kicked: boolean = false
 
-    constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin) {
+    constructor(uid: string, realmData: RealmData, username: string, skin: string = defaultSkin, serverId: string, discordId: string) {
         super(realmData)
         this.uid = uid
         this.player = new Player(skin, this, username, true)
+        this.serverId = serverId
+        this.discordId = discordId
     }
 
     override async loadRoom(index: number) {
@@ -32,6 +37,7 @@ export class PlayApp extends App {
         this.setUpBlockedTiles()
         this.spawnLocalPlayer()
         await this.syncOtherPlayers()
+        this.displayInitialChatMessage()
     }
 
     private async loadAssets() {
@@ -331,6 +337,22 @@ export class PlayApp extends App {
         if (player) {
             player.setMessage(data.message)
         }
+    }
+
+    private displayInitialChatMessage = async () => {
+        let channelName = ''
+
+        if (this.serverId) {
+            const { data, error } = await request('/getChannelName', { userId: this.discordId, serverId: this.serverId, channelId: this.realmData.rooms[this.currentRoomIndex].channelId })
+            if (data) {
+                channelName = data.name
+            }
+        }
+
+        signal.emit('newRoomChat', {
+            name: this.realmData.rooms[this.currentRoomIndex].name,
+            channelId: channelName
+        })
     }
 
     private setUpSocketEvents = () => {
