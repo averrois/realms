@@ -63,8 +63,8 @@ export class SessionManager {
     private playerIdToRealmId: { [key: string]: string } = {}
     private socketIdToPlayerId: { [key: string]: string } = {}
 
-    public createSession(id: string, mapData: RealmData | null, discord_id: string | null): void {
-        const realm = new Session(id, mapData, discord_id)
+    public createSession(id: string, mapData: RealmData | null, discord_id: string | null, privacy_level: string): void {
+        const realm = new Session(id, mapData, discord_id, privacy_level)
 
         this.sessions[id] = realm
     }
@@ -113,7 +113,7 @@ export class SessionManager {
 
         const players = session.getPlayerIds()
         players.forEach(player => {
-            kickPlayer(io, player, reason)
+            kickPlayer(player, reason)
         })
 
         delete this.sessions[id]
@@ -126,11 +126,13 @@ export class Session {
     public id: string
     public map_data: RealmData 
     public discord_id: string | null
+    public privacy_level
 
-    constructor(id: string, mapData: RealmData | null, discord_id: string | null) {
+    constructor(id: string, mapData: RealmData | null, discord_id: string | null, privacy_level: string) {
         this.id = id
         this.map_data = mapData || defaultMapData
         this.discord_id = discord_id
+        this.privacy_level = privacy_level
     }
 
     public addPlayer(socketId: string, uid: string, username: string, skin: string) {

@@ -47,7 +47,6 @@ export default function routes(): Router {
         try {
             const guild = await client.guilds.fetch(params.serverId)
             if (!guild) {
-                console.log('no guild')
                 return res.status(400).json({ message: 'Invalid server ID.' })
             }
             return res.json({ isOwner: guild.ownerId === userId })

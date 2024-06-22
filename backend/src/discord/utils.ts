@@ -12,7 +12,10 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             return
         }
 
-        const member = await guild.members.fetch(senderId)
+        const member = await guild.members.fetch({
+            force: true,
+            user: senderId,
+        })
         if (!member) {
             return
         }
@@ -29,7 +32,10 @@ export async function userIsInGuild(userId: string, guildId: string) {
             return false
         }
 
-        const member = await guild.members.fetch(userId)
+        const member = await guild.members.fetch({
+            force: true,
+            user: userId,
+        })
         if (!member) {
             return false
         }
