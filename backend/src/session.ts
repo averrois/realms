@@ -46,6 +46,7 @@ export interface Player {
     room: number,
     socketId: string,
     skin: string
+    realmOnlyMessages: boolean
 }
 
 export const defaultSkin = '009'
@@ -78,8 +79,8 @@ export class SessionManager {
         return this.sessions[realmId]
     }
 
-    public addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
-        this.sessions[realmId].addPlayer(socketId, uid, username, skin)
+    public addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string, realmOnlyMessages: boolean) {
+        this.sessions[realmId].addPlayer(socketId, uid, username, skin, realmOnlyMessages)
         this.playerIdToRealmId[uid] = realmId
         this.socketIdToPlayerId[socketId] = uid
     }
@@ -133,7 +134,7 @@ export class Session {
         this.discord_id = discord_id
     }
 
-    public addPlayer(socketId: string, uid: string, username: string, skin: string) {
+    public addPlayer(socketId: string, uid: string, username: string, skin: string, realmOnlyMessages: boolean) {
         this.removePlayer(uid)
         const spawnIndex = this.map_data.spawnpoint.roomIndex
         const spawnX = this.map_data.spawnpoint.x
@@ -148,6 +149,7 @@ export class Session {
             room: spawnIndex,
             socketId: socketId,
             skin,
+            realmOnlyMessages,
         }
 
         this.roomData[spawnIndex].add(uid)
