@@ -4,8 +4,8 @@ import PixiApp from './PixiApp'
 import { RealmData } from '@/utils/pixi/types'
 import PlayNavbar from './PlayNavbar'
 import { useModal } from '../hooks/useModal'
-import { server } from '@/utils/backend/server'
 import signal from '@/utils/signal'
+import ChatLog from './ChatLog'
 
 type PlayProps = {
     mapData: RealmData
@@ -45,6 +45,7 @@ const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realm
         <div className='relative w-full h-screen flex flex-col-reverse sm:flex-col'>
             <PixiApp mapData={mapData} className='w-full grow sm:h-full sm:flex-grow-0' username={username} access_token={access_token} realmId={realmId} uid={uid} shareId={shareId} initialSkin={initialSkin}/>
             <PlayNavbar />
+            <ChatLog />
         </div>
     )
 }

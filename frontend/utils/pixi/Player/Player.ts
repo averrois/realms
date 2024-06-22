@@ -5,6 +5,7 @@ import { PlayApp } from '../PlayApp'
 import { bfs } from '../pathfinding'
 import { server } from '../../backend/server'
 import { defaultSkin, skins } from './skins'
+import signal from '@/utils/signal'
 
 function formatText(message: string, maxLength: number): string {
     message = message.trim()
@@ -139,6 +140,11 @@ export class Player {
         text.y = -text.height - 42
         this.parent.addChild(text)
         this.textMessage = text
+
+        signal.emit('newMessage', {
+            content: message,
+            username: this.username
+        })
 
         this.textTimeout = setTimeout(() => {
             if (this.textMessage) {
