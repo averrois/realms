@@ -128,6 +128,8 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
         }
     }
 
+    console.log(discordId)
+
     return (
         <div className='flex flex-col items-center pt-24'>
             <div className='flex flex-row gap-8 relative'>
@@ -156,7 +158,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                     )}
                     {selectedTab === 1 && (
                         <div className='flex flex-col gap-2'>
-                            {!discordId || discord_error && (
+                            {(!discordId || discord_error) && (
                                 <div className='flex flex-col gap-1'>
                                     <h1>This realm is not linked to a Discord server.</h1>
                                     <BasicButton className='max-w-max'>
@@ -164,7 +166,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                                     </BasicButton>
                                 </div>
                             )}
-                            {discordId && !discord_error && (
+                            {(discordId && !discord_error) && (
                                 <div className='flex flex-col gap-2'>
                                     <h1>Linked to server: <span className='font-bold'>{discord_server_name}</span></h1>
                                     <BasicLoadingButton loading={unlinkButtonLoading} className='max-w-max' onClick={onClickUnlink}>

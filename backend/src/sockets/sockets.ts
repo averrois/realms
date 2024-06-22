@@ -120,7 +120,6 @@ export function sockets(io: Server) {
                 }
 
                 const username = users.getUser(uid)!.user_metadata.full_name
-                const discordId = users.getUser(uid)!.user_metadata.provider_id
                 sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   

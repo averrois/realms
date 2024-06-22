@@ -6,7 +6,7 @@ interface ExtendedClient extends Client {
   commands?: Collection<unknown, unknown>;
 }
 
-const client: ExtendedClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]  })
+const client: ExtendedClient = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent, GatewayIntentBits.GuildMembers]  })
 
 function setUpClient() {
     client.commands = new Collection()
