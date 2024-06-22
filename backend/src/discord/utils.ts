@@ -1,22 +1,47 @@
+import { Guild } from 'discord.js'
 import { client } from './client'
 
+export const confirmedGuildStates: { [key: string]: { [key: string]: boolean } } = {}
+
+export function setConfirmedGuildState(guildId: string, userId: string, isMember: boolean) {
+    if (!confirmedGuildStates[guildId]) {
+        confirmedGuildStates[guildId] = {}
+    }
+    confirmedGuildStates[guildId][userId] = isMember
+}
+
+function isConfirmedGuildState(guildId: string, userId: string): boolean | undefined {
+    if (guildId in confirmedGuildStates && userId in confirmedGuildStates[guildId]) {
+        return confirmedGuildStates[guildId][userId]
+    }
+    return undefined
+}
+
 export async function sendMessageToChannel(senderId: string, guildId: string, channelId: string, message: string) {
+    let isInServer = isConfirmedGuildState(guildId, senderId)
+    if (isInServer === false) {
+        console.log('returning early because not in server')
+        return
+    }
+
     try {
         const guild = await client.guilds.fetch(guildId)
         if (!guild) {
             return
         }
 
-        const channel = await guild.channels.fetch(channelId)
-        if (!channel || !channel.isTextBased()) {
-            return
+        if (isInServer === undefined) {
+            isInServer = await userIsInGuild(senderId, guild)
+            if (!isInServer) {
+                return
+            }
+        }
+        if (isInServer === true) {
+            console.log('skipping fetch because confirmed in server!')
         }
 
-        const member = await guild.members.fetch({
-            force: true,
-            user: senderId,
-        })
-        if (!member) {
+        const channel = await guild.channels.fetch(channelId)
+        if (!channel || !channel.isTextBased()) {
             return
         }
 
@@ -25,23 +50,41 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
     }
 }
 
-export async function userIsInGuild(userId: string, guildId: string) {
+export async function userIsInGuildWithId(userId: string, guildId: string) {
+    const isConfirmed = isConfirmedGuildState(guildId, userId)
+    if (isConfirmed !== undefined) {
+        return isConfirmed
+    }
+
     try {
         const guild = await client.guilds.fetch(guildId)
         if (!guild) {
             return false
         }
 
-        const member = await guild.members.fetch({
+        return await userIsInGuild(userId, guild)
+    } catch {
+        return false
+    }
+}
+
+export async function userIsInGuild(userId: string, guild: Guild) {
+    const isConfirmed = isConfirmedGuildState(guild.id, userId)
+    if (isConfirmed !== undefined) {
+        return isConfirmed
+    }
+
+    try {
+        await guild.members.fetch({
             force: true,
             user: userId,
         })
-        if (!member) {
-            return false
-        }
-
+        setConfirmedGuildState(guild.id, userId, true)
         return true
-    } catch {
+    } catch (err: any) {
+        if (err.rawError?.message === 'Unknown Member') {
+            setConfirmedGuildState(guild.id, userId, false)
+        }
         return false
     }
 }

@@ -4,7 +4,7 @@ import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
 import { client } from '../discord/client'
-import { userIsInGuild } from '../discord/utils'
+import { userIsInGuildWithId } from '../discord/utils'
 
 export default function routes(): Router {
     const router = Router()
@@ -87,7 +87,7 @@ export default function routes(): Router {
             return res.status(401).json({ message: 'Invalid access token' })
         }
 
-        const isInGuild = await userIsInGuild(user.user.user_metadata.provider_id, params.guildId)
+        const isInGuild = await userIsInGuildWithId(user.user.user_metadata.provider_id, params.guildId)
         return res.json({ isInGuild })
     })
 

@@ -6,8 +6,7 @@ import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
 import { kickPlayer } from './kick'
-import { sendMessageToChannel } from '../discord/utils'
-import { userIsInGuild } from '../discord/utils'
+import { sendMessageToChannel, userIsInGuildWithId } from '../discord/utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -140,7 +139,7 @@ export function sockets(io: Server) {
 
             if (realm.privacy_level === 'discord') {
                 const discordId = users.getUser(socket.handshake.query.uid as string)!.user_metadata.provider_id
-                const isInGuild = await userIsInGuild(discordId, realm.discord_server_id)
+                const isInGuild = await userIsInGuildWithId(discordId, realm.discord_server_id)
 
                 if (isInGuild) {
                     return join()
