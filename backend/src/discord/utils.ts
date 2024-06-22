@@ -1,4 +1,4 @@
-import { Guild } from 'discord.js'
+import { Guild, PermissionsBitField } from 'discord.js'
 import { client } from './client'
 
 export const confirmedGuildStates: { [key: string]: { [key: string]: boolean } } = {}
@@ -41,6 +41,8 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             return
         }
 
+        const canSpeak = channel.permissionsFor(senderId)?.has(PermissionsBitField.Flags.SendMessages)
+        if (!canSpeak) return
         await channel.send(message)
     } catch (err) {
     }

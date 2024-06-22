@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid'
 import Toggle from '@/components/Toggle'
 import BasicLoadingButton from '@/components/BasicLoadingButton'
 import { unlinkFromDiscord } from '@/utils/supabase/unlinkFromDiscord'
+import Link from 'next/link'
 
 type ManageChildProps = {
     realmId: string
@@ -159,9 +160,11 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                             {(!discordId || discord_error) && (
                                 <div className='flex flex-col gap-1'>
                                     <h1>This realm is not linked to a Discord server.</h1>
-                                    <BasicButton className='max-w-max'>
-                                        Link to Discord
-                                    </BasicButton>
+                                    <Link href='/howtolink'>
+                                        <BasicButton className='max-w-max'>
+                                            Link to Discord
+                                        </BasicButton>
+                                    </Link>
                                 </div>
                             )}
                             {(discordId && !discord_error) && (

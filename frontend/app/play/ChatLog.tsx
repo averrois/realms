@@ -92,7 +92,7 @@ const ChatLog: React.FC<ChatLogProps> = () => {
                 </div>
             )}
             {expanded && (
-                <div className='bg-secondary w-[500px] h-[300px] rounded-br-lg transparent-scrollbar relative p-1 border-b-8 border-r-8 border-darkblue'>
+                <div className='bg-secondary w-[500px] h-[200px] rounded-br-lg transparent-scrollbar relative p-1 border-b-8 border-r-8 border-darkblue'>
                     <div className='cursor-pointer absolute bottom-[-8px] right-[-8px] rounded-tl-lg rounded-br-lg bg-darkblue hover:bg-lightblue p-2' onClick={collapse}>
                         <ArrowUpLeft className='h-4 w-4' />
                     </div>

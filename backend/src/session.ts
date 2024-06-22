@@ -198,11 +198,7 @@ export class Session {
     }
 
     public getRoomWithChannelId(channelId: string): number | null {
-        console.log('looking for room with channelId: ', channelId)
-        const index = this.map_data.rooms.findIndex(room => {
-            console.log(room.channelId)
-            return room.channelId === channelId
-        })
+        const index = this.map_data.rooms.findIndex(room => room.channelId === channelId)
         return index !== -1 ? index : null
     }
 
