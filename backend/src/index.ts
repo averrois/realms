@@ -54,12 +54,12 @@ function onRealmUpdate(payload: any) {
         refresh = true
     }
     if (refresh) {
-        sessionManager.terminateSession(io, id, "This realm has been changed by the owner.")
+        sessionManager.terminateSession(id, "This realm has been changed by the owner.")
     }
 }
 
 function onRealmDelete(payload: any) {
-    sessionManager.terminateSession(io, payload.old.id, "This realm is no longer available.")
+    sessionManager.terminateSession(payload.old.id, "This realm is no longer available.")
 }
 
 supabase

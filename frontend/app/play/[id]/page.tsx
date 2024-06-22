@@ -37,7 +37,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
     return (
         <PlayClient 
             mapData={map_data} 
-            username={user.user_metadata.full_name} 
+            username={user.user_metadata.custom_claims.global_name} 
             access_token={session.access_token} 
             realmId={params.id} 
             uid={user.id} 

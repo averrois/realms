@@ -40,7 +40,7 @@ function getColorClass(color: Message['color']) {
 
 const ChatLog: React.FC<ChatLogProps> = () => {
     const [messages, setMessages] = useState<Message[]>([])
-    const [expanded, setExpanded] = useState(false)
+    const [expanded, setExpanded] = useState(true)
     const containerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -57,12 +57,19 @@ const ChatLog: React.FC<ChatLogProps> = () => {
             }])
         }
 
+        const discordMessage = (message: Message) => {
+            setMessages(prevMessages => [message, ...prevMessages])
+            containerRef.current?.scrollTo(0, containerRef.current.scrollHeight)
+        }
+
         signal.on('newMessage', onNewMessage)
         signal.on('newRoomChat', onNewRoomChat)
+        signal.on('discordMessage', discordMessage)
 
         return () => {
             signal.off('newMessage', onNewMessage)
             signal.off('newRoomChat', onNewRoomChat)
+            signal.off('discordMessage', discordMessage)
         }
     }, [])
 
@@ -75,7 +82,7 @@ const ChatLog: React.FC<ChatLogProps> = () => {
     }
 
     return (
-        <div className='absolute top-0 left-0'>
+        <div className='absolute top-0 left-0 hidden sm:flex'>
             {!expanded && (
                 <div
                     className='bg-secondary hover:bg-lightblue p-2 grid place-items-center rounded-br-lg cursor-pointer'

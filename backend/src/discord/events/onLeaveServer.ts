@@ -1,7 +1,7 @@
 import { Events, GuildMember } from 'discord.js'
 import { Event } from '../events'
 import { users } from '../../Users'
-import { kickPlayer } from '../../sockets/kick'
+import { kickPlayer } from '../../sockets/helpers'
 import { sessionManager } from '../../session'
 import { setConfirmedGuildState } from '../utils'
 

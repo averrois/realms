@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { kickPlayer } from './sockets/kick'
-import { Server } from 'socket.io'
+import { kickPlayer } from './sockets/helpers'
 
 export const defaultMapData: RealmData = {
     spawnpoint: {
@@ -45,7 +44,8 @@ export interface Player {
     y: number,
     room: number,
     socketId: string,
-    skin: string
+    skin: string,
+    discordId: string,
 }
 
 export const defaultSkin = '009'
@@ -60,6 +60,7 @@ export type RoomData = { [key: number]: Player[] }
 
 export class SessionManager {
     private sessions: { [key: string]: Session } = {}
+    private serverIdToRealmId: { [key: string]: string } = {}
     private playerIdToRealmId: { [key: string]: string } = {}
     private socketIdToPlayerId: { [key: string]: string } = {}
 
@@ -67,10 +68,17 @@ export class SessionManager {
         const realm = new Session(id, mapData, discord_id, privacy_level)
 
         this.sessions[id] = realm
+        if (discord_id) {
+            this.serverIdToRealmId[discord_id] = id
+        }
     }
 
     public getSession(id: string): Session {
         return this.sessions[id]
+    }
+
+    public getSessionByServerId(serverId: string): Session {
+        return this.sessions[this.serverIdToRealmId[serverId]]
     }
 
     public getPlayerSession(uid: string): Session {
@@ -78,8 +86,8 @@ export class SessionManager {
         return this.sessions[realmId]
     }
 
-    public addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string) {
-        this.sessions[realmId].addPlayer(socketId, uid, username, skin)
+    public addPlayerToSession(socketId: string, realmId: string, uid: string, username: string, skin: string, discordId: string) {
+        this.sessions[realmId].addPlayer(socketId, uid, username, skin, discordId)
         this.playerIdToRealmId[uid] = realmId
         this.socketIdToPlayerId[socketId] = uid
     }
@@ -107,7 +115,7 @@ export class SessionManager {
         return true
     }
 
-    public terminateSession(io: Server, id: string, reason: string) {
+    public terminateSession(id: string, reason: string) {
         const session = this.sessions[id]
         if (!session) return
 
@@ -116,6 +124,9 @@ export class SessionManager {
             kickPlayer(player, reason)
         })
 
+        if (session.discord_id) {
+            delete this.serverIdToRealmId[session.discord_id]
+        }
         delete this.sessions[id]
     }
 }
@@ -135,7 +146,7 @@ export class Session {
         this.privacy_level = privacy_level
     }
 
-    public addPlayer(socketId: string, uid: string, username: string, skin: string) {
+    public addPlayer(socketId: string, uid: string, username: string, skin: string, discordId: string) {
         this.removePlayer(uid)
         const spawnIndex = this.map_data.spawnpoint.roomIndex
         const spawnX = this.map_data.spawnpoint.x
@@ -150,6 +161,7 @@ export class Session {
             room: spawnIndex,
             socketId: socketId,
             skin,
+            discordId,
         }
 
         this.roomData[spawnIndex].add(uid)
@@ -183,6 +195,15 @@ export class Session {
             .map(uid => this.players[uid])
 
         return players
+    }
+
+    public getRoomWithChannelId(channelId: string): number | null {
+        console.log('looking for room with channelId: ', channelId)
+        const index = this.map_data.rooms.findIndex(room => {
+            console.log(room.channelId)
+            return room.channelId === channelId
+        })
+        return index !== -1 ? index : null
     }
 
     public getPlayer(uid: string): Player {
