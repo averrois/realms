@@ -41,7 +41,7 @@ const PlayNavbar:React.FC<PlayNavbarProps> = () => {
 
     function onChange(e:React.ChangeEvent<HTMLInputElement>) {
         const value = removeExtraSpaces(e.target.value)
-        setInput(value);
+        setInput(value)
     }
     
     return (
