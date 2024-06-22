@@ -20,7 +20,6 @@ function isConfirmedGuildState(guildId: string, userId: string): boolean | undef
 export async function sendMessageToChannel(senderId: string, guildId: string, channelId: string, message: string) {
     let isInServer = isConfirmedGuildState(guildId, senderId)
     if (isInServer === false) {
-        console.log('returning early because not in server')
         return
     }
 
@@ -35,9 +34,6 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             if (!isInServer) {
                 return
             }
-        }
-        if (isInServer === true) {
-            console.log('skipping fetch because confirmed in server!')
         }
 
         const channel = await guild.channels.fetch(channelId)
