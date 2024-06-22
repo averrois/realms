@@ -30,7 +30,7 @@ const ChatLog:React.FC<ChatLogProps> = () => {
     }, [messages])
 
     return (
-        <div className='hidden sm:flex absolute top-0 left-0 flex-col-reverse pt-4 pl-2 w-[400px] h-[100px] text-sm md:text-base md:h-[200px] overflow-y-scroll transparent-scrollbar bg-primary bg-opacity-50 rounded-br-lg' ref={containerRef}>
+        <div className='hidden sm:flex absolute top-0 left-0 flex-col-reverse pt-4 pl-2 w-[400px] h-[100px] text-sm md:text-base md:h-[200px] overflow-y-scroll no-scrollbar' ref={containerRef}>
             {messages.map((message, index) => (
                 <div key={index}>
                     <span className='font-bold'>{message.username}:</span> {message.content}
