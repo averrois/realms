@@ -104,13 +104,13 @@ export function sockets(io: Server) {
 
             const join = async () => {
                 if (!sessionManager.getSession(realmData.realmId)) {
-                    sessionManager.createSession(realmData.realmId, data.map_data, data.discord_server_id)
+                    sessionManager.createSession(realmData.realmId, data.map_data, data.discord_server_id, data.privacy_level)
                 }
 
                 const uid = socket.handshake.query.uid as string
                 const currentSession = sessionManager.getPlayerSession(uid)
                 if (currentSession) {
-                    kickPlayer(io, uid, 'You have logged in from another location.')
+                    kickPlayer(uid, 'You have logged in from another location.')
                 }
 
                 const profile = await supabase.from('profiles').select('skin').eq('id', uid).single()

@@ -128,8 +128,6 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
         }
     }
 
-    console.log(discordId)
-
     return (
         <div className='flex flex-col items-center pt-24'>
             <div className='flex flex-row gap-8 relative'>

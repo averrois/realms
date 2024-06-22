@@ -1,7 +1,7 @@
-import { Server } from 'socket.io'
 import { sessionManager } from '../session'
+import { io } from '..'
 
-export function kickPlayer(io: Server, uid: string, reason: string) {
+export function kickPlayer(uid: string, reason: string) {
     const session = sessionManager.getPlayerSession(uid)
     const room = session.getPlayerRoom(uid)
     const players = session.getPlayersInRoom(room)
