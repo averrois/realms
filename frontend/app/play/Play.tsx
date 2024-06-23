@@ -6,6 +6,7 @@ import PlayNavbar from './PlayNavbar'
 import { useModal } from '../hooks/useModal'
 import signal from '@/utils/signal'
 import ChatLog from './ChatLog'
+import revalidate from '@/utils/revalidate'
 
 type PlayProps = {
     mapData: RealmData
@@ -27,6 +28,10 @@ const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realm
         const onShowKickedModal = (message: string) => { 
             setErrorModal('Disconnected')
             setDisconnectedMessage(message)
+
+            if (message.includes('changed')) {
+                revalidate('/play/[id]')
+            }
         }
 
         const onShowDisconnectModal = () => {
