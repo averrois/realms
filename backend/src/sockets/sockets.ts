@@ -184,6 +184,7 @@ export function sockets(io: Server) {
             player.x = data.x
             player.y = data.y
             if (player.room !== data.roomIndex) {
+                // TODO: Dont run if discord server id is defined and the user does not have permission to speak or read in the channel 
                 emit('playerLeftRoom', uid)
                 const session = sessionManager.getPlayerSession(uid)
                 session.changeRoom(uid, data.roomIndex)
