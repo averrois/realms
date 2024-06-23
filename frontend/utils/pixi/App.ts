@@ -72,7 +72,7 @@ export class App {
 
     protected async loadRoom(index: number) {
         const room = this.realmData.rooms[index]
-        this.loadRoomFromData(room)
+        await this.loadRoomFromData(room)
     }
 
     private placeTileFromJson = async (x: number, y: number, layer: Layer, tileName: string) => {
