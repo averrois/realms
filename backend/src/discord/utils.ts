@@ -1,4 +1,4 @@
-import { Guild, PermissionsBitField } from 'discord.js'
+import { Guild, GuildChannel, PermissionsBitField } from 'discord.js'
 import { client } from './client'
 
 export const confirmedGuildStates: { [key: string]: { [key: string]: boolean } } = {}
@@ -29,21 +29,17 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             return
         }
 
-        if (isInServer === undefined) {
-            isInServer = await userIsInGuild(senderId, guild)
-            if (!isInServer) {
-                return
-            }
-        }
-
         const channel = await guild.channels.fetch(channelId)
         if (!channel || !channel.isTextBased()) {
             return
         }
 
-        // TODO: Check if this user even has access to this channel before sending. this is important to not leak information
-        // const canSpeak = channel.permissionsFor(senderId)?.has(PermissionsBitField.Flags.SendMessages)
-        // if (!canSpeak) return
+        if (!(channel instanceof GuildChannel)) return
+
+        if (!userHasPermissionToAccessChannel(senderId, channel)) {
+            return
+        }
+
         await channel.send(message)
     } catch (err) {
     }
@@ -86,4 +82,10 @@ export async function userIsInGuild(userId: string, guild: Guild) {
         }
         return false
     }
+}
+
+export function userHasPermissionToAccessChannel(userId: string, channel: GuildChannel) {
+    const canSendMessages = channel.permissionsFor(userId)?.has('SendMessages')
+    const canViewChannel = channel.permissionsFor(userId)?.has('ViewChannel')
+    return canSendMessages && canViewChannel
 }

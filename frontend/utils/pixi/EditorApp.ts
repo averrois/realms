@@ -1003,6 +1003,10 @@ export class EditorApp extends App {
                 if (value.teleporter?.roomIndex === index) {
                     delete value.teleporter
                 }
+                // if the room index is greater than the deleted room, decrement it
+                if (value.teleporter?.roomIndex && value.teleporter.roomIndex > index) {
+                    value.teleporter.roomIndex -= 1
+                }
             }
         }
         // reset spawn point if room deleted

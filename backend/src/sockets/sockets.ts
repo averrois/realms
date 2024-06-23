@@ -3,7 +3,7 @@ import { JoinRealm, Disconnect, OnEventCallback, MovePlayer, Teleport, ChangedSk
 import { z } from 'zod'
 import { supabase } from '../supabase'
 import { users } from '../Users'
-import { defaultSkin, sessionManager } from '../session'
+import { sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
 import { kickPlayer } from './helpers'
 import { sendMessageToChannel, userIsInGuildWithId } from '../discord/utils'

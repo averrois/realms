@@ -46,7 +46,12 @@ const command: Command = {
 
     if (!room) {
         const roomNames = getRoomNamesWithChannelId(mapData, interaction.channelId)
-        const message = `No room with that name is connected to this channel. Here are the rooms this channel is connected to: ${roomNames.map(name => '`' + name + '`').join(', ')}`
+        let message = ''
+        if (roomNames.length === 0) {
+            message = `This channel is not connected to any rooms, no need to disconnect anything!`
+        } else {
+            message = `No room with that name is connected to this channel. Here are the rooms this channel is connected to: ${roomNames.map(name => '`' + name + '`').join(', ')}`
+        }
         return await interaction.reply({ content: message, ephemeral: true })
     }
 

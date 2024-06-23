@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Guild } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
 import { getRoomFromName, getRoomNames } from '../../utils'
 import { supabase } from '../../supabase'
@@ -16,6 +16,10 @@ const command: Command = {
     const guild = interaction.guild as Guild
     if (interaction.user.id !== guild.ownerId) {
       return await interaction.reply({ content: 'only the owner of this server can run this command. sorry!', ephemeral: true })
+    }
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
     }
 
     const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id, owner_id, map_data').eq('discord_server_id', guild.id)
@@ -57,7 +61,7 @@ const command: Command = {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }
 
-    await interaction.reply({ content: `${interaction.channel} has been connected with ` + '`' + room.name + '`' + '!', ephemeral: true })
+    await interaction.reply({ content: `${interaction.channel} has been connected to ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 
