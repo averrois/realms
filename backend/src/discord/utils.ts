@@ -41,8 +41,9 @@ export async function sendMessageToChannel(senderId: string, guildId: string, ch
             return
         }
 
-        const canSpeak = channel.permissionsFor(senderId)?.has(PermissionsBitField.Flags.SendMessages)
-        if (!canSpeak) return
+        // TODO: Check if this user even has access to this channel before sending. this is important to not leak information
+        // const canSpeak = channel.permissionsFor(senderId)?.has(PermissionsBitField.Flags.SendMessages)
+        // if (!canSpeak) return
         await channel.send(message)
     } catch (err) {
     }
