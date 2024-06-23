@@ -57,7 +57,7 @@ const command: Command = {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }
 
-    await interaction.reply({ content: `${interaction.channel} has been disconnected with ` + '`' + room.name + '`' + '!', ephemeral: true })
+    await interaction.reply({ content: `${interaction.channel} has been disconnected from ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 

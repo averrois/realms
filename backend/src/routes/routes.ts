@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { GetPlayersInRoom, GetServerName, IsOwnerOfServer, UserIsInGuild } from './route-types'
+import { GetPlayersInRoom, GetServerName, IsOwnerOfServer, UserIsInGuild, GetChannelName } from './route-types'
 import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
 import { client } from '../discord/client'
-import { userIsInGuild } from '../discord/utils'
+import { userIsInGuildWithId } from '../discord/utils'
 
 export default function routes(): Router {
     const router = Router()
@@ -75,6 +75,34 @@ export default function routes(): Router {
         }
     })
 
+    router.get('/getChannelName', async (req, res) => {
+        const params = req.query as unknown as z.infer<typeof GetChannelName>
+        if (!GetChannelName.safeParse(params).success) {
+            return res.status(400).json({ message: 'Invalid parameters' })
+        }
+
+        try {
+            const guild = await client.guilds.fetch(params.serverId)
+            if (!guild) {
+                return res.status(400).json({ message: 'Invalid server ID.' })
+            }
+
+            await guild.members.fetch({
+                force: true,
+                user: params.userId,
+            })
+
+            const channel = await guild.channels.fetch(params.channelId)
+            if (!channel) {
+                return res.status(400).json({ message: 'Invalid channel ID.' })
+            }
+
+            return res.json({ name: channel.name })
+        } catch (err: any) {
+            return res.status(400).json({ message: 'Something went wrong.' })
+        }
+    })
+
     router.get('/userIsInGuild', async (req, res) => {
         const params = req.query as unknown as z.infer<typeof UserIsInGuild>
         if (!UserIsInGuild.safeParse(params).success) {
@@ -87,7 +115,7 @@ export default function routes(): Router {
             return res.status(401).json({ message: 'Invalid access token' })
         }
 
-        const isInGuild = await userIsInGuild(user.user.user_metadata.provider_id, params.guildId)
+        const isInGuild = await userIsInGuildWithId(user.user.user_metadata.provider_id, params.guildId)
         return res.json({ isInGuild })
     })
 

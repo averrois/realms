@@ -5,9 +5,8 @@ import { supabase } from '../supabase'
 import { users } from '../Users'
 import { defaultSkin, sessionManager } from '../session'
 import { removeExtraSpaces } from '../utils'
-import { kickPlayer } from './kick'
-import { sendMessageToChannel } from '../discord/utils'
-import { userIsInGuild } from '../discord/utils'
+import { kickPlayer } from './helpers'
+import { sendMessageToChannel, userIsInGuildWithId } from '../discord/utils'
 
 const joiningInProgress = new Set<string>()
 
@@ -80,24 +79,30 @@ export function sockets(io: Server) {
         }
 
         socket.on('joinRealm', async (realmData: z.infer<typeof JoinRealm>) => {
+            const uid = socket.handshake.query.uid as string
             const rejectJoin = (reason: string) => {
                 socket.emit('failedToJoinRoom', reason)
-                joiningInProgress.delete(socket.handshake.query.uid as string)
+                joiningInProgress.delete(uid)
             }
 
             if (JoinRealm.safeParse(realmData).success === false) {
                 return rejectJoin('Invalid request data.')
             }
 
-            if (joiningInProgress.has(socket.handshake.query.uid as string)) {
+            if (joiningInProgress.has(uid)) {
                 rejectJoin('Already joining a realm.')
             }
-            joiningInProgress.add(socket.handshake.query.uid as string)
+            joiningInProgress.add(uid)
 
             const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data, discord_server_id, only_owner').eq('id', realmData.realmId).single()
 
             if (error || !data) {
                 return rejectJoin('Realm not found.')
+            }
+
+            const { data: profile, error: profileError } = await supabase.from('profiles').select('skin, discord_id').eq('id', uid).single()
+            if (profileError) {
+                return rejectJoin('Failed to get profile.')
             }
 
             const realm = data
@@ -107,20 +112,13 @@ export function sockets(io: Server) {
                     sessionManager.createSession(realmData.realmId, data.map_data, data.discord_server_id, data.privacy_level)
                 }
 
-                const uid = socket.handshake.query.uid as string
                 const currentSession = sessionManager.getPlayerSession(uid)
                 if (currentSession) {
                     kickPlayer(uid, 'You have logged in from another location.')
                 }
 
-                const profile = await supabase.from('profiles').select('skin').eq('id', uid).single()
-                let skin = defaultSkin
-                if (profile.data) {
-                    skin = profile.data.skin
-                }
-
-                const username = users.getUser(uid)!.user_metadata.full_name
-                sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, skin)
+                const username = users.getUser(uid)!.user_metadata.custom_claims.global_name
+                sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, profile.skin, profile.discord_id)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   
 
@@ -140,7 +138,7 @@ export function sockets(io: Server) {
 
             if (realm.privacy_level === 'discord') {
                 const discordId = users.getUser(socket.handshake.query.uid as string)!.user_metadata.provider_id
-                const isInGuild = await userIsInGuild(discordId, realm.discord_server_id)
+                const isInGuild = await userIsInGuildWithId(discordId, realm.discord_server_id)
 
                 if (isInGuild) {
                     return join()
