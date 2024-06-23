@@ -4,7 +4,8 @@ import { supabase } from '../supabase'
 import { z } from 'zod'
 import { sessionManager } from '../session'
 import { client } from '../discord/client'
-import { userIsInGuildWithId } from '../discord/utils'
+import { userIsInGuildWithId, userHasPermissionToAccessChannel } from '../discord/utils'
+import { GuildChannel } from 'discord.js'
 
 export default function routes(): Router {
     const router = Router()
@@ -87,14 +88,12 @@ export default function routes(): Router {
                 return res.status(400).json({ message: 'Invalid server ID.' })
             }
 
-            await guild.members.fetch({
-                force: true,
-                user: params.userId,
-            })
-
             const channel = await guild.channels.fetch(params.channelId)
             if (!channel) {
                 return res.status(400).json({ message: 'Invalid channel ID.' })
+            }
+            if (!userHasPermissionToAccessChannel(params.userId, channel as GuildChannel)) {
+                return res.status(400).json({ message: 'User does not have permission to access channel.' }) 
             }
 
             return res.json({ name: channel.name })

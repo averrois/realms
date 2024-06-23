@@ -61,20 +61,7 @@ const command: Command = {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }
 
-    // check if channel is private
-    const everyone = guild.roles.everyone
-    const channel = interaction.channel as GuildChannel
-    let isPrivate = false
-    if (channel.permissionsFor(everyone)?.has('ViewChannel') === false) {
-        isPrivate = true
-    }
-
-    let reply = `${interaction.channel} has been connected to ` + '`' + room.name + '`' + '!'
-    if (isPrivate) {
-        reply += '\n\nWARNING: We noticed this channel is private. This means that users in your realm will be able to send and receive messages from it, regardless of their permissions. If you want to keep this channel private, you can use the `/disconnect` command to disconnect it from the room. If you are okay with this, remember to add the bot to the channel so it can send messages!'
-    }
-
-    await interaction.reply({ content: reply, ephemeral: true })
+    await interaction.reply({ content: `${interaction.channel} has been connected to ` + '`' + room.name + '`' + '!', ephemeral: true })
   },
 }
 
