@@ -24,6 +24,7 @@ export class EditorApp extends App {
     private lastErasedCoordinates: Point = { x: 0, y: 0 }
     private newTeleporterCoordinates: Point = { x: 0, y: 0 }
     private canErase: boolean = true
+    
 
     private gizmoSprites: GizmoSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
