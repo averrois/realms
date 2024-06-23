@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { Layer, RealmData, ColliderMap, TilePoint, defaultMapData } from './types'
+import { Layer, RealmData, ColliderMap, TilePoint, defaultMapData, Room } from './types'
 import { sprites, Collider } from './spritesheet/spritesheet'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
@@ -40,14 +40,12 @@ export class App {
         this.app.stage.addChild(this.layers.object)
     }
 
-    protected async loadRoom(index: number) {
+    protected async loadRoomFromData(room: Room) {
         // Clear the current room
         this.layers.floor.removeChildren()
         this.layers.above_floor.removeChildren()
         this.layers.object.removeChildren()
         this.collidersFromSpritesMap = {}
-
-        const room = this.realmData.rooms[index]
 
         for (const [tilePoint, tileData] of Object.entries(room.tilemap)) {
             const floor = tileData.floor
@@ -70,6 +68,11 @@ export class App {
         }
 
         this.sortObjectsByY()
+    }
+
+    protected async loadRoom(index: number) {
+        const room = this.realmData.rooms[index]
+        this.loadRoomFromData(room)
     }
 
     private placeTileFromJson = async (x: number, y: number, layer: Layer, tileName: string) => {
