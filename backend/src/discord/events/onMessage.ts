@@ -1,24 +1,26 @@
-import { Events, Message } from 'discord.js'
+import { Events, GuildChannel, Message } from 'discord.js'
 import { Event } from '../events'
 import { sessionManager } from '../../session'
 import { io } from '../..'
-import { userIsInGuild } from '../utils'
+import { userHasPermissionToAccessChannel } from '../utils'
 
 const event: Event = {
     name: Events.MessageCreate,
     async execute(message: Message) {
         if (message.author.bot || message.system) return
         if (!message.guild) return
-        const channelId = message.channel.id
+        if (!(message.channel instanceof GuildChannel)) return
+        if (!message.channel.isTextBased()) return
         const session = sessionManager.getSessionByServerId(message.guild.id)
         if (!session) return
+        const channelId = message.channel.id
         const roomIndex = session.getRoomWithChannelId(channelId)
         if (roomIndex === null) return
         const players = session.getPlayersInRoom(roomIndex)
 
         for (const player of players) {
-            const inGuild = await userIsInGuild(player.discordId, message.guild)
-            if (!inGuild) continue
+            const hasPermission = userHasPermissionToAccessChannel(player.discordId, message.channel)
+            if (!hasPermission) return
 
             io.to(player.socketId).emit('discordMessage', {
                 username: message.author.displayName,

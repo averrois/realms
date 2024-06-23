@@ -17,6 +17,10 @@ const command: Command = {
     if (interaction.user.id !== guild.ownerId) {
       return await interaction.reply({ content: 'only the owner of this server can run this command. sorry!', ephemeral: true })
     }
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
+    }
 
     const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id, owner_id, map_data').eq('discord_server_id', guild.id)
     if (getRealmError) {
