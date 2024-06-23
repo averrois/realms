@@ -6,15 +6,25 @@ type ToolButtonProps = {
     onClick?: () => void
     className?: string
     label?: string
+    disabled?: boolean
 }
 
-const ToolButton:React.FC<ToolButtonProps> = ({ children, selected, onClick, className, label }) => {
+const ToolButton:React.FC<ToolButtonProps> = ({ children, selected, onClick, className, label, disabled }) => {
     
     const [showTooltip, setShowTooltip] = useState<boolean>(false)
 
+    const handleShowToolTip = (show: boolean) => {
+        if (disabled) {
+            setShowTooltip(false)
+        } else {
+            setShowTooltip(show)
+        }
+
+    }
+
     return (
-        <div className='relative' onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)}>
-            <button className={`${selected ? 'bg-lightblue' : ''} hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 ${className}`} onClick={onClick}>
+        <div className='relative' onMouseEnter={() => handleShowToolTip(true)} onMouseLeave={() => handleShowToolTip(false)}>
+            <button className={`${selected ? 'bg-lightblue' : ''} ${disabled ? 'pointer-events-none text-gray-500' : ''} hover:bg-lightblue aspect-square grid place-items-center rounded-lg p-1 ${className}`} onClick={onClick}>
                 {children}
             </button>
             {showTooltip && label && <div className='absolute p-1 px-2 bg-secondary left-12 top-1 rounded-md whitespace-nowrap'>
