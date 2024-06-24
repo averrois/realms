@@ -147,7 +147,7 @@ export class EditorApp extends App {
             x,
             y
         }
-        this.updateRealmData(newRealmData, true)
+        this.updateRealmData(newRealmData, false)
     }
 
     private removeSpawnTile = () => {
@@ -1084,6 +1084,8 @@ export class EditorApp extends App {
         this.gizmoContainer.removeChildren()
         this.drawSpecialTiles()
         this.updateRealmData(newRealmData, false, true)
+        this.snapshots = []
+        this.setSnapshotIndex(0)
         signal.emit('roomDeleted', { deletedIndex: index, newIndex: this.currentRoomIndex })
     }
 
