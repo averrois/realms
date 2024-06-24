@@ -35,7 +35,6 @@ const CreateRealmModal:React.FC = () => {
         }).select()
 
         if (error) {
-            setLoading(false)
             toast.error(error?.message)
         } 
 

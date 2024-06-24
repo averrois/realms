@@ -1,15 +1,6 @@
 import { z } from 'zod'
 import { kickPlayer } from './sockets/helpers'
 
-export const defaultMapData: RealmData = {
-    "spawnpoint": {
-        "roomIndex": 0,
-        x: 0,
-        y: 0,
-    },
-    "rooms": [{"name": 'Home', "tilemap": {}}]
-}
-
 export type RealmData = {
     spawnpoint: {
         roomIndex: number,
@@ -64,7 +55,7 @@ export class SessionManager {
     private playerIdToRealmId: { [key: string]: string } = {}
     private socketIdToPlayerId: { [key: string]: string } = {}
 
-    public createSession(id: string, mapData: RealmData | null, discord_id: string | null, privacy_level: string): void {
+    public createSession(id: string, mapData: RealmData, discord_id: string | null, privacy_level: string): void {
         const realm = new Session(id, mapData, discord_id, privacy_level)
 
         this.sessions[id] = realm
@@ -139,9 +130,9 @@ export class Session {
     public discord_id: string | null
     public privacy_level
 
-    constructor(id: string, mapData: RealmData | null, discord_id: string | null, privacy_level: string) {
+    constructor(id: string, mapData: RealmData, discord_id: string | null, privacy_level: string) {
         this.id = id
-        this.map_data = mapData || defaultMapData
+        this.map_data = mapData 
         this.discord_id = discord_id
         this.privacy_level = privacy_level
     }

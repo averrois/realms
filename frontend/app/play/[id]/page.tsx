@@ -2,10 +2,8 @@ import React from 'react'
 import NotFound from '@/app/not-found'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { defaultMapData } from '@/utils/pixi/types'
 import { getPlayRealmData } from '@/utils/supabase/getPlayRealmData'
 import PlayClient from '../Play'
-import { defaultSkin } from '@/utils/pixi/Player/skins'
 import { updateVisitedRealms } from '@/utils/supabase/updateVisitedRealms'
 
 export default async function Play({ params, searchParams }: { params: { id: string }, searchParams: { shareId: string } }) {
@@ -26,7 +24,7 @@ export default async function Play({ params, searchParams }: { params: { id: str
         return <NotFound specialMessage={message}/>
     }
     const realm = data
-    const map_data = realm.map_data || defaultMapData
+    const map_data = realm.map_data
 
     let skin = profile.skin
 

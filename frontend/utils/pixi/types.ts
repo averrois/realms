@@ -2,15 +2,6 @@ import { Sprite } from 'pixi.js'
 import { RoomSchema, RealmDataSchema } from './zod'
 import { z } from 'zod'
 
-export const defaultMapData: RealmData = {
-    spawnpoint: {
-        roomIndex: 0,
-        x: 0,
-        y: 0,
-    },
-    rooms: [{name: 'Home', tilemap: {}}]
-}
-
 export type Tool = 'None' | 'Hand' | 'ZoomIn' | 'ZoomOut' | 'Tile'  | 'Eraser'
 
 export type SpecialTile = 'None' | 'Impassable' | 'Teleport' | 'Spawn'
