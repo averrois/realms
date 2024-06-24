@@ -2,12 +2,12 @@ import { z } from 'zod'
 import { kickPlayer } from './sockets/helpers'
 
 export const defaultMapData: RealmData = {
-    spawnpoint: {
-        roomIndex: 0,
+    "spawnpoint": {
+        "roomIndex": 0,
         x: 0,
         y: 0,
     },
-    rooms: [{name: 'Home', tilemap: {}}]
+    "rooms": [{"name": 'Home', "tilemap": {}}]
 }
 
 export type RealmData = {

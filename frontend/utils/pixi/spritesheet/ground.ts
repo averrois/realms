@@ -7,6 +7,9 @@ const url = '/sprites/spritesheets/ground.png'
 const sprites: SpriteSheetTile[] = [
     { name: 'light_solid_grass', x: 32, y: 32, width: 32, height: 32 },
     { name: 'vibrant_solid_grass', x: 416, y: 32, width: 32, height: 32 },
+    { name: 'normal_solid_grass', x: 32, y: 160, width: 32, height: 32 },
+    { name: 'dark_solid_grass', x: 224, y: 160, width: 32, height: 32 },
+
     { name: 'top_left_outer_light_grass', x: 0, y: 0, width: 32, height: 32, layer: 'above_floor' },
     { name: 'top_outer_light_grass', x: 32, y: 0, width: 32, height: 32, layer: 'above_floor' },
     { name: 'top_right_outer_light_grass', x: 64, y: 0, width: 32, height: 32, layer: 'above_floor' },
@@ -72,7 +75,58 @@ const sprites: SpriteSheetTile[] = [
     { name: 'right_inner_curve_vibrant_grass', x: 736, y: 32, width: 32, height: 32, layer: 'above_floor' },
     { name: 'bottom_left_inner_curve_vibrant_grass', x: 672, y: 64, width: 32, height: 32, layer: 'above_floor' },
     { name: 'bottom_inner_curve_vibrant_grass', x: 704, y: 64, width: 32, height: 32, layer: 'above_floor' },
-    { name: 'bottom_right_inner_curve_vibrant_grass', x: 736, y: 64, width: 32, height: 32, layer: 'above_floor' }
+    { name: 'bottom_right_inner_curve_vibrant_grass', x: 736, y: 64, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'bl_tr_corners_normal_grass', x: 96, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_normal_grass', x: 16, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_normal_grass', x: 48, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_br_corners_normal_grass', x: 160, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_normal_grass', x: 16, y: 176, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_normal_grass', x: 48, y: 176, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'tl_inner_normal_grass', x: 96, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'top_inner_normal_grass', x: 128, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_inner_normal_grass', x: 160, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'left_inner_normal_grass', x: 96, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'right_inner_normal_grass', x: 160, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_inner_normal_grass', x: 96, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bottom_inner_normal_grass', x: 128, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_inner_normal_grass', x: 160, y: 192, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'bl_tr_corners_dark_grass', x: 288, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_dark_grass', x: 208, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_dark_grass', x: 240, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_br_corners_dark_grass', x: 352, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_dark_grass', x: 208, y: 176, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_dark_grass', x: 240, y: 176, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'tl_inner_dark_grass', x: 288, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'top_inner_dark_grass', x: 320, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_inner_dark_grass', x: 352, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'left_inner_dark_grass', x: 288, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'right_inner_dark_grass', x: 352, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_inner_dark_grass', x: 288, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bottom_inner_dark_grass', x: 320, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_inner_dark_grass', x: 352, y: 192, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'bl_tr_corners_bush', x: 480, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_bush', x: 400, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_bush', x: 432, y: 144, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tl_br_corners_bush', x: 544, y: 224, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_bush', x: 400, y: 176, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_bush', x: 432, y: 176, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'tl_bush_thin', x: 480, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'top_bush_thin', x: 512, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'tr_bush_thin', x: 544, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'left_bush_thin', x: 480, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'right_bush_thin', x: 544, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bl_bush_thin', x: 480, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'bottom_bush_thin', x: 512, y: 192, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'br_bush_thin', x: 544, y: 192, width: 32, height: 32, layer: 'above_floor' },
 ]
 
 const groundSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
