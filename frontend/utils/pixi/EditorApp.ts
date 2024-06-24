@@ -530,10 +530,14 @@ export class EditorApp extends App {
     }
 
     private eraseTilesInRectangle = (squares: Point[]) => {
+        let alreadyDidSnapshot = false
         squares.forEach((square, index) => {
-            const firstIteration = index === 0
-
-            this.eraseTileAtPosition(square.x, square.y, this.eraserLayer, firstIteration)
+            let doSnapshot = false
+            if (alreadyDidSnapshot === false && this.getTileAtPosition(square.x, square.y, this.eraserLayer)) {
+                doSnapshot = true
+                alreadyDidSnapshot = true
+            }
+            this.eraseTileAtPosition(square.x, square.y, this.eraserLayer, doSnapshot)
         })
     }
 
@@ -550,7 +554,7 @@ export class EditorApp extends App {
             delete this.tilemapSprites[`${x}, ${y}`][layer as Layer]
             this.removeTileFromRealmData(x, y, layer as Layer, snapshot)
 
-            if (tileData && tileData.colliders) {
+            if (tileData && tileData.colliders) { 
                 // remove the collider and the sprite
                 tileData.colliders.forEach((collider) => {
                     const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
@@ -664,6 +668,7 @@ export class EditorApp extends App {
 
     private updateRealmData = (newRealmData: RealmData, snapshot: boolean, dontSavePresent?: boolean) => {
         if (snapshot) {
+            console.log('snapshot')
             const pastRoom = JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex]))
             this.snapshots.push(pastRoom)
             this.setSnapshotIndex(this.snapshots.length)
@@ -708,8 +713,8 @@ export class EditorApp extends App {
             room = newRealmData.rooms[this.currentRoomIndex]
         }
 
-        await this.loadRoomFromData(room)
         this.updateRealmData(newRealmData, false, true)
+        await this.loadRoomFromData(room)
     }
 
     private placePreviewTileAtMouse = (e: PIXI.FederatedPointerEvent) => {
@@ -1030,7 +1035,7 @@ export class EditorApp extends App {
         }
         const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms.push(newRoom)
-        this.updateRealmData(newRealmData, false)
+        this.updateRealmData(newRealmData, false, true)
         signal.emit('newRoom', newRoom.name)
 
         this.changeRoom(this.realmData.rooms.length - 1)
@@ -1078,14 +1083,14 @@ export class EditorApp extends App {
 
         this.gizmoContainer.removeChildren()
         this.drawSpecialTiles()
-        this.updateRealmData(newRealmData, false)
+        this.updateRealmData(newRealmData, false, true)
         signal.emit('roomDeleted', { deletedIndex: index, newIndex: this.currentRoomIndex })
     }
 
     private onChangeRoomName = ({ index, newName }: { index: number, newName: string }) => {
         const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms[index].name = newName
-        this.updateRealmData(newRealmData, false)
+        this.updateRealmData(newRealmData, false, true)
         signal.emit('roomNameChanged', { index, newName })
     }
 
