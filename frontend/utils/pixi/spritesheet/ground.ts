@@ -6,8 +6,10 @@ const height = 384
 const url = '/sprites/spritesheets/ground.png'
 const sprites: SpriteSheetTile[] = [
     { name: 'light_solid_grass', x: 32, y: 32, width: 32, height: 32 },
+    { name: 'detailed_grass', x: 32, y: 96, width: 32, height: 32 },
     { name: 'vibrant_solid_grass', x: 416, y: 32, width: 32, height: 32 },
     { name: 'normal_solid_grass', x: 32, y: 160, width: 32, height: 32 },
+    { name: 'normal_detailed_grass', x: 32, y: 208, width: 32, height: 32 },
     { name: 'dark_solid_grass', x: 224, y: 160, width: 32, height: 32 },
     { name: 'solid_dirt', x: 32, y: 286, width: 32, height: 32 },
     { name: 'detailed_dirt', x: 224, y: 286, width: 32, height: 32 },
