@@ -27,6 +27,7 @@ export class EditorApp extends App {
 
     private snapshots: Room[] = []
     private snapshotIndex: number = 0
+    private present: Room = {} as Room
 
     private gizmoSprites: GizmoSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
@@ -530,9 +531,9 @@ export class EditorApp extends App {
 
     private eraseTilesInRectangle = (squares: Point[]) => {
         squares.forEach((square, index) => {
-            const lastIteration = index === squares.length - 1
+            const firstIteration = index === 0
 
-            this.eraseTileAtPosition(square.x, square.y, this.eraserLayer, lastIteration)
+            this.eraseTileAtPosition(square.x, square.y, this.eraserLayer, firstIteration)
         })
     }
 
@@ -661,11 +662,15 @@ export class EditorApp extends App {
         this.updateRealmData(newRealmData, snapshot)
     }
 
-    private updateRealmData = (newRealmData: RealmData, snapshot: boolean) => {
+    private updateRealmData = (newRealmData: RealmData, snapshot: boolean, dontSavePresent?: boolean) => {
         if (snapshot) {
-            console.log('snapshot!')
-            this.snapshots.push(JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex])))
+            const pastRoom = JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex]))
+            this.snapshots.push(pastRoom)
             this.setSnapshotIndex(this.snapshots.length)
+        }
+
+        if (!dontSavePresent) {
+            this.present = JSON.parse(JSON.stringify(newRealmData.rooms[this.currentRoomIndex]))
         }
 
         this.realmData = newRealmData
@@ -684,18 +689,27 @@ export class EditorApp extends App {
 
     private undo = async () => {
         this.setSnapshotIndex(this.snapshotIndex - 1)
-        await this.loadRoomFromData(this.snapshots[this.snapshotIndex])
-        const newRealmData = this.getRealmDataCopy()
-        newRealmData.rooms[this.currentRoomIndex] = this.snapshots[this.snapshotIndex]
-        this.updateRealmData(newRealmData, false)
+        await this.loadSnapshotRoom()
     }
 
-    private redo = () => {
+    private redo = async () => {
         this.setSnapshotIndex(this.snapshotIndex + 1)
-        this.loadRoomFromData(this.snapshots[this.snapshotIndex])
+        await this.loadSnapshotRoom()
+    }
+
+    private loadSnapshotRoom = async () => {
         const newRealmData = this.getRealmDataCopy()
-        newRealmData.rooms[this.currentRoomIndex] = this.snapshots[this.snapshotIndex]
-        this.updateRealmData(newRealmData, false)
+        let room = null
+        if (this.snapshotIndex >= this.snapshots.length) {
+            newRealmData.rooms[this.currentRoomIndex].tilemap = this.present.tilemap
+            room = newRealmData.rooms[this.currentRoomIndex]
+        } else {
+            newRealmData.rooms[this.currentRoomIndex].tilemap = this.snapshots[this.snapshotIndex].tilemap
+            room = newRealmData.rooms[this.currentRoomIndex]
+        }
+
+        await this.loadRoomFromData(room)
+        this.updateRealmData(newRealmData, false, true)
     }
 
     private placePreviewTileAtMouse = (e: PIXI.FederatedPointerEvent) => {
@@ -850,9 +864,8 @@ export class EditorApp extends App {
             
             // place the tiles!
             squares.forEach((square, index) => {
-                const lastIteration = index === squares.length - 1
-
-                this.placeTileAtPosition(square.x, square.y, lastIteration)
+                const firstIteration = index === 0
+                this.placeTileAtPosition(square.x, square.y, firstIteration)
             })
         }
     }
