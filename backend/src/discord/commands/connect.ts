@@ -45,6 +45,9 @@ const command: Command = {
         return await interaction.reply({ content: 'You must be the owner of the realm to connect a room!', ephemeral: true })
     }
 
+
+    // TODO: ACCOUNT FOR NULL MAPDATA
+
     const mapData = realm.map_data
     const room = getRoomFromName(mapData, roomName)
 

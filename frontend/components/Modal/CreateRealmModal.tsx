@@ -35,11 +35,11 @@ const CreateRealmModal:React.FC = () => {
         }).select()
 
         if (error) {
-            setLoading(false)
             toast.error(error?.message)
         } 
 
         if (data) {
+            setRealmName('')
             revalidate('/app')
             setModal('None')
             toast.success('Your new realm has been created!')
@@ -47,7 +47,6 @@ const CreateRealmModal:React.FC = () => {
         }
 
         setLoading(false)
-        setRealmName('')
     }
 
     function onChange(e: React.ChangeEvent<HTMLInputElement>) {

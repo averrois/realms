@@ -4,7 +4,7 @@ import ToolButton from './ToolButton'
 import { HandRaisedIcon } from '@heroicons/react/24/outline'
 import { Tool, TileMode, SpecialTile, Layer } from '@/utils/pixi/types'
 import { MagnifyingGlassPlusIcon, MagnifyingGlassMinusIcon } from '@heroicons/react/24/solid'
-import { Eraser } from '@phosphor-icons/react'
+import { Eraser, ArrowUUpLeft, ArrowUUpRight } from '@phosphor-icons/react'
 import { GridFour, Square, Eye, EyeSlash, Wall, FlowerTulip, Couch, Atom } from '@phosphor-icons/react'
 import signal from '@/utils/signal'
 
@@ -21,11 +21,21 @@ type LeftBarProps = {
 const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTileMode, specialTile, selectEraserLayer, eraserLayer }) => {
 
     const [showGizmos, setShowGizmos] = useState<boolean>(false)
+    const [undoEnabled, setUndoEnabled] = useState<boolean>(false)
+    const [redoEnabled, setRedoEnabled] = useState<boolean>(false)
 
     function toggleShowGizmos() {
         const show = !showGizmos
         setShowGizmos(show)
         signal.emit('showGizmos', show)
+    }
+
+    function undo() {
+        signal.emit('undo')
+    }
+
+    function redo() {
+        signal.emit('redo')
     }
 
     useEffect(() => {
@@ -34,10 +44,22 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
             setShowGizmos(true)
         }
 
+        const onUndoEnabled = (enabled: boolean) => {
+            setUndoEnabled(enabled)
+        }
+
+        const onRedoEnabled = (enabled: boolean) => {
+            setRedoEnabled(enabled)
+        }
+
         signal.on('gizmosVisible', onShowGizmos)
+        signal.on('undoEnabled', onUndoEnabled)
+        signal.on('redoEnabled', onRedoEnabled)
 
         return () => {
             signal.off('gizmosVisible', onShowGizmos)
+            signal.off('undoEnabled', onUndoEnabled)
+            signal.off('redoEnabled', onRedoEnabled)
         }
     }, [])
 
@@ -65,6 +87,13 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
             <div className='w-full h-[2px] bg-black'/>
             <ToolButton selected={false} onClick={toggleShowGizmos} label={'Toggle Special Tiles'} className={specialTile !== 'None' ? 'pointer-events-none text-gray-700' : ''}>
                 {showGizmos ? <EyeSlash className='h-8 w-8'/> : <Eye className='h-8 w-8'/>}
+            </ToolButton>
+            <div className='w-full h-[2px] bg-black'/>
+            <ToolButton selected={false} label={'Undo'} onClick={undo} disabled={!undoEnabled}>
+                <ArrowUUpLeft className='h-8 w-8'/>
+            </ToolButton>
+            <ToolButton selected={false} label={'Redo'} onClick={redo} disabled={!redoEnabled}>
+                <ArrowUUpRight className='h-8 w-8'/>
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
             {tool === 'Eraser' && (

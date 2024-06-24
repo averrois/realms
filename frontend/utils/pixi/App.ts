@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import { Layer, RealmData, ColliderMap, TilePoint, defaultMapData, Room } from './types'
+import { Layer, RealmData, ColliderMap, TilePoint, Room } from './types'
 import { sprites, Collider } from './spritesheet/spritesheet'
 
 PIXI.TextureStyle.defaultOptions.scaleMode = 'nearest'
@@ -13,13 +13,11 @@ export class App {
         object: new PIXI.Container(),
     }
     protected currentRoomIndex: number = 0    
-    protected realmData: RealmData = defaultMapData
+    protected realmData: RealmData
     protected collidersFromSpritesMap: ColliderMap = {}
 
     constructor(realmData: RealmData) {
-        if (realmData) {
-            this.realmData = JSON.parse(JSON.stringify(realmData))
-        }
+        this.realmData = JSON.parse(JSON.stringify(realmData))
     }
 
     public async init() {

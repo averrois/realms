@@ -13,7 +13,7 @@ const LinkRealmDropdown:React.FC<LinkRealmDropdownProps> = ({ realms, selectedRe
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className={`inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm capitalize p-2`}>
+        <Menu.Button className={`inline-flex w-64 justify-between bg-darkblue px-3 text-sm font-semibold text-white shadow-sm p-2`}>
           {selectedRealm.name}
           <ChevronDownIcon className="-mr-1 h-5 w-5 text-white" aria-hidden="true" />
         </Menu.Button>
@@ -33,7 +33,7 @@ const LinkRealmDropdown:React.FC<LinkRealmDropdownProps> = ({ realms, selectedRe
                 <Menu.Item key={realm.id}>
                     {() => (
                         <div
-                            className={`block px-3 text-sm capitalize cursor-pointer text-white bg-darkblue hover:bg-lightblue p-2`}
+                            className={`block px-3 text-sm cursor-pointer text-white bg-darkblue hover:bg-lightblue p-2`}
                             onClick={() => setSelectedRealm(realm)}
                         >
                             {realm.name}
