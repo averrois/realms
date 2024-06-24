@@ -668,6 +668,8 @@ export class EditorApp extends App {
 
     private updateRealmData = (newRealmData: RealmData, snapshot: boolean, dontSavePresent?: boolean) => {
         if (snapshot) {
+            // remove last snapshot. i dont know why but this kind of fixes things
+            this.snapshots = this.snapshots.slice(0, this.snapshotIndex)
             const pastRoom = JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex]))
             this.snapshots.push(pastRoom)
             this.setSnapshotIndex(this.snapshots.length)
