@@ -4,6 +4,7 @@ import signal from '../signal'
 import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 import { formatForComparison } from '../removeExtraSpaces'
+import { HighlightSpanKind } from 'typescript'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
@@ -778,6 +779,9 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                if (this.getCurrentTileMode() === 'Rectangle') {
+                    this.removePreviewTiles()
+                }
             } 
         })
 
