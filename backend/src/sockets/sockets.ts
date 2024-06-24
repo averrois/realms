@@ -99,7 +99,6 @@ export function sockets(io: Server) {
             if (error || !data) {
                 return rejectJoin('Realm not found.')
             }
-
             const { data: profile, error: profileError } = await supabase.from('profiles').select('skin, discord_id').eq('id', uid).single()
             if (profileError) {
                 return rejectJoin('Failed to get profile.')

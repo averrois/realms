@@ -1043,6 +1043,8 @@ export class EditorApp extends App {
     private changeRoom = async (index: number) => {
         signal.emit('loadingRoom')
         this.currentRoomIndex = index
+        this.snapshots = []
+        this.setSnapshotIndex(0)
         await this.loadRoom(this.currentRoomIndex)
         this.app.stage.position.set(0, 0)
         this.setScale(1)
