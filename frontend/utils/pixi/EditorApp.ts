@@ -668,7 +668,6 @@ export class EditorApp extends App {
 
     private updateRealmData = (newRealmData: RealmData, snapshot: boolean, dontSavePresent?: boolean) => {
         if (snapshot) {
-            console.log('snapshot')
             const pastRoom = JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex]))
             this.snapshots.push(pastRoom)
             this.setSnapshotIndex(this.snapshots.length)
