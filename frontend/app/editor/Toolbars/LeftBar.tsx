@@ -30,6 +30,14 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
         signal.emit('showGizmos', show)
     }
 
+    function undo() {
+        signal.emit('undo')
+    }
+
+    function redo() {
+        signal.emit('redo')
+    }
+
     useEffect(() => {
 
         const onShowGizmos = () => {
@@ -81,10 +89,10 @@ const LeftBar:React.FC<LeftBarProps> = ({ tool, tileMode, selectTool, selectTile
                 {showGizmos ? <EyeSlash className='h-8 w-8'/> : <Eye className='h-8 w-8'/>}
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>
-            <ToolButton selected={false} label={'Undo'} onClick={() => {}} disabled={!undoEnabled}>
+            <ToolButton selected={false} label={'Undo'} onClick={undo} disabled={!undoEnabled}>
                 <ArrowUUpLeft className='h-8 w-8'/>
             </ToolButton>
-            <ToolButton selected={false} label={'Redo'} onClick={() => {}} disabled={!redoEnabled}>
+            <ToolButton selected={false} label={'Redo'} onClick={redo} disabled={!redoEnabled}>
                 <ArrowUUpRight className='h-8 w-8'/>
             </ToolButton>
             <div className='w-full h-[2px] bg-black'/>

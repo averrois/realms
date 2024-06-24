@@ -26,6 +26,7 @@ export class EditorApp extends App {
     private canErase: boolean = true
 
     private snapshots: Room[] = []
+    private snapshotIndex: number = 0
 
     private gizmoSprites: GizmoSpriteMap = {}
     private previewTiles: PIXI.Sprite[] = []
@@ -139,7 +140,7 @@ export class EditorApp extends App {
     }
 
     private addSpawnToRealmData = (x: number, y: number) => {
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.spawnpoint = {
             roomIndex: this.currentRoomIndex,
             x,
@@ -225,7 +226,7 @@ export class EditorApp extends App {
 
     private addTeleporterToRealmData = (start: Point, destination: Point, roomIndex: number) => {
         const key = `${start.x}, ${start.y}` as TilePoint
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms[this.currentRoomIndex] = {
             ...newRealmData.rooms[this.currentRoomIndex],
             tilemap: {
@@ -305,6 +306,8 @@ export class EditorApp extends App {
         signal.on('selectEraserLayer', this.onSelectEraserLayer)
         signal.on('teleport', this.onCreateTeleporter)
         signal.on('selectPalette', this.onSelectPalette)
+        signal.on('undo', this.undo)
+        signal.on('redo', this.redo)
     }
 
     private onSelectPalette = (palette: SheetName) => {
@@ -613,7 +616,10 @@ export class EditorApp extends App {
 
     private addTileToRealmData = (x: number, y: number, layer: Layer, tile: string, snapshot: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
+        // return if the tile is already there
+        if (newRealmData.rooms[this.currentRoomIndex].tilemap[key]?.[layer] === tile) return
+
         newRealmData.rooms[this.currentRoomIndex] = {
             ...newRealmData.rooms[this.currentRoomIndex],
             tilemap: {
@@ -629,7 +635,7 @@ export class EditorApp extends App {
 
     private addColliderToRealmData = (x: number, y: number, snapshot: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms[this.currentRoomIndex].tilemap[key] = {
             ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
             impassable: true
@@ -650,18 +656,46 @@ export class EditorApp extends App {
 
     private removeTileFromRealmData = (x: number, y: number, layer: Layer, snapshot: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         delete newRealmData.rooms[this.currentRoomIndex].tilemap[key][layer]
         this.updateRealmData(newRealmData, snapshot)
     }
 
     private updateRealmData = (newRealmData: RealmData, snapshot: boolean) => {
         if (snapshot) {
+            console.log('snapshot!')
             this.snapshots.push(JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex])))
+            this.setSnapshotIndex(this.snapshots.length)
         }
 
         this.realmData = newRealmData
         this.needsToSave = true
+    }
+
+    private setSnapshotIndex = (index: number) => {
+        // clamp between 0 and this.snapshots.length
+        this.snapshotIndex = Math.min(Math.max(index, 0), this.snapshots.length)
+        const undoEnabled = this.snapshotIndex > 0 && this.snapshots.length > 0
+        const redoEnabled = this.snapshotIndex < this.snapshots.length
+
+        signal.emit('undoEnabled', undoEnabled)
+        signal.emit('redoEnabled', redoEnabled)
+    }
+
+    private undo = async () => {
+        this.setSnapshotIndex(this.snapshotIndex - 1)
+        await this.loadRoomFromData(this.snapshots[this.snapshotIndex])
+        const newRealmData = this.getRealmDataCopy()
+        newRealmData.rooms[this.currentRoomIndex] = this.snapshots[this.snapshotIndex]
+        this.updateRealmData(newRealmData, false)
+    }
+
+    private redo = () => {
+        this.setSnapshotIndex(this.snapshotIndex + 1)
+        this.loadRoomFromData(this.snapshots[this.snapshotIndex])
+        const newRealmData = this.getRealmDataCopy()
+        newRealmData.rooms[this.currentRoomIndex] = this.snapshots[this.snapshotIndex]
+        this.updateRealmData(newRealmData, false)
     }
 
     private placePreviewTileAtMouse = (e: PIXI.FederatedPointerEvent) => {
@@ -981,7 +1015,7 @@ export class EditorApp extends App {
             name: this.generateUniqueRoomName(this.realmData.rooms),
             tilemap: {}
         }
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms.push(newRoom)
         this.updateRealmData(newRealmData, false)
         signal.emit('newRoom', newRoom.name)
@@ -1002,7 +1036,7 @@ export class EditorApp extends App {
         // disable delete if only one room
         if (this.realmData.rooms.length === 1) return
 
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms.splice(index, 1)
         for (const room of newRealmData.rooms) {
             for (const [key, value] of Object.entries(room.tilemap)) {
@@ -1031,14 +1065,12 @@ export class EditorApp extends App {
 
         this.gizmoContainer.removeChildren()
         this.drawSpecialTiles()
-
         this.updateRealmData(newRealmData, false)
-
         signal.emit('roomDeleted', { deletedIndex: index, newIndex: this.currentRoomIndex })
     }
 
     private onChangeRoomName = ({ index, newName }: { index: number, newName: string }) => {
-        const newRealmData = this.realmData
+        const newRealmData = this.getRealmDataCopy()
         newRealmData.rooms[index].name = newName
         this.updateRealmData(newRealmData, false)
         signal.emit('roomNameChanged', { index, newName })
@@ -1061,6 +1093,10 @@ export class EditorApp extends App {
         this.gizmoContainer.visible = show
     }
 
+    private getRealmDataCopy = ():RealmData => {
+        return JSON.parse(JSON.stringify(this.realmData))
+    }
+
     public destroy() {
         signal.off('selectTool', this.onSelectTool)
         signal.off('tileSelected', this.onSelectTile)
@@ -1076,6 +1112,8 @@ export class EditorApp extends App {
         signal.off('selectEraserLayer', this.onSelectEraserLayer)
         signal.off('teleport', this.onCreateTeleporter)
         signal.off('selectPalette', this.onSelectPalette)
+        signal.off('undo', this.undo)
+        signal.off('redo', this.redo)
         window.removeEventListener('beforeunload', this.onBeforeUnload)
 
         super.destroy()
