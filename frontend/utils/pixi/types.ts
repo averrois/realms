@@ -30,6 +30,12 @@ export interface TilemapSprites {
     }
 }
 
+export interface TileChange {
+    layer: Layer,
+    palette: string,
+    tile: string,
+}
+
 export type Layer = 'floor' | 'above_floor' | 'object'
 
 export type Bounds = {
