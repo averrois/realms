@@ -26,7 +26,7 @@ const RightSection:React.FC<RightSectionProps> = ({ selectedTile, setSelectedTil
     const [tab, setTab] = useState<Tab>('Tile')
 
     return (
-        <div className='min-w-[420px] bg-secondary flex flex-col select-none'>
+        <div className='w-[420px] bg-secondary flex flex-col select-none'>
             <div className='flex flex-row h-10 px-2 pt-[4px]'>
                 <div 
                     className={`grow hover:bg-darkblue rounded-t-md cursor-pointer grid place-items-center select-none ${tab === 'Tile' ? 'pointer-events-none bg-lightblue' : 'bg-secondary'}`}

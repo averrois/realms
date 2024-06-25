@@ -4,9 +4,10 @@ import signal from '../signal'
 import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 import { formatForComparison } from '../removeExtraSpaces'
-import { HighlightSpanKind } from 'typescript'
 
 export class EditorApp extends App {
+    private maxTileCount: number = 10_000
+
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
     private gizmoContainer: PIXI.Container = new PIXI.Container()
     private toolMode: Tool = 'None'
@@ -64,6 +65,17 @@ export class EditorApp extends App {
         this.setUpInitialTilemapDataAndPointerEvents('floor')
         this.setUpInitialTilemapDataAndPointerEvents('above_floor')
         this.setUpInitialTilemapDataAndPointerEvents('object')
+
+        this.emitBarWidth()
+    }
+
+    private emitBarWidth = () => {
+        const keyCount = this.getTileCount()
+        signal.emit('barWidth', keyCount / this.maxTileCount)
+    }
+
+    private getTileCount = () => {
+        return Object.keys(this.realmData.rooms[this.currentRoomIndex].tilemap).length
     }
 
     private drawSpecialTiles = () => {
@@ -387,6 +399,13 @@ export class EditorApp extends App {
     private placeTileAtPosition = (x: number, y: number, snapshot: boolean) => {
         const { tile, data, layer, type } = this.getCurrentSpriteInfo()
 
+        // stop if too many tiles
+        if (type !== 'Spawn') {
+            if (this.getTileCount() >= this.maxTileCount) {
+                return
+            }
+        }
+
         tile.x = x * 32
         tile.y = y * 32
 
@@ -651,12 +670,17 @@ export class EditorApp extends App {
 
     private removeGizmoFromRealmData = (x: number, y: number, snapshot: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        const newRealmData = this.realmData
-        newRealmData.rooms[this.currentRoomIndex].tilemap[key] = {
-            ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
-            impassable: false,
-            teleporter: undefined
+        const newRealmData = this.getRealmDataCopy()
+        if (newRealmData.rooms[this.currentRoomIndex].tilemap[key]) {
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key].impassable
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key].teleporter
+
+            // delete the key if no data on it
+            if (Object.keys(newRealmData.rooms[this.currentRoomIndex].tilemap[key]).length === 0) {
+                delete newRealmData.rooms[this.currentRoomIndex].tilemap[key]
+            }
         }
+        
         this.updateRealmData(newRealmData, snapshot)
     }
 
@@ -664,6 +688,10 @@ export class EditorApp extends App {
         const key = `${x}, ${y}` as TilePoint
         const newRealmData = this.getRealmDataCopy()
         delete newRealmData.rooms[this.currentRoomIndex].tilemap[key][layer]
+        // delete the key if no data on it
+        if (Object.keys(newRealmData.rooms[this.currentRoomIndex].tilemap[key]).length === 0) {
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key]
+        }
         this.updateRealmData(newRealmData, snapshot)
     }
 
@@ -681,6 +709,7 @@ export class EditorApp extends App {
         }
 
         this.realmData = newRealmData
+        this.emitBarWidth()
         this.needsToSave = true
     }
 

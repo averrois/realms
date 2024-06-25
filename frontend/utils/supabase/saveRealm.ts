@@ -22,6 +22,10 @@ export async function saveRealm(access_token: string, realmData: RealmData, id: 
     // return if any rooms in realm data have the same name
     const roomNames = new Set<string>()
     for (const room of realmData.rooms) {
+        if (Object.keys(room.tilemap).length > 10_000) {
+            return { error: { message: 'This room is too big to save!' } }
+        }
+
         const roomName = formatForComparison(room.name)
 
         if (roomNames.has(roomName)) {
