@@ -4,6 +4,7 @@ import { getRoomFromName, getRoomNamesWithChannelId } from '../../utils'
 import { supabase } from '../../supabase'
 
 const command: Command = {
+  cooldown: 5,
   data: new SlashCommandBuilder()
     .setName('disconnect')
     .setDescription('disconnect this channel from a room in your realm.')

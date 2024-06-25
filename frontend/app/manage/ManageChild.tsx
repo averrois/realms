@@ -12,6 +12,8 @@ import Toggle from '@/components/Toggle'
 import BasicLoadingButton from '@/components/BasicLoadingButton'
 import { unlinkFromDiscord } from '@/utils/supabase/unlinkFromDiscord'
 import Link from 'next/link'
+import BasicInput from '@/components/BasicInput'
+import { removeExtraSpaces } from '@/utils/removeExtraSpaces'
 
 type ManageChildProps = {
     realmId: string
@@ -21,6 +23,7 @@ type ManageChildProps = {
     starting_discord_id: string
     discord_server_name: string
     discord_error: boolean
+    startingName: string
 }
 
 const privacyOptions = [
@@ -28,7 +31,7 @@ const privacyOptions = [
     'anyone in the discord server'
 ]
 
-const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId, startingOnlyOwner, starting_discord_id, discord_server_name, discord_error }) => {
+const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startingShareId, startingOnlyOwner, starting_discord_id, discord_server_name, discord_error, startingName }) => {
 
     const [selectedTab, setSelectedTab] = useState(0)
     const [privacy, setPrivacy] = useState(getDropdownValue())
@@ -36,6 +39,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
     const [onlyOwner, setOnlyOwner] = useState(startingOnlyOwner)
     const [unlinkButtonLoading, setUnlinkButtonLoading] = useState(false)
     const [discordId, setDiscordId] = useState(starting_discord_id)
+    const [name, setName] = useState(startingName)
     const { setModal, setLoadingText } = useModal()
 
     const supabase = createClient()
@@ -57,6 +61,11 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
     }
 
     async function save() {
+        if (name.trim() === '') {
+            toast.error('Name cannot be empty!')
+            return
+        }
+
         setModal('Loading')
         setLoadingText('Saving...')
 
@@ -65,6 +74,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
             .update({ 
                     privacy_level: getPrivacyLevel(),
                     only_owner: onlyOwner,
+                    name: name,
                 })
             .eq('id', realmId)
 
@@ -129,15 +139,27 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
         }
     }
 
+    function onNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const value = removeExtraSpaces(e.target.value)
+        setName(value)
+    }
+
     return (
         <div className='flex flex-col items-center pt-24'>
             <div className='flex flex-row gap-8 relative'>
                 <div className='flex flex-col h-[500px] w-[200px] border-white border-r-2 pr-4 gap-2'>
-                    <h1 className={`${selectedTab === 0 ? 'font-bold underline' : ''} cursor-pointer`} onClick={() => setSelectedTab(0)}>Sharing Options</h1> 
-                    <h1 className={`${selectedTab === 1 ? 'font-bold underline' : ''} cursor-pointer`} onClick={() => setSelectedTab(1)}>Discord Channel</h1> 
+                    <h1 className={`${selectedTab === 0 ? 'font-bold underline' : ''} cursor-pointer`} onClick={() => setSelectedTab(0)}>General</h1> 
+                    <h1 className={`${selectedTab === 1 ? 'font-bold underline' : ''} cursor-pointer`} onClick={() => setSelectedTab(1)}>Sharing Options</h1> 
+                    <h1 className={`${selectedTab === 2 ? 'font-bold underline' : ''} cursor-pointer`} onClick={() => setSelectedTab(2)}>Discord Channel</h1> 
                 </div>
                 <div className='flex flex-col w-[300px]'>
                     {selectedTab === 0 && (
+                        <div className='flex flex-col gap-2'>
+                            Name
+                            <BasicInput value={name} onChange={onNameChange} maxLength={32}/>
+                        </div>
+                    )}
+                    {selectedTab === 1 && (
                         <div className='flex flex-col gap-2'>
                             Who can join this realm?
                             <div>
@@ -155,7 +177,7 @@ const ManageChild:React.FC<ManageChildProps> = ({ realmId, privacyLevel, startin
                             </BasicButton>
                         </div>
                     )}
-                    {selectedTab === 1 && (
+                    {selectedTab === 2 && (
                         <div className='flex flex-col gap-2'>
                             {(!discordId || discord_error) && (
                                 <div className='flex flex-col gap-1'>

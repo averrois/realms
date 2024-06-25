@@ -2,6 +2,7 @@ import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, But
 import { Command } from '../commands'
 
 const command: Command = {
+  cooldown: 0,
   data: new SlashCommandBuilder()
     .setName('help')
     .setDescription('learn the Realms commands'),

@@ -4,6 +4,7 @@ import { getRoomFromName, getRoomNames } from '../../utils'
 import { supabase } from '../../supabase'
 
 const command: Command = {
+  cooldown: 5,
   data: new SlashCommandBuilder()
     .setName('connect')
     .setDescription('connect this channel with a room from your realm.')
@@ -44,9 +45,6 @@ const command: Command = {
     if (profileData.id !== realm.owner_id) {
         return await interaction.reply({ content: 'You must be the owner of the realm to connect a room!', ephemeral: true })
     }
-
-
-    // TODO: ACCOUNT FOR NULL MAPDATA
 
     const mapData = realm.map_data
     const room = getRoomFromName(mapData, roomName)

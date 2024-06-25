@@ -1,4 +1,4 @@
-import { DotsThreeVertical, Share } from '@phosphor-icons/react'
+import { DotsThreeVertical, Link as LinkIcon } from '@phosphor-icons/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useModal } from '@/app/hooks/useModal'
@@ -68,7 +68,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId, s
                 <p>{name}</p>
                 {!shared && (
                     <div className='flex flex-row'>
-                        <Share className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={copyShareLink}/>
+                        <LinkIcon className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={copyShareLink}/>
                     <div ref={dotsRef}>
                         <DotsThreeVertical className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={handleDotsClick}/>
                     </div>

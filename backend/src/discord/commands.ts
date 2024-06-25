@@ -9,6 +9,7 @@ import rooms from './commands/rooms'
 export type Command = {
     data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
     execute: Function
+    cooldown?: number
 }
 
 export const commands: Command[] = [

@@ -3,7 +3,8 @@ import { events } from './events'
 import { commands } from './commands'
 
 interface ExtendedClient extends Client {
-  commands?: Collection<unknown, unknown>;
+  commands?: Collection<unknown, unknown>
+    cooldowns?: Collection<unknown, unknown>
 }
 
 const client: ExtendedClient = new Client({ intents: [
@@ -16,6 +17,7 @@ const client: ExtendedClient = new Client({ intents: [
 
 function setUpClient() {
     client.commands = new Collection()
+    client.cooldowns = new Collection()
     for (const command of commands) {
         client.commands.set(command.data.name, command)
     }
