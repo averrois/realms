@@ -1,16 +1,18 @@
-import { DotsThreeVertical } from '@phosphor-icons/react'
+import { DotsThreeVertical, Share } from '@phosphor-icons/react'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useModal } from '@/app/hooks/useModal'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 
 type DesktopRealmItemProps = {
     name: string,
     id: string,
-    shareId?: string,
+    shareId: string,
+    shared?: boolean
 }
 
-const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId }) => {
+const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId, shared }) => {
     
     const [showMenu, setShowMenu] = useState<boolean>(false)  
     const router = useRouter()
@@ -41,11 +43,16 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId })
     }
 
     function getLink() {
-        if (shareId) {
+        if (shared) {
             return `/play/${id}?shareId=${shareId}`
         } else {
             return `/play/${id}`
         }
+    }
+
+    function copyShareLink() {
+        navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_BASE_URL}/play/${id}?shareId=${shareId}`)
+        toast.success('Link copied!')
     }
 
     return (
@@ -59,11 +66,13 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId })
             </Link>
             <div className='mt-1 flex flex-row justify-between'>
                 <p>{name}</p>
-                {!shareId && (
+                {!shared && (
+                    <div className='flex flex-row'>
+                        <Share className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={copyShareLink}/>
                     <div ref={dotsRef}>
                         <DotsThreeVertical className='h-7 w-7 cursor-pointer hover:bg-neutral-900 rounded-md p-1' onClick={handleDotsClick}/>
                     </div>
-                )}
+                </div>)}
             </div>
             {showMenu && (
                 <div className='absolute w-36 h-24 rounded-lg bg-secondary right-0 flex flex-col z-10' ref={menuRef}>

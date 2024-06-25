@@ -4,6 +4,7 @@ import signal from '../signal'
 import { Layer, TilemapSprites, Tool, TilePoint, Point, RealmData, Room, TileMode, GizmoSpriteMap, SpecialTile } from './types'
 import { SheetName, SpriteSheetTile, sprites } from './spritesheet/spritesheet'
 import { formatForComparison } from '../removeExtraSpaces'
+import { HighlightSpanKind } from 'typescript'
 
 export class EditorApp extends App {
     private gridLines: PIXI.TilingSprite = new PIXI.TilingSprite()
@@ -668,6 +669,8 @@ export class EditorApp extends App {
 
     private updateRealmData = (newRealmData: RealmData, snapshot: boolean, dontSavePresent?: boolean) => {
         if (snapshot) {
+            // remove last snapshot. i dont know why but this kind of fixes things
+            this.snapshots = this.snapshots.slice(0, this.snapshotIndex)
             const pastRoom = JSON.parse(JSON.stringify(this.realmData.rooms[this.currentRoomIndex]))
             this.snapshots.push(pastRoom)
             this.setSnapshotIndex(this.snapshots.length)
@@ -776,6 +779,9 @@ export class EditorApp extends App {
             if (this.toolMode === 'Tile') {
                 this.app.stage.off('pointermove', this.placeTileOnMousePosition)
                 this.onTileDragEnd(e)
+                if (this.getCurrentTileMode() === 'Rectangle') {
+                    this.removePreviewTiles()
+                }
             } 
         })
 
@@ -1043,6 +1049,8 @@ export class EditorApp extends App {
     private changeRoom = async (index: number) => {
         signal.emit('loadingRoom')
         this.currentRoomIndex = index
+        this.snapshots = []
+        this.setSnapshotIndex(0)
         await this.loadRoom(this.currentRoomIndex)
         this.app.stage.position.set(0, 0)
         this.setScale(1)
