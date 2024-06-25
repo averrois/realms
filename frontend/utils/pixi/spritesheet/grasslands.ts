@@ -84,6 +84,36 @@ const sprites: SpriteSheetTile[] = [
     { name: 'foliage_46', x: 288, y: 128, width: 32, height: 32, layer: 'above_floor' },
     { name: 'foliage_47', x: 320, y: 128, width: 32, height: 32, layer: 'above_floor' },
     { name: 'foliage_48', x: 352, y: 128, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'pebbles_1', x: 0, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_2', x: 32, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_3', x: 64, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_4', x: 96, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_5', x: 128, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_6', x: 160, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_7', x: 192, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_8', x: 224, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_9', x: 256, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_10', x: 288, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_11', x: 320, y: 160, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'pebbles_12', x: 352, y: 160, width: 32, height: 32, layer: 'above_floor' },
+
+    { name: 'stone_wall_tl', x: 416, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_wall_top', x: 448, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'stone_wall_tr', x: 480, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'stone_wall_left', x: 416, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'stone_wall_right', x: 480, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'stone_wall_bl', x: 416, y: 256, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'stone_wall_bottom', x: 448, y: 256, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+    { name: 'stone_wall_br', x: 480, y: 256, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
+
+    { name: 'stone_wall_end_right', x: 352, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_wall_end_bottom', x: 384, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'stone_wall_end_left', x: 352, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_wall_end_top', x: 384, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] }
+
 ]
 
 const grasslandsSpriteSheetData = new SpriteSheetData(width, height, url, sprites)

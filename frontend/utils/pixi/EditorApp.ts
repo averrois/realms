@@ -17,7 +17,6 @@ export class EditorApp extends App {
     private scale: number = 1
     private selectedPalette: SheetName = 'ground'
     private selectedTile: string = ''   
-    private selectedTileLayer: Layer | null = null
     private specialTileMode: SpecialTile = 'None'
     private eraserLayer: Layer | 'gizmo' = 'floor'
     private tilemapSprites: TilemapSprites = {}
@@ -332,7 +331,6 @@ export class EditorApp extends App {
         this.selectedTile = tile
         this.toolMode = 'Tile'
         const spriteLayer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile)
-        this.selectedTileLayer = spriteLayer
         this.setSpecialTileToNone()
     }
 
