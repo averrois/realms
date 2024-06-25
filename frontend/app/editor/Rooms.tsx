@@ -4,6 +4,7 @@ import BasicButton from '@/components/BasicButton'
 import signal from '@/utils/signal'
 import { useModal } from '../hooks/useModal'
 import RoomItem from './RoomItem'
+import { toast } from 'react-toastify'
 
 type RoomsProps = {
     rooms: string[]
@@ -18,6 +19,11 @@ const Rooms:React.FC<RoomsProps> = ({ rooms, setRooms, roomIndex, setRoomIndex }
     const firstRender = useRef(true)
 
     function onClickCreateRoom() {
+        if (rooms.length >= 50) {
+            toast.error('You can only have up to 50 rooms.')
+            return
+        }
+
         signal.emit('createRoom')
     }
 

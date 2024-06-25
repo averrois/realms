@@ -8,7 +8,7 @@ html {
 }
 
 .transparent-scrollbar::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
 }
 
 .transparent-scrollbar::-webkit-scrollbar-thumb {

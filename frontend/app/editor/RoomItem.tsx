@@ -81,11 +81,7 @@ const RoomItem:React.FC<RoomItemProps> = ({ rooms, selectedRoomIndex, roomIndex,
             revertRoomName()
             toast.error('Room name cannot be empty.')
             return
-        } else if (rooms[roomIndex].length > 32) {
-            revertRoomName()
-            toast.error('Room name must be less than 32 characters.')
-            return
-        }
+        } 
     }
 
     useEffect(() => {

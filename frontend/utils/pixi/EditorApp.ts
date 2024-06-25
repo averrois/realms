@@ -651,12 +651,17 @@ export class EditorApp extends App {
 
     private removeGizmoFromRealmData = (x: number, y: number, snapshot: boolean) => {
         const key = `${x}, ${y}` as TilePoint
-        const newRealmData = this.realmData
-        newRealmData.rooms[this.currentRoomIndex].tilemap[key] = {
-            ...newRealmData.rooms[this.currentRoomIndex].tilemap[key],
-            impassable: false,
-            teleporter: undefined
+        const newRealmData = this.getRealmDataCopy()
+        if (newRealmData.rooms[this.currentRoomIndex].tilemap[key]) {
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key].impassable
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key].teleporter
+
+            // delete the key if no data on it
+            if (Object.keys(newRealmData.rooms[this.currentRoomIndex].tilemap[key]).length === 0) {
+                delete newRealmData.rooms[this.currentRoomIndex].tilemap[key]
+            }
         }
+        
         this.updateRealmData(newRealmData, snapshot)
     }
 
@@ -664,6 +669,10 @@ export class EditorApp extends App {
         const key = `${x}, ${y}` as TilePoint
         const newRealmData = this.getRealmDataCopy()
         delete newRealmData.rooms[this.currentRoomIndex].tilemap[key][layer]
+        // delete the key if no data on it
+        if (Object.keys(newRealmData.rooms[this.currentRoomIndex].tilemap[key]).length === 0) {
+            delete newRealmData.rooms[this.currentRoomIndex].tilemap[key]
+        }
         this.updateRealmData(newRealmData, snapshot)
     }
 
@@ -681,6 +690,7 @@ export class EditorApp extends App {
         }
 
         this.realmData = newRealmData
+        console.log(this.realmData)
         this.needsToSave = true
     }
 
