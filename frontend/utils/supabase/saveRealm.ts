@@ -11,7 +11,13 @@ export async function saveRealm(access_token: string, realmData: RealmData, id: 
         return { error: { message: 'Invalid realm data.' } }
     }
 
-    realmData = JSON.parse(JSON.stringify(realmData))
+    if (realmData.rooms.length === 0) {
+        return { error: { message: 'A realm must have at least one room.' } }
+    }
+
+    if (realmData.rooms.length > 50) {
+        return { error: { message: 'A realm cannot have more than 50 rooms.' } }
+    }
 
     // return if any rooms in realm data have the same name
     const roomNames = new Set<string>()
