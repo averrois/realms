@@ -1,4 +1,4 @@
-import { Events, Interaction } from 'discord.js'
+import { Events, Collection } from 'discord.js'
 import { Event } from '../events'
 
 const event: Event = {
@@ -12,6 +12,29 @@ const event: Event = {
 			console.error(`No command matching ${interaction.commandName} was found.`)
 			return
 		}
+
+        const { cooldowns } = interaction.client;
+
+        if (!cooldowns.has(command.data.name)) {
+            cooldowns.set(command.data.name, new Collection())
+        }
+
+        const now = Date.now()
+        const timestamps = cooldowns.get(command.data.name)
+        const defaultCooldownDuration = 3
+        const cooldownInSeconds = (command.cooldown ?? defaultCooldownDuration)
+        const cooldownAmount = cooldownInSeconds * 1_000
+
+        if (timestamps.has(interaction.user.id)) {
+            const expirationTime = timestamps.get(interaction.user.id) + cooldownAmount
+
+            if (now < expirationTime) {
+                return interaction.reply({ content: `Please wait, you are on a cooldown for \`/${command.data.name}\`. You can use it again in ${cooldownInSeconds} seconds.`, ephemeral: true })
+            }
+        }
+
+        timestamps.set(interaction.user.id, now)
+        setTimeout(() => timestamps.delete(interaction.user.id), cooldownAmount)
 
 		try {
 			await command.execute(interaction)
