@@ -34,6 +34,7 @@ export default async function Manage({ params }: { params: { id: string } }) {
                 starting_discord_id={realm.discord_server_id}
                 discord_error={discordError}
                 discord_server_name={serverData?.name}
+                startingName={realm.name}
             />
         </div>
     )
