@@ -30,6 +30,9 @@ export async function saveRealm(access_token: string, realmData: RealmData, id: 
         if (roomName.trim() === '') {
             return { error: { message: 'Room name cannot be empty.' } }
         }
+        if (roomName.length > 32) {
+            return { error: { message: 'Room names cannot be longer than 32 characters.' } }
+        }
         roomNames.add(roomName)
 
         room.name = removeExtraSpaces(room.name, true)
