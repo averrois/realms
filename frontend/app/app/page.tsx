@@ -16,13 +16,14 @@ export default async function App() {
     }
 
     const realms = []
-    const { data: ownedRealms, error } = await supabase.from('realms').select('id, name').eq('owner_id', user.id)
+    const { data: ownedRealms, error } = await supabase.from('realms').select('id, name, share_id').eq('owner_id', user.id)
     if (ownedRealms) {
         realms.push(...ownedRealms)
     }
     if (session) {
-        const { data: visitedRealms, error: visitedRealmsError } = await getVisitedRealms(session.access_token)
+        let { data: visitedRealms, error: visitedRealmsError } = await getVisitedRealms(session.access_token)
         if (visitedRealms) {
+            visitedRealms = visitedRealms.map((realm) => ({ ...realm, shared: true }))
             realms.push(...visitedRealms)
         }
     }
