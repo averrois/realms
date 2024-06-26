@@ -31,13 +31,13 @@ export default async function App() {
     }
     const errorMessage = error?.message || ''
 
-    const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id), access_token: session.access_token})
-    if (playerCountData) {
-        playerCountData.playerCounts.forEach((count: any, index: number) => {
-            if (realms[index].id === count.realmId) {
+    if (realms.length > 0) {
+        const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id), access_token: session.access_token})
+        if (playerCountData) {
+            playerCountData.playerCounts.forEach((count: any, index: number) => {
                 realms[index].playerCount = count.playerCount
-            }
-        })
+            })
+        }
     }
 
     return (
