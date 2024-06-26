@@ -10,6 +10,7 @@ type Realm = {
     name: string,
     share_id: string
     shared?: boolean
+    playerCount?: number
 }
 
 type RealmsMenuProps = {
@@ -66,7 +67,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                 <div className='hidden sm:grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-8 w-full'>
                     {realms.map((realm) => {
                         return (
-                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared}/>
+                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared} playerCount={realm.playerCount}/>
                         )
                     })}
                 </div>

@@ -26,3 +26,8 @@ export const UserIsInGuild = z.object({
     access_token: z.string(),
     guildId: z.string(),
 })
+
+export const GetPlayerCounts = z.object({
+    access_token: z.string(),
+    realmIds: z.string().transform((s) => s.split(',')),
+})

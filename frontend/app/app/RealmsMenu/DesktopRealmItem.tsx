@@ -60,12 +60,11 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId, s
         <div className='relative select-none'>
             <Link href={getLink()}>
                 <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
-                    {playerCount && (
-                        <div className='absolute top-2 left-2 rounded-full px-2 py-1 flex flex-row bg-black bg-opacity-80 gap-2 items-center'>
+                    {playerCount !== undefined && playerCount !== null && (
+                        <div className='absolute top-2 left-2 rounded-full px-2 py-1 flex flex-row bg-black bg-opacity-80 gap-2 items-center max-w-max'>
                             <div className='bg-green-500 w-3 h-3 rounded-full'/>
                             <p className='text-sm'>{playerCount}</p>
                         </div>
-                    
                     )}
                     <div className='w-full h-full bg-black opacity-0 absolute hover:opacity-25'/>
                     <img src='/pixel-screenshot.jpg' />

@@ -193,6 +193,10 @@ export class Session {
         return index !== -1 ? index : null
     }
 
+    public getPlayerCount() {
+        return Object.keys(this.players).length
+    }
+
     public getPlayer(uid: string): Player {
         return this.players[uid]
     }
