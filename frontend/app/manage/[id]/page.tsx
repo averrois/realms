@@ -9,8 +9,9 @@ export default async function Manage({ params }: { params: { id: string } }) {
     const supabase = createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
 
-    if (!user) {
+    if (!user || !session) {
         return redirect('/signin')
     }
 
@@ -20,7 +21,7 @@ export default async function Manage({ params }: { params: { id: string } }) {
         return <NotFound />
     }
     const realm = data
-    const { data: serverData, error: serverError } = await request('/getServerName', { serverId: realm.discord_server_id })
+    const { data: serverData, error: serverError } = await request('/getServerName', { access_token: session.access_token, serverId: realm.discord_server_id })
 
     const discordError = serverError ? true : false
 

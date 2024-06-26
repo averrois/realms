@@ -112,7 +112,23 @@ const sprites: SpriteSheetTile[] = [
     { name: 'stone_wall_end_bottom', x: 384, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
     { name: 'stone_wall_end_left', x: 352, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-    { name: 'stone_wall_end_top', x: 384, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] }
+    { name: 'stone_wall_end_top', x: 384, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'stone_1', x: 0, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_2', x: 32, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_3', x: 64, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_4', x: 0, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_5', x: 32, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_6', x: 64, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'stone_inverted_1', x: 160, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_inverted_2', x: 192, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_inverted_3', x: 224, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_inverted_4', x: 160, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_inverted_5', x: 192, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'stone_inverted_6', x: 224, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
 
 ]
 

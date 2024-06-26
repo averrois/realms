@@ -64,6 +64,12 @@ export default function routes(): Router {
         if (!GetServerName.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
+
+        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+
+        if (error) {
+            return res.status(401).json({ message: 'Invalid access token' })
+        }
         
         try {
             const guild = await client.guilds.fetch(params.serverId)
@@ -80,6 +86,12 @@ export default function routes(): Router {
         const params = req.query as unknown as z.infer<typeof GetChannelName>
         if (!GetChannelName.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
+        }
+
+        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+
+        if (error) {
+            return res.status(401).json({ message: 'Invalid access token' })
         }
 
         try {

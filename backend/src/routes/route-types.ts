@@ -11,10 +11,12 @@ export const IsOwnerOfServer = z.object({
 })
 
 export const GetServerName = z.object({
+    access_token: z.string(),
     serverId: z.string(),
 })
 
 export const GetChannelName = z.object({
+    access_token: z.string(),
     serverId: z.string(),
     channelId: z.string(),
     userId: z.string(),

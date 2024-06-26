@@ -59,7 +59,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId, s
         <div className='relative select-none'>
             <Link href={getLink()}>
                 <div className='w-full aspect-video rounded-3xl overflow-hidden relative'>
-                    <div className='w-full h-full bg-black opacity-0 absolute hover:opacity-15'/>
+                    <div className='w-full h-full bg-black opacity-0 absolute hover:opacity-25'/>
                     <img src='/pixel-screenshot.jpg' />
                     <div className='animate-pulse w-full h-full bg-secondary absolute'/>
                 </div>

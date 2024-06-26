@@ -408,7 +408,7 @@ export class EditorApp extends App {
         tile.y = y * 32
 
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile)) return
+            if (this.collidersConflict(data.colliders, tile, layer)) return
         }
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -451,7 +451,7 @@ export class EditorApp extends App {
         this.addTileToRealmData(x, y, layer as Layer, this.selectedPalette + '-' + this.selectedTile, snapshot)
     }
 
-    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
+    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite, layer: Layer | 'gizmo') => {
         for (const collider of colliders) {
             const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
                 const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
@@ -763,7 +763,7 @@ export class EditorApp extends App {
 
         let colliderConflict = false
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile)) {
+            if (this.collidersConflict(data.colliders, tile, layer)) {
                 colliderConflict = true
                 tile.tint = 0xff0008
             }
