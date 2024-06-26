@@ -94,6 +94,14 @@ export function sockets(io: Server) {
             }
             joiningInProgress.add(uid)
 
+            const session = sessionManager.getSession(realmData.realmId)
+            if (session) {
+                const playerCount = session.getPlayerCount()
+                if (playerCount >= 30) {
+                    return rejectJoin("Realm is full. It's 30 players max.")
+                } 
+            }
+
             const { data, error } = await supabase.from('realms').select('privacy_level, owner_id, share_id, map_data, discord_server_id, only_owner').eq('id', realmData.realmId).single()
 
             if (error || !data) {
