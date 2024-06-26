@@ -4,13 +4,14 @@ import { toast } from 'react-toastify'
 import BasicButton from '@/components/BasicButton'
 import DesktopRealmItem from './DesktopRealmItem'
 import { useRouter } from 'next/navigation'
+import { request } from '@/utils/backend/requests'
+import { createClient } from '@/utils/supabase/client'
 
 type Realm = {
     id: string,
     name: string,
     share_id: string
     shared?: boolean
-    playerCount?: number
 }
 
 type RealmsMenuProps = {
@@ -21,13 +22,19 @@ type RealmsMenuProps = {
 const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
 
     const [selectedRealm, setSelectedRealm] = useState<Realm | null>(null)
+    const [playerCounts, setPlayerCounts] = useState<number[]>([])
     const router = useRouter()
+    const supabase = createClient()
 
     useEffect(() => {
         if (errorMessage) {
             toast.error(errorMessage)
         }
     }, [errorMessage])
+
+    useEffect(() => {
+        getPlayerCounts()
+    }, [])
 
     function getLink() {
         if (selectedRealm?.share_id) {
@@ -37,12 +44,22 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
         }
     }
 
+    async function getPlayerCounts() {
+        // get session
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return
+        const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id)}, session.access_token)
+        if (playerCountData) {
+            setPlayerCounts(playerCountData.playerCounts)
+        }
+    }
+
     return (
         <>
             {/* Mobile View */}
             <div className='flex flex-col items-center p-4 gap-2 sm:hidden'>
                 {realms.length === 0 && <p className='text-center'>You have no realms you can join. Create one on desktop to get started!</p>}
-                {realms.map((realm) => {
+                {realms.map((realm, index) => {
 
                     function selectRealm() {
                         setSelectedRealm(realm)
@@ -51,8 +68,8 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                     return (
                         <button key={realm.id} className={`w-full h-12 bg-quaternary px-2 hover:bg-quaternaryhover cursor-pointer rounded-md border-4 border-transparent flex flex-row items-center justify-between${selectedRealm?.id === realm.id ? 'border-white' : ''}`} onClick={selectRealm}>
                             <p className='text-white text-xl text-left'>{realm.name}</p>
-                            {realm.playerCount !== undefined && realm.playerCount !== null && <div className='rounded-full grid place-items-center w-8 h-8 font-bold bg-green-500'>
-                                {realm.playerCount}
+                            {playerCounts[index] && <div className='rounded-full grid place-items-center w-8 h-8 font-bold bg-green-500'>
+                                {playerCounts[index]}
                             </div>}
                         </button>
                     )
@@ -68,9 +85,9 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
             <div className='flex-col items-center w-full p-8 hidden sm:flex'>
                 {realms.length === 0 && <p className='text-center'>You have no realms you can join. Create a realm to get started!</p>}
                 <div className='hidden sm:grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-8 w-full'>
-                    {realms.map((realm) => {
+                    {realms.map((realm, index) => {
                         return (
-                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared} playerCount={realm.playerCount}/>
+                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared} playerCount={playerCounts[index]}/>
                         )
                     })}
                 </div>

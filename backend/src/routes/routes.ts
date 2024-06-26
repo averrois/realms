@@ -185,15 +185,15 @@ export default function routes(): Router {
             return res.status(401).json({ message: 'Invalid access token' })
         }
 
-        const playerCounts: { realmId: string, playerCount: number }[] = []
+        const playerCounts: number[] = []
         for (const realmId of params.realmIds) {
             const session = sessionManager.getSession(realmId)
             if (session) {
                 const playerCount = session.getPlayerCount()
 
-                playerCounts.push({ realmId, playerCount })
+                playerCounts.push(playerCount)
             } else {
-                playerCounts.push({ realmId, playerCount: 0 })
+                playerCounts.push(0)
             }
         }
 
