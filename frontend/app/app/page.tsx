@@ -32,7 +32,7 @@ export default async function App() {
     const errorMessage = error?.message || ''
 
     if (realms.length > 0) {
-        const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id), access_token: session.access_token})
+        const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id)}, session.access_token)
         if (playerCountData) {
             playerCountData.playerCounts.forEach((count: any, index: number) => {
                 realms[index].playerCount = count.playerCount

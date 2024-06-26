@@ -347,7 +347,7 @@ export class PlayApp extends App {
         let channelName = ''
 
         if (this.serverId) {
-            const { data, error } = await request('/getChannelName', { access_token: session.access_token, userId: this.discordId, serverId: this.serverId, channelId: this.realmData.rooms[this.currentRoomIndex].channelId })
+            const { data, error } = await request('/getChannelName', { userId: this.discordId, serverId: this.serverId, channelId: this.realmData.rooms[this.currentRoomIndex].channelId }, session.access_token)
             if (data) {
                 channelName = data.name
             }

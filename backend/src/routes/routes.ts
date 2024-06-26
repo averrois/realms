@@ -11,12 +11,18 @@ export default function routes(): Router {
     const router = Router()
 
     router.get('/getPlayersInRoom', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         const params = req.query as unknown as z.infer<typeof GetPlayersInRoom>
         if (!GetPlayersInRoom.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
@@ -32,12 +38,18 @@ export default function routes(): Router {
     })
 
     router.get('/isOwnerOfServer', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         const params = req.query as unknown as z.infer<typeof IsOwnerOfServer>
         if (!IsOwnerOfServer.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
@@ -60,12 +72,18 @@ export default function routes(): Router {
     })
 
     router.get('/getServerName', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         const params = req.query as unknown as z.infer<typeof GetServerName>
         if (!GetServerName.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
@@ -83,12 +101,18 @@ export default function routes(): Router {
     })
 
     router.get('/getChannelName', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         const params = req.query as unknown as z.infer<typeof GetChannelName>
         if (!GetChannelName.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
@@ -115,12 +139,18 @@ export default function routes(): Router {
     })
 
     router.get('/userIsInGuild', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         const params = req.query as unknown as z.infer<typeof UserIsInGuild>
         if (!UserIsInGuild.safeParse(params).success) {
             return res.status(400).json({ message: 'Invalid parameters' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
@@ -131,6 +161,12 @@ export default function routes(): Router {
     })
 
     router.get('/getPlayerCounts', async (req, res) => {
+        const access_token = req.headers.authorization?.split(' ')[1];
+
+        if (!access_token) {
+            return res.status(401).json({ message: 'No access token provided' });
+        }
+
         let params = req.query as unknown as z.infer<typeof GetPlayerCounts>
         const parseResults = GetPlayerCounts.safeParse(params)
         if (!parseResults.success) {
@@ -143,7 +179,7 @@ export default function routes(): Router {
             return res.status(400).json({ message: 'Too many server IDs' })
         }
 
-        const { data: user, error: error } = await supabase.auth.getUser(params.access_token)
+        const { data: user, error: error } = await supabase.auth.getUser(access_token)
 
         if (error) {
             return res.status(401).json({ message: 'Invalid access token' })
