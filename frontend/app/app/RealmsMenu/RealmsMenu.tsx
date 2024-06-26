@@ -10,6 +10,7 @@ type Realm = {
     name: string,
     share_id: string
     shared?: boolean
+    playerCount?: number
 }
 
 type RealmsMenuProps = {
@@ -48,8 +49,11 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                     }
 
                     return (
-                        <button key={realm.id} className={`w-full h-12 bg-quaternary pl-2 hover:bg-quaternaryhover cursor-pointer rounded-md border-4 border-transparent ${selectedRealm?.id === realm.id ? 'border-white' : ''}`} onClick={selectRealm}>
+                        <button key={realm.id} className={`w-full h-12 bg-quaternary px-2 hover:bg-quaternaryhover cursor-pointer rounded-md border-4 border-transparent flex flex-row items-center justify-between${selectedRealm?.id === realm.id ? 'border-white' : ''}`} onClick={selectRealm}>
                             <p className='text-white text-xl text-left'>{realm.name}</p>
+                            {realm.playerCount !== undefined && realm.playerCount !== null && <div className='rounded-full grid place-items-center w-8 h-8 font-bold bg-green-500'>
+                                {realm.playerCount}
+                            </div>}
                         </button>
                     )
                 })}
@@ -66,7 +70,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
                 <div className='hidden sm:grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-8 w-full'>
                     {realms.map((realm) => {
                         return (
-                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared}/>
+                            <DesktopRealmItem key={realm.id} name={realm.name} id={realm.id} shareId={realm.share_id} shared={realm.shared} playerCount={realm.playerCount}/>
                         )
                     })}
                 </div>

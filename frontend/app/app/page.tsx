@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation'
 import { Navbar } from '@/components/Navbar/Navbar'
 import RealmsMenu from './RealmsMenu/RealmsMenu'
 import { getVisitedRealms } from '@/utils/supabase/getVisitedRealms'
+import { request } from '@/utils/backend/requests'
+import { access } from 'fs'
 
 export default async function App() {
 
@@ -11,11 +13,11 @@ export default async function App() {
     const { data: { user } } = await supabase.auth.getUser()
     const { data: { session } } = await supabase.auth.getSession()
 
-    if (!user) {
+    if (!user || !session) {
         return redirect('/signin')
     }
 
-    const realms = []
+    const realms: any = []
     const { data: ownedRealms, error } = await supabase.from('realms').select('id, name, share_id').eq('owner_id', user.id)
     if (ownedRealms) {
         realms.push(...ownedRealms)
@@ -28,6 +30,15 @@ export default async function App() {
         }
     }
     const errorMessage = error?.message || ''
+
+    if (realms.length > 0) {
+        const { data: playerCountData, error: playerCountsError } = await request('/getPlayerCounts', { realmIds: realms.map((realm: any) => realm.id), access_token: session.access_token})
+        if (playerCountData) {
+            playerCountData.playerCounts.forEach((count: any, index: number) => {
+                realms[index].playerCount = count.playerCount
+            })
+        }
+    }
 
     return (
         <div>

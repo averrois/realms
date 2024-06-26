@@ -17,7 +17,6 @@ export class EditorApp extends App {
     private scale: number = 1
     private selectedPalette: SheetName = 'ground'
     private selectedTile: string = ''   
-    private selectedTileLayer: Layer | null = null
     private specialTileMode: SpecialTile = 'None'
     private eraserLayer: Layer | 'gizmo' = 'floor'
     private tilemapSprites: TilemapSprites = {}
@@ -332,7 +331,6 @@ export class EditorApp extends App {
         this.selectedTile = tile
         this.toolMode = 'Tile'
         const spriteLayer = sprites.getSpriteLayer(this.selectedPalette, this.selectedTile)
-        this.selectedTileLayer = spriteLayer
         this.setSpecialTileToNone()
     }
 
@@ -410,7 +408,7 @@ export class EditorApp extends App {
         tile.y = y * 32
 
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile)) return
+            if (this.collidersConflict(data.colliders, tile, layer)) return
         }
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -453,7 +451,7 @@ export class EditorApp extends App {
         this.addTileToRealmData(x, y, layer as Layer, this.selectedPalette + '-' + this.selectedTile, snapshot)
     }
 
-    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
+    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite, layer: Layer | 'gizmo') => {
         for (const collider of colliders) {
             const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
                 const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
@@ -765,7 +763,7 @@ export class EditorApp extends App {
 
         let colliderConflict = false
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile)) {
+            if (this.collidersConflict(data.colliders, tile, layer)) {
                 colliderConflict = true
                 tile.tint = 0xff0008
             }
@@ -1134,7 +1132,7 @@ export class EditorApp extends App {
 
     private getCurrentTileMode = (): TileMode => {
         // rectangle mode does nothing for object layer or teleport
-        if ((this.selectedTileLayer === 'object' && this.toolMode === 'Tile' && this.specialTileMode === 'None') || this.specialTileMode === 'Teleport' || this.specialTileMode === 'Spawn') {
+        if (this.specialTileMode === 'Teleport' || this.specialTileMode === 'Spawn') {
             return 'Single'
         }
 

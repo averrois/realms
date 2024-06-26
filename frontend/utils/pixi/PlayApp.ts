@@ -6,6 +6,7 @@ import { server } from '../backend/server'
 import { defaultSkin } from './Player/skins'
 import signal from '../signal'
 import { request } from '../backend/requests'
+import { createClient } from '../supabase/client'
 
 export class PlayApp extends App {
     private scale: number = 2
@@ -340,10 +341,13 @@ export class PlayApp extends App {
     }
 
     private displayInitialChatMessage = async () => {
+        const supabase = createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        if (!session) return
         let channelName = ''
 
         if (this.serverId) {
-            const { data, error } = await request('/getChannelName', { userId: this.discordId, serverId: this.serverId, channelId: this.realmData.rooms[this.currentRoomIndex].channelId })
+            const { data, error } = await request('/getChannelName', { access_token: session.access_token, userId: this.discordId, serverId: this.serverId, channelId: this.realmData.rooms[this.currentRoomIndex].channelId })
             if (data) {
                 channelName = data.name
             }
