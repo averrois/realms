@@ -21,7 +21,7 @@ export default async function Manage({ params }: { params: { id: string } }) {
         return <NotFound />
     }
     const realm = data
-    const { data: serverData, error: serverError } = await request('/getServerName', { access_token: session.access_token, serverId: realm.discord_server_id })
+    const { data: serverData, error: serverError } = await request('/getServerName', { serverId: realm.discord_server_id }, session.access_token)
 
     const discordError = serverError ? true : false
 

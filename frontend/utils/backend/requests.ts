@@ -1,15 +1,19 @@
-export async function request(url: string, params: Record<string, any> = {}) {
-    // Remove the leading slash if it exists
+export async function request(url: string, params: Record<string, any> = {}, access_token?: string) {
+
     if (url.startsWith('/')) {
         url = url.substring(1)
     }
 
-    // Convert params object to query string
     const queryString = new URLSearchParams(params).toString()
     const fullUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/${url}${queryString ? '?' + queryString : ''}`
 
+    const headers = new Headers();
+    if (access_token) {
+        headers.append('Authorization', `Bearer ${access_token}`);
+    }
+
     try {
-        const response = await fetch(fullUrl)
+        const response = await fetch(fullUrl, { headers })
 
         if (!response.ok) {
             const error = await response.json()

@@ -14,7 +14,7 @@ export async function linkDiscordServer(access_token: string, discord_server_id:
         return { error: userError }
     }
 
-    const { data: ownerData, error: isOwnerError } = await request('/isOwnerOfServer', { access_token, serverId: discord_server_id })
+    const { data: ownerData, error: isOwnerError } = await request('/isOwnerOfServer', { serverId: discord_server_id }, access_token)
     if (isOwnerError) {
         return { error: isOwnerError }
     }

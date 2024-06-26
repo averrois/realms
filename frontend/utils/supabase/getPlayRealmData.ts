@@ -35,7 +35,7 @@ export async function getPlayRealmData(accessToken: string, shareId: string) {
     if (realm.privacy_level === 'anyone') {
         return { data, error }
     } else if (realm.privacy_level === 'discord') {
-        const { data: guildData, error: guildError } = await request('/userIsInGuild', { access_token: accessToken, guildId: realm.discord_server_id})
+        const { data: guildData, error: guildError } = await request('/userIsInGuild', { guildId: realm.discord_server_id}, accessToken)
         if (guildError || guildData.isInGuild === false) {
             return { data: null, error: { message: 'not in discord' }}
         }
