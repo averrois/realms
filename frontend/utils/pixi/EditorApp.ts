@@ -408,7 +408,7 @@ export class EditorApp extends App {
         tile.y = y * 32
 
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile, layer)) return
+            if (this.collidersConflict(data.colliders, tile)) return
         }
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -451,17 +451,17 @@ export class EditorApp extends App {
         this.addTileToRealmData(x, y, layer as Layer, this.selectedPalette + '-' + this.selectedTile, snapshot)
     }
 
-    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite, layer: Layer | 'gizmo') => {
+    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
         for (const collider of colliders) {
             const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
+            const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
 
-                // cannot place a tile with collider on top of another collider
-                if (this.collidersFromSpritesMap[key] === true) return true
+            // cannot place a tile with collider on top of another collider
+            if (this.collidersFromSpritesMap[key] === true) return true
 
-                if (this.isTeleporterAtPosition(colliderCoordinates.x, colliderCoordinates.y)) return true
+            if (this.isTeleporterAtPosition(colliderCoordinates.x, colliderCoordinates.y)) return true
 
-                if (this.realmData.spawnpoint.x === colliderCoordinates.x && this.realmData.spawnpoint.y === colliderCoordinates.y) return true
+            if (this.realmData.spawnpoint.x === colliderCoordinates.x && this.realmData.spawnpoint.y === colliderCoordinates.y) return true
         }
         return false
     }
@@ -763,7 +763,7 @@ export class EditorApp extends App {
 
         let colliderConflict = false
         if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile, layer)) {
+            if (this.collidersConflict(data.colliders, tile)) {
                 colliderConflict = true
                 tile.tint = 0xff0008
             }
