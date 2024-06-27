@@ -29,6 +29,7 @@ const BasicInput:React.FC<BasicInputProps> = ({ label, className, value, onChang
                 value={value}
                 onChange={onChange}
                 maxLength={maxLength}
+                spellCheck={false}
             />
         </div>
         </div>
