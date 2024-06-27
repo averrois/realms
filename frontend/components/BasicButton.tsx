@@ -10,7 +10,7 @@ type BasicButtonProps = {
 const BasicButton:React.FC<BasicButtonProps> = ({ children, className, onClick, disabled }) => {
     
     return (
-        <button className={`bg-quaternary hover:bg-quaternaryhover py-1 px-2 rounded-3xl ${disabled ? 'bg-quaternarydisabled pointer-events-none text-gray-400' : ''} ${className}`} onClick={onClick}>
+        <button className={`bg-rainbow-less hover:bg-rainbow-less-hover font-bold py-1 px-2 rounded-3xl ${disabled ? 'pointer-events-none text-gray-500' : ''} ${className}`} onClick={onClick}>
             {children}
         </button>
     )

@@ -6,6 +6,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+        backgroundImage: {
+            "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+            "gradient-conic":
+            "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+            'rainbow': "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)",
+            'rainbow-less': "linear-gradient(45deg, red, blue, indigo)",
+            'rainbow-less-hover': "linear-gradient(45deg, #ff4d4d, #4d4dff, #4d4dff)",
+            'rainbow-less-disabled': "linear-gradient(45deg, darkred, darkblue, darkindigo)",
+        },
       colors: {
         primary: "#0F0F0F",
         secondary: "#232D3F",
