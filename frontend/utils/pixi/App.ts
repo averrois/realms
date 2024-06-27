@@ -133,11 +133,11 @@ export class App {
     }
 
     public getZIndex = (child: PIXI.ContainerChild) => {
-        if (child instanceof PIXI.Container) {
-            return child.y
-        } else {
+        if (child instanceof PIXI.Sprite) {
             const containerChild = child as PIXI.ContainerChild
             return containerChild.y + 32
+        } else {
+            return child.y
         }
     }
 

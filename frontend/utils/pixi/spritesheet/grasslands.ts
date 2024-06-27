@@ -172,6 +172,12 @@ const sprites: SpriteSheetTile[] = [
     { name: 'arrow_sign_left', x: 32, y: 448, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
 
     { name: 'big_wood_table', x: 64, y: 448, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'big_wood_stool', x: 0, y: 480, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'small_wood_stool', x: 32, y: 480, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'long_wood_table', x: 128, y: 448, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 0, y: 1 }] },
+    { name: 'small_wood_table', x: 128, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'basic_tree', x: 0, y: 928, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
 ]
 
 const grasslandsSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
