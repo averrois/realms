@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
 import { supabase } from '../../supabase'
 
@@ -7,6 +7,11 @@ const command: Command = {
     .setName('play')
     .setDescription('join the realm!'),
   async execute(interaction: ChatInputCommandInteraction) {
+
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
+    }
 
     const guildId = interaction.guildId
     const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id').eq('discord_server_id', guildId)

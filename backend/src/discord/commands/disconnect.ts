@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Guild } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
 import { getRoomFromName, getRoomNamesWithChannelId } from '../../utils'
 import { supabase } from '../../supabase'
@@ -18,8 +18,12 @@ const command: Command = {
     if (interaction.user.id !== guild.ownerId) {
       return await interaction.reply({ content: 'only the owner of this server can run this command. sorry!', ephemeral: true })
     }
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
+    }
 
-    const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id, owner_id, map_data').eq('discord_server_id', guild.id)
+    const { data: realms, error: getRealmError } = await supabase.from('realms').select('map_data').eq('discord_server_id', guild.id)
     if (getRealmError) {
         await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
         return
@@ -32,15 +36,6 @@ const command: Command = {
     const realm = realms[0]
 
     const roomName = interaction.options.getString('room_name')!
-
-    const { data: profileData, error: profileError } = await supabase.from('profiles').select('id').eq('discord_id', interaction.user.id).single()
-    if (!profileData) {
-        return await interaction.reply({ content: "Your profile couldn't be fetched, try again later.", ephemeral: true })
-    }
-
-    if (profileData.id !== realm.owner_id) {
-        return await interaction.reply({ content: 'You must be the owner of the realm to disconnect a room!', ephemeral: true })
-    }
 
     const mapData = realm.map_data
     const room = getRoomFromName(mapData, roomName)
@@ -58,7 +53,7 @@ const command: Command = {
 
     delete room.channelId 
 
-    const { error: updateError } = await supabase.from('realms').update({ map_data: mapData }).eq('id', realm.id).eq('owner_id', realm.owner_id)
+    const { error: updateError } = await supabase.from('realms').update({ map_data: mapData }).eq('discord_server_id', guild.id)
     if (updateError) {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }

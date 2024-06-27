@@ -1,10 +1,11 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
+import { supabase } from '../../supabase'
 
 const command: Command = {
   data: new SlashCommandBuilder()
-    .setName('link')
-    .setDescription('link your server to a realm.'),
+    .setName('unlink')
+    .setDescription('unlink your server from the realm.'),
   async execute(interaction: ChatInputCommandInteraction) {
 
     const guild = interaction.guild as Guild
@@ -17,22 +18,12 @@ const command: Command = {
         return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
     }
 
-    const link = new URL(process.env.FRONTEND_URL! + '/link')
-    const params = new URLSearchParams({
-        id: guild.id,
-        name: guild.name,
-    })
-    link.search = params.toString()
+    const { error: updateError } = await supabase.from('realms').update({ discord_server_id: null }).eq('discord_server_id', guild.id)
+    if (updateError) {
+        return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
+    }
 
-    const row = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
-        new ButtonBuilder()
-          .setLabel('Click Here')
-          .setStyle(ButtonStyle.Link)
-          .setURL(link.toString())
-      )
-
-    await interaction.reply({ content: '​\n\n**🚀 click the button below to link this server to a realm! 🚀**\n​', components: [row], ephemeral: true })
+    await interaction.reply({ content: 'This server has been unlinked from the realm!', ephemeral: true })
   },
 }
 
