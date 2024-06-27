@@ -178,6 +178,16 @@ const sprites: SpriteSheetTile[] = [
     { name: 'small_wood_table', x: 128, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
 
     { name: 'basic_tree', x: 0, y: 928, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
+    { name: 'basic_tree_bundle', x: 0, y: 512, width: 160, height: 160, layer: 'object', colliders: [
+        { x: 1, y: 3 }, 
+        { x: 2, y: 3 }, 
+        { x: 3, y: 3 }, 
+        { x: 2, y: 4 },
+        { x: 1, y: 2 }, 
+        { x: 2, y: 2 }, 
+        { x: 3, y: 2 },
+        { x: 2, y: 1 },
+    ] },
 ]
 
 const grasslandsSpriteSheetData = new SpriteSheetData(width, height, url, sprites)

@@ -428,7 +428,7 @@ export class EditorApp extends App {
 
         const existingTile = this.getTileAtPosition(x, y, layer as Layer)
         if (existingTile) {
-            this.layers[layer as Layer].removeChild(existingTile)
+            this.eraseTileAtPosition(x, y, layer as Layer, false)
         }
 
         const key = `${x}, ${y}` as TilePoint
