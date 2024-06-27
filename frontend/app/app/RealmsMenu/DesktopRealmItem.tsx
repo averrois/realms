@@ -67,7 +67,7 @@ const DesktopRealmItem:React.FC<DesktopRealmItemProps> = ({ name, id, shareId, s
                         </div>
                     )}
                     <div className='w-full h-full bg-black opacity-0 absolute hover:opacity-25'/>
-                    <img src='/pixel-screenshot.jpg' />
+                    <img src='/thumbnail.png' style={{imageRendering: 'pixelated'}}/>
                     <div className='animate-pulse w-full h-full bg-secondary absolute'/>
                 </div>
             </Link>
