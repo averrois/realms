@@ -15,7 +15,7 @@ export default async function Index() {
             </div>     
             <h1 className='font-bold text-3xl'>Make your Discord server open-world</h1>   
             <p className='w-full text-xl mb-6'>Create a 2D pixel art world. Invite your friends to play. Integrate it with your Discord server.</p>
-            <Link href='/app' className='bg-rainbow-less p-2 rounded-md font-bold mb-6'>Open App</Link>
+            <Link href='/app' className='bg-rainbow-less hover:bg-rainbow-less-hover p-2 rounded-md font-bold mb-6'>Open App</Link>
             <p className='mt-6'></p>
             <div className='flex flex-row items-center'>
                 <div className='relative bottom-4'>
