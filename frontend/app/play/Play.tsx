@@ -28,10 +28,6 @@ const PlayClient:React.FC<PlayProps> = ({ mapData, username, access_token, realm
         const onShowKickedModal = (message: string) => { 
             setErrorModal('Disconnected')
             setDisconnectedMessage(message)
-
-            if (message.includes('changed')) {
-                revalidate('/play/[id]')
-            }
         }
 
         const onShowDisconnectModal = () => {

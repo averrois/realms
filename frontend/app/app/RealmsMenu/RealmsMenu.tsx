@@ -6,6 +6,7 @@ import DesktopRealmItem from './DesktopRealmItem'
 import { useRouter } from 'next/navigation'
 import { request } from '@/utils/backend/requests'
 import { createClient } from '@/utils/supabase/client'
+import revalidate from '@/utils/revalidate'
 
 type Realm = {
     id: string,
@@ -34,6 +35,7 @@ const RealmsMenu:React.FC<RealmsMenuProps> = ({ realms, errorMessage }) => {
 
     useEffect(() => {
         getPlayerCounts()
+        revalidate('/play/[id]')
     }, [])
 
     function getLink() {
