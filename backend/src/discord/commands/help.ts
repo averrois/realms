@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
 
 const command: Command = {
@@ -7,6 +7,10 @@ const command: Command = {
     .setName('help')
     .setDescription('learn the Realms commands'),
   async execute(interaction: ChatInputCommandInteraction) {
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
+    }
 
     const commandInstructions = [
         '​\n`/link` - link this server to a realm.',

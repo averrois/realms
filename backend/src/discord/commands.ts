@@ -5,6 +5,7 @@ import connect from './commands/connect'
 import disconnect from './commands/disconnect'
 import help from './commands/help'
 import rooms from './commands/rooms'
+import unlink from './commands/unlink'
 
 export type Command = {
     data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder,
@@ -18,5 +19,6 @@ export const commands: Command[] = [
     connect,
     disconnect,
     help,
-    rooms
+    rooms,
+    unlink
 ]

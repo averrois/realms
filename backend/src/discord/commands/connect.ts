@@ -23,7 +23,7 @@ const command: Command = {
         return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
     }
 
-    const { data: realms, error: getRealmError } = await supabase.from('realms').select('share_id, id, owner_id, map_data').eq('discord_server_id', guild.id)
+    const { data: realms, error: getRealmError } = await supabase.from('realms').select('map_data').eq('discord_server_id', guild.id)
     if (getRealmError) {
         await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
         return
@@ -37,15 +37,6 @@ const command: Command = {
 
     const roomName = interaction.options.getString('room_name')!
 
-    const { data: profileData, error: profileError } = await supabase.from('profiles').select('id').eq('discord_id', interaction.user.id).single()
-    if (!profileData) {
-        return await interaction.reply({ content: "Your profile couldn't be fetched, try again later.", ephemeral: true })
-    }
-
-    if (profileData.id !== realm.owner_id) {
-        return await interaction.reply({ content: 'You must be the owner of the realm to connect a room!', ephemeral: true })
-    }
-
     const mapData = realm.map_data
     const room = getRoomFromName(mapData, roomName)
 
@@ -57,7 +48,7 @@ const command: Command = {
 
     room.channelId = interaction.channelId
 
-    const { error: updateError } = await supabase.from('realms').update({ map_data: mapData }).eq('id', realm.id).eq('owner_id', realm.owner_id)
+    const { error: updateError } = await supabase.from('realms').update({ map_data: mapData }).eq('discord_server_id', guild.id)
     if (updateError) {
         return await interaction.reply({ content: 'There was an error on our end. Sorry!', ephemeral: true })
     }

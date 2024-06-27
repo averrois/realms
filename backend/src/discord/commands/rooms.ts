@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction, Guild } from 'discord.js'
+import { SlashCommandBuilder, ChatInputCommandInteraction, Guild, GuildChannel } from 'discord.js'
 import { Command } from '../commands'
 import { supabase } from '../../supabase'
 import { getRoomNamesWithChannelId } from '../../utils'
@@ -8,6 +8,10 @@ const command: Command = {
     .setName('rooms')
     .setDescription('see which rooms are connected to this channel'),
   async execute(interaction: ChatInputCommandInteraction) {
+    if (!(interaction.channel instanceof GuildChannel)) return
+    if (!interaction.channel.isTextBased()) {
+        return await interaction.reply({ content: 'this command can only be run in text channels!', ephemeral: true })
+    }
 
     const guild = interaction.guild as Guild
     const { data: realms, error: getRealmError } = await supabase.from('realms').select('map_data').eq('discord_server_id', guild.id)
