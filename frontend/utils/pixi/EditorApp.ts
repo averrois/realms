@@ -568,10 +568,10 @@ export class EditorApp extends App {
                 return
             }
 
+            this.deleteSpriteColliders(x, y, layer)
             this.layers[layer as Layer].removeChild(tile)
             delete this.tilemapSprites[`${x}, ${y}`][layer as Layer]
             this.removeTileFromRealmData(x, y, layer as Layer, snapshot)
-            this.deleteSpriteColliders(x, y, layer)
         }
     }
 

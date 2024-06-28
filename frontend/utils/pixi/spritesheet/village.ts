@@ -48,6 +48,17 @@ const sprites: SpriteSheetTile[] = [
     { name: 'step_tiles_21', x: 384, y: 96, width: 32, height: 32, layer: 'above_floor' },
     { name: 'step_tiles_22', x: 416, y: 96, width: 32, height: 32, layer: 'above_floor' },
     { name: 'step_tiles_23', x: 448, y: 96, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'placeholder_2', x: 32, y: 96, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'placeholder_4', x: 0, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'placeholder_5', x: 32, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'placeholder_6', x: 64, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'placeholder_8', x: 32, y: 160, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
 
 
 ]
