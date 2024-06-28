@@ -112,8 +112,6 @@ const sprites: SpriteSheetTile[] = [
     { name: 'stone_inverted_5', x: 192, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_inverted_6', x: 224, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
 
-    { name: 'big_altar', x: 512, y: 512, width: 160, height: 671, layer: 'above_floor' },
-
     { name: 'stone_wall_tl', x: 416, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_wall_top', x: 448, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
     { name: 'stone_wall_tr', x: 480, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },

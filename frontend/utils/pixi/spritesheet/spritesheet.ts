@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { citySpriteSheetData } from './city'
 import { groundSpriteSheetData } from './ground'
 import { grasslandsSpriteSheetData } from './grasslands'
+import { villageSpriteSheetData } from './village'
 import { Layer } from '../types'
 import { SpriteSheetData } from './SpriteSheetData'
 
@@ -24,13 +25,14 @@ type Sheets = {
     [key in SheetName]?: PIXI.Spritesheet
 }
 
-export type SheetName = 'ground' | 'grasslands' | 'city'
+export type SheetName = 'ground' | 'grasslands' | 'village' | 'city'
 
 class Sprites {
     public spriteSheetDataSet: { [key in SheetName]: SpriteSheetData } = {
         ground: groundSpriteSheetData,
         city: citySpriteSheetData,
         grasslands: grasslandsSpriteSheetData,
+        village: villageSpriteSheetData,
     }
     public sheets: Sheets = {}
 
