@@ -12,30 +12,25 @@ const joiningInProgress = new Set<string>()
 
 function protectConnection(io: Server) {
     io.use(async (socket, next) => {
-        const access_token = socket.handshake.query.access_token as string
+        const access_token = socket.handshake.headers['authorization']?.split(' ')[1]
         const uid = socket.handshake.query.uid as string
         if (!access_token || !uid) {
-            // Reject the connection by calling next with an error.
             const error = new Error("Invalid access token or uid.")
             return next(error)
         } else {
-            // If clientId is provided, check if valid user
             const { data: user, error: error } = await supabase.auth.getUser(access_token)
-
             if (error) {
                 return next(new Error("Invalid access token."))
             }
-
-            // reject connection if the uid does not match the access token
             if (!user || user.user.id !== uid) {
                 return next(new Error("Invalid uid."))
             }
-
             users.addUser(uid, user.user)
             next()
         }
     })
 }
+
 
 export function sockets(io: Server) {
     protectConnection(io)
