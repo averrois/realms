@@ -11,22 +11,25 @@ const backend_url: string = process.env.NEXT_PUBLIC_BACKEND_URL as string
 
 class Server {
     public socket: Socket = {} as Socket
-    private access_token: string = ''
     private connected: boolean = false
 
     public async connect(realmId: string, uid: string, shareId: string, access_token: string) {
         this.socket = io(backend_url, {
-                reconnection: true,
-                autoConnect: false,
-                reconnectionAttempts: 5,
-                reconnectionDelay: 2000,
-                query: {
-                    access_token,
-                    uid
+        reconnection: true,
+        autoConnect: false,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 2000,
+        transportOptions: {
+            polling: {
+                extraHeaders: {
+                    'Authorization': `Bearer ${access_token}`
                 }
             }
-        )
-        this.access_token = access_token
+        },
+        query: {
+            uid
+        }
+    })
 
         return new Promise<ConnectionResponse>((resolve, reject) => {
             this.socket.connect()
