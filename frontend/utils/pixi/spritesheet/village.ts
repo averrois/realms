@@ -50,17 +50,14 @@ const sprites: SpriteSheetTile[] = [
     { name: 'step_tiles_23', x: 448, y: 96, width: 32, height: 32, layer: 'above_floor' },
     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
 
-    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
-    { name: 'placeholder_2', x: 32, y: 96, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
-    { name: 'placeholder_4', x: 0, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-    { name: 'placeholder_5', x: 32, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-    { name: 'placeholder_6', x: 64, y: 128, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
-    { name: 'placeholder_8', x: 32, y: 160, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
-
-
-
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'chair_down', x: 32, y: 96, width: 32, height: 32, layer: 'above_floor' },
+     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'chair_right', x: 0, y: 128, width: 32, height: 32, layer: 'above_floor'},
+    { name: 'table', x: 32, y: 128, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
+    { name: 'chair_left', x: 64, y: 128, width: 32, height: 32, layer: 'above_floor' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'above_floor' },
+    { name: 'chair_up', x: 32, y: 160, width: 32, height: 32, layer: 'above_floor' },
 ]
 
 const villageSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
