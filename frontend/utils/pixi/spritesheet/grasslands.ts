@@ -112,12 +112,6 @@ const sprites: SpriteSheetTile[] = [
     { name: 'stone_inverted_5', x: 192, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_inverted_6', x: 224, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
 
-    { name: 'big_wood_table', x: 64, y: 448, width: 64, height: 64, layer: 'above_floor', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
-    { name: 'big_wood_stool', x: 0, y: 480, width: 32, height: 32, layer: 'above_floor' },
-    { name: 'small_wood_stool', x: 32, y: 480, width: 32, height: 32, layer: 'above_floor' },
-    { name: 'long_wood_table', x: 128, y: 448, width: 32, height: 64, layer: 'above_floor', colliders: [{ x: 0, y: 0 }, { x: 0, y: 1 }] },
-    { name: 'small_wood_table', x: 128, y: 416, width: 32, height: 32, layer: 'above_floor' },
-
     { name: 'stone_wall_tl', x: 416, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_wall_top', x: 448, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
     { name: 'stone_wall_tr', x: 480, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
@@ -176,6 +170,12 @@ const sprites: SpriteSheetTile[] = [
 
     { name: 'arrow_sign_right', x: 0, y: 448, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'arrow_sign_left', x: 32, y: 448, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'big_wood_table', x: 64, y: 448, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'big_wood_stool', x: 0, y: 480, width: 32, height: 32, layer: 'object' },
+    { name: 'small_wood_stool', x: 32, y: 480, width: 32, height: 32, layer: 'object' },
+    { name: 'long_wood_table', x: 128, y: 448, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 0, y: 1 }] },
+    { name: 'small_wood_table', x: 128, y: 416, width: 32, height: 32, layer: 'object' },
 
     { name: 'basic_tree', x: 0, y: 928, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
     { name: 'basic_tree_bundle', x: 0, y: 512, width: 160, height: 160, layer: 'object', colliders: [
