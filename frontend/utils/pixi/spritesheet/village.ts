@@ -58,6 +58,17 @@ const sprites: SpriteSheetTile[] = [
     { name: 'chair_left', x: 64, y: 128, width: 32, height: 32, layer: 'object' },
     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
     { name: 'chair_up', x: 32, y: 160, width: 32, height: 32, layer: 'object' },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'other_chair_down', x: 96, y: 96, width: 32, height: 32, layer: 'object' },
+    { name: 'other_chair_up', x: 96, y: 160, width: 32, height: 32, layer: 'object' },
+    { name: 'small_stool', x: 128, y: 128, width: 32, height: 32, layer: 'object' },
+
+    { name: 'sign_1', x: 224, y: 96, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'sign_2', x: 256, y: 96, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'sign_3', x: 288, y: 96, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'sign_4', x: 320, y: 96, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+
 ]
 
 const villageSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
