@@ -112,6 +112,8 @@ const sprites: SpriteSheetTile[] = [
     { name: 'stone_inverted_5', x: 192, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_inverted_6', x: 224, y: 224, width: 32, height: 32, layer: 'above_floor', colliders: [{ x: 0, y: 0 }] },
 
+    { name: 'big_altar', x: 512, y: 512, width: 160, height: 671, layer: 'above_floor' },
+
     { name: 'stone_wall_tl', x: 416, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_wall_top', x: 448, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
     { name: 'stone_wall_tr', x: 480, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }]  },
@@ -200,6 +202,28 @@ const sprites: SpriteSheetTile[] = [
         { x: 3, y: 2 },
         { x: 2, y: 1 },
     ]},
+
+    { name: 'short_basic_tree', x: 176, y: 912, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
+    { name: 'short_basic_tree_bundle', x: 48, y: 720, width: 160, height: 160, layer: 'object', colliders: [
+        { x: 1, y: 3 }, 
+        { x: 2, y: 3 }, 
+        { x: 3, y: 3 }, 
+        { x: 2, y: 4 },
+        { x: 1, y: 2 }, 
+        { x: 2, y: 2 }, 
+        { x: 3, y: 2 },
+    ]},
+    { name: 'short_light_basic_tree', x: 272, y: 912, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
+    { name: 'short_light_basic_tree_bundle', x: 192, y: 720, width: 160, height: 160, layer: 'object', colliders: [
+        { x: 1, y: 3 }, 
+        { x: 2, y: 3 }, 
+        { x: 3, y: 3 }, 
+        { x: 2, y: 4 },
+        { x: 1, y: 2 }, 
+        { x: 2, y: 2 }, 
+        { x: 3, y: 2 },
+    ]},
+
 ]
 
 const grasslandsSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
