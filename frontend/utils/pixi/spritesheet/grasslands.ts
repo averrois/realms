@@ -128,6 +128,78 @@ const sprites: SpriteSheetTile[] = [
     { name: 'stone_wall_end_left', x: 352, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'stone_wall_end_top', x: 384, y: 224, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'stone_tall_1', x: 96, y: 192, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'stone_tall_2', x: 128, y: 192, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'stone_tall_inverted_1', x: 256, y: 192, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'stone_tall_inverted_2', x: 288, y: 192, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'big_rock_1', x: 0, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}] },
+    { name: 'big_rock_2', x: 64, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}] },
+    { name: 'big_rock_3', x: 128, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}] },
+    { name: 'big_rock_4', x: 192, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}] },
+    { name: 'big_rock_5', x: 256, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'big_rock_6', x: 320, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
+
+    { name: 'fence_tl', x: 0, y: 320, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_top', x: 32, y: 320, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_tr', x: 64, y: 320, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_left', x: 0, y: 352, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'fence_right', x: 64, y: 352, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_bl', x: 0, y: 384, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_bottom', x: 32, y: 384, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_br', x: 64, y: 384, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_end_right', x: 96, y: 320, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_end_bottom', x: 128, y: 320, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+    { name: 'fence_end_left', x: 96, y: 352, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'fence_end_top', x: 128, y: 352, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'fence_open_right', x: 160, y: 320, width: 64, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'fence_open_left', x: 224, y: 320, width: 64, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'empty', x: 0, y: 0, width: 0, height: 0, layer: 'object' },
+
+    { name: 'sign_1', x: 0, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'sign_2', x: 32, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'sign_3', x: 64, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'arrow_sign_right', x: 0, y: 448, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'arrow_sign_left', x: 32, y: 448, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'big_wood_table', x: 64, y: 448, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1}, { x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'big_wood_stool', x: 0, y: 480, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'small_wood_stool', x: 32, y: 480, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+    { name: 'long_wood_table', x: 128, y: 448, width: 32, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 0, y: 1 }] },
+    { name: 'small_wood_table', x: 128, y: 416, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'basic_tree', x: 0, y: 928, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
+    { name: 'basic_tree_bundle', x: 0, y: 512, width: 160, height: 160, layer: 'object', colliders: [
+        { x: 1, y: 3 }, 
+        { x: 2, y: 3 }, 
+        { x: 3, y: 3 }, 
+        { x: 2, y: 4 },
+        { x: 1, y: 2 }, 
+        { x: 2, y: 2 }, 
+        { x: 3, y: 2 },
+        { x: 2, y: 1 },
+    ]},
+
+    { name: 'light_basic_tree', x: 80, y: 928, width: 96, height: 96, layer: 'object', colliders: [{ x: 1, y: 2 }] },
+    { name: 'light_basic_tree_bundle', x: 240, y: 512, width: 160, height: 160, layer: 'object', colliders: [
+        { x: 1, y: 3 }, 
+        { x: 2, y: 3 }, 
+        { x: 3, y: 3 }, 
+        { x: 2, y: 4 },
+        { x: 1, y: 2 }, 
+        { x: 2, y: 2 }, 
+        { x: 3, y: 2 },
+        { x: 2, y: 1 },
+    ]},
 ]
 
 const grasslandsSpriteSheetData = new SpriteSheetData(width, height, url, sprites)

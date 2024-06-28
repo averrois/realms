@@ -407,8 +407,14 @@ export class EditorApp extends App {
         tile.x = x * 32
         tile.y = y * 32
 
-        if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile, layer)) return
+        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
+        if (existingTile) {
+            this.deleteSpriteColliders(x, y, layer)
+            this.layers[layer as Layer].removeChild(existingTile)
+        } else {
+            if (data.colliders) {
+                if (this.collidersConflict(data.colliders, tile)) return
+            }
         }
 
         this.setUpEraserTool(tile, x, y, layer)
@@ -425,11 +431,6 @@ export class EditorApp extends App {
         }
 
         this.layers[layer as Layer].addChild(tile)
-
-        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
-        if (existingTile) {
-            this.layers[layer as Layer].removeChild(existingTile)
-        }
 
         const key = `${x}, ${y}` as TilePoint
         this.tilemapSprites[key] = {
@@ -451,17 +452,17 @@ export class EditorApp extends App {
         this.addTileToRealmData(x, y, layer as Layer, this.selectedPalette + '-' + this.selectedTile, snapshot)
     }
 
-    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite, layer: Layer | 'gizmo') => {
+    private collidersConflict = (colliders: Point[], tile: PIXI.Sprite) => {
         for (const collider of colliders) {
             const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
+            const key = `${colliderCoordinates.x}, ${colliderCoordinates.y}` as TilePoint
 
-                // cannot place a tile with collider on top of another collider
-                if (this.collidersFromSpritesMap[key] === true) return true
+            // cannot place a tile with collider on top of another collider
+            if (this.collidersFromSpritesMap[key] === true) return true
 
-                if (this.isTeleporterAtPosition(colliderCoordinates.x, colliderCoordinates.y)) return true
+            if (this.isTeleporterAtPosition(colliderCoordinates.x, colliderCoordinates.y)) return true
 
-                if (this.realmData.spawnpoint.x === colliderCoordinates.x && this.realmData.spawnpoint.y === colliderCoordinates.y) return true
+            if (this.realmData.spawnpoint.x === colliderCoordinates.x && this.realmData.spawnpoint.y === colliderCoordinates.y) return true
         }
         return false
     }
@@ -567,21 +568,27 @@ export class EditorApp extends App {
                 return
             }
 
-            const tileData = this.getTileDataAtPosition(x, y, layer as Layer)
             this.layers[layer as Layer].removeChild(tile)
             delete this.tilemapSprites[`${x}, ${y}`][layer as Layer]
             this.removeTileFromRealmData(x, y, layer as Layer, snapshot)
+            this.deleteSpriteColliders(x, y, layer)
+        }
+    }
 
-            if (tileData && tileData.colliders) { 
-                // remove the collider and the sprite
-                tileData.colliders.forEach((collider) => {
-                    const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
-                    this.collidersFromSpritesMap[`${colliderCoordinates.x}, ${colliderCoordinates.y}`] = false
-                    if (!this.isImpassableColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y)) {
-                        this.removeGizmoSpriteAtPosition(colliderCoordinates.x, colliderCoordinates.y)
-                    } 
-                })
-            }
+    private deleteSpriteColliders = (x: number, y: number, layer: Layer | 'gizmo') => {
+        if (layer === 'gizmo') return
+
+        const tile = this.getTileAtPosition(x, y, layer)
+        const tileData = this.getTileDataAtPosition(x, y, layer as Layer)
+        if (tile && tileData && tileData.colliders) { 
+            // remove the collider and the sprite
+            tileData.colliders.forEach((collider) => {
+                const colliderCoordinates = this.getTileCoordinatesOfCollider(collider, tile)
+                this.collidersFromSpritesMap[`${colliderCoordinates.x}, ${colliderCoordinates.y}`] = false
+                if (!this.isImpassableColliderAtPosition(colliderCoordinates.x, colliderCoordinates.y)) {
+                    this.removeGizmoSpriteAtPosition(colliderCoordinates.x, colliderCoordinates.y)
+                } 
+            })
         }
     }
 
@@ -762,14 +769,16 @@ export class EditorApp extends App {
         this.previewTiles.push(tile)
 
         let colliderConflict = false
-        if (data.colliders) {
-            if (this.collidersConflict(data.colliders, tile, layer)) {
-                colliderConflict = true
-                tile.tint = 0xff0008
+        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
+        if (!existingTile) {
+            if (data.colliders) {
+                if (this.collidersConflict(data.colliders, tile)) {
+                    colliderConflict = true
+                    tile.tint = 0xff0008
+                }
             }
         }
 
-        const existingTile = this.getTileAtPosition(x, y, layer as Layer)
         // hide tiles it covers
         if (existingTile && !colliderConflict) {
             existingTile.visible = false

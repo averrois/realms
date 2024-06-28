@@ -1,7 +1,6 @@
 import { TilePoint, Coordinate } from './types'
 
-export function bfs(start: Coordinate, end: Coordinate, blocked: Set<TilePoint>): Coordinate[] | null {
-    // if the end position is blocked, return null
+export function bfs(start: Coordinate, end: Coordinate, blocked: Set<TilePoint>, maxAttempts: number = 10_000): Coordinate[] | null {
     if (blocked.has(`${end[0]}, ${end[1]}`)) {
         return null
     }
@@ -14,7 +13,14 @@ export function bfs(start: Coordinate, end: Coordinate, blocked: Set<TilePoint>)
     const visited = new Set<TilePoint>(blocked)
     visited.add(`${start[0]}, ${start[1]}`)
 
+    let attempts = 0;
+
     while (queue.length > 0) {
+        if (attempts >= maxAttempts) {
+            return null
+        }
+        attempts++;
+
         const [currentPos, path] = queue.shift()!;
         const [x, y] = currentPos
 

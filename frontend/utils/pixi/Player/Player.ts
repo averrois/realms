@@ -63,6 +63,7 @@ export class Player {
     private movementMode: 'keyboard' | 'mouse' = 'mouse'
     public frozen: boolean = false
     private initialized: boolean = false
+    private strikes: number = 0
 
     constructor(skin: string, playApp: PlayApp, username: string, isLocal: boolean = false) {
         this.skin = skin
@@ -175,11 +176,16 @@ export class Player {
     }
 
     public moveToTile = (x: number, y: number) => {
+        if (this.strikes > 25) return
+
         const start: Coordinate = [this.currentTilePosition.x, this.currentTilePosition.y]
         const end: Coordinate = [x, y]
 
         const path: Coordinate[] | null = bfs(start, end, this.playApp.blocked)
         if (!path || path.length === 0) {
+            if (!path && !this.isLocal) {
+                this.strikes++
+            }
             return
         }
 
