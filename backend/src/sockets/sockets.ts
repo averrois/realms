@@ -119,7 +119,8 @@ export function sockets(io: Server) {
                     kickPlayer(uid, 'You have logged in from another location.')
                 }
 
-                const username = users.getUser(uid)!.user_metadata.custom_claims.global_name
+                const user = users.getUser(uid)!
+                const username = user.user_metadata.custom_claims.global_name || user.user_metadata.full_name
                 sessionManager.addPlayerToSession(socket.id, realmData.realmId, uid, username, profile.skin, profile.discord_id)
                 const newSession = sessionManager.getPlayerSession(uid)
                 const player = newSession.getPlayer(uid)   
