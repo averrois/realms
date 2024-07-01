@@ -107,6 +107,9 @@ const sprites: SpriteSheetTile[] = [
     { name: 'well_no_top_ladder', x: 448, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 0, y: 1 },{ x: 1, y: 1 }] },
 
     { name: 'post_right', x: 320, y: 640, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'post_right_sign', x: 384, y: 640, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'post_left', x: 320, y: 704, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
+    { name: 'post_left_sign', x: 384, y: 704, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
 ]
 
 const villageSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
