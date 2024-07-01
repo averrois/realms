@@ -93,6 +93,20 @@ const sprites: SpriteSheetTile[] = [
     { name: 'box', x: 288, y: 160, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'empty_box', x: 320, y: 160, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
     { name: 'small_empty_box', x: 320, y: 192, width: 32, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }] },
+
+    { name: 'three_boxes', x: 192, y: 192, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }, { x: 1, y: 1 }] },
+    { name: 'empty_water_trough', x: 256, y: 224, width: 64, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 1, y: 0 }] },
+    { name: 'filled_water_trough', x: 320, y: 224, width: 64, height: 32, layer: 'object', colliders: [{ x: 0, y: 0 }, { x: 1, y: 0 }] },
+
+    { name: 'well_filled', x: 384, y: 160, width: 64, height: 96, layer: 'object', colliders: [{ x: 0, y: 2 }, { x: 1, y: 2 },{ x: 0, y: 1 }, { x: 1, y: 1 }] },
+    { name: 'well_empty', x: 448, y: 160, width: 64, height: 96, layer: 'object', colliders: [{ x: 0, y: 2 }, { x: 1, y: 2 },{ x: 0, y: 1 }, { x: 1, y: 1 }] },
+
+    { name: 'well_no_top_filled', x: 256, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 0, y: 1 },{ x: 1, y: 1 }] },
+    { name: 'well_no_top_halfway_filled', x: 320, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 0, y: 1 },{ x: 1, y: 1 }] },
+    { name: 'well_no_top_empty', x: 384, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 0, y: 1 },{ x: 1, y: 1 }] },
+    { name: 'well_no_top_ladder', x: 448, y: 256, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 0 },{ x: 1, y: 0 },{ x: 0, y: 1 },{ x: 1, y: 1 }] },
+
+    { name: 'post_right', x: 320, y: 640, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
 ]
 
 const villageSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
