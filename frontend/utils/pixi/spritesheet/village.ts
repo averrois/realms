@@ -110,6 +110,42 @@ const sprites: SpriteSheetTile[] = [
     { name: 'post_right_sign', x: 384, y: 640, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
     { name: 'post_left', x: 320, y: 704, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
     { name: 'post_left_sign', x: 384, y: 704, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
+
+    { name: 'lamp_post_right_off', x: 384, y: 768, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'lamp_post_left_off', x: 448, y: 768, width: 64, height: 64, layer: 'object', colliders: [{ x: 0, y: 1 }] },
+    { name: 'lamp_post_right_on', x: 384, y: 832, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
+    { name: 'lamp_post_right_on', x: 448, y: 832, width: 64, height: 64, layer: 'object', colliders: [{ x: 1, y: 1 }] },
+
+    { name: 'big_fountain', x: 0, y: 800, width: 128, height: 128, layer: 'object', colliders: [
+        { x: 0, y: 0 },
+        { x: 1, y: 0 },
+        { x: 2, y: 0 },
+        { x: 3, y: 0 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 3, y: 1 },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+        { x: 3, y: 2 },
+        { x: 0, y: 3 },
+        { x: 1, y: 3 },
+        { x: 2, y: 3 },
+        { x: 3, y: 3 },
+    ] },
+
+    { name: 'small_fountain', x: 288, y: 800, width: 96, height: 128, layer: 'object', colliders: [
+        { x: 0, y: 3 },
+        { x: 1, y: 3 },
+        { x: 2, y: 3 },
+        { x: 0, y: 1 },
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 0, y: 2 },
+        { x: 1, y: 2 },
+        { x: 2, y: 2 },
+    ] },
 ]
 
 const villageSpriteSheetData = new SpriteSheetData(width, height, url, sprites)
