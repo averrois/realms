@@ -5,7 +5,7 @@ export default async function Index() {
 
   return (
     <div className='w-full pt-48 p-8 flex flex-col items-center'>
-        <div className='max-w-96 flex flex-col items-center '>
+        <div className='max-w-96 flex flex-col items-center'>
             <div className='w-full h-2 bg-primary'/>
             <div className='w-full flex flex-row justify-between'>
                 <AnimatedCharacter src='/sprites/characters/Character_012.png'/>
