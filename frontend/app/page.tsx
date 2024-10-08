@@ -21,7 +21,7 @@ export default async function Index() {
                 <div className='relative bottom-4'>
                     <AnimatedCharacter src='/sprites/characters/Character_009.png'/>
                 </div>
-                <p className='text-sm text-gray-500'>created by <a href="https://x.com/trevdev__" target="_blank" rel="noopener noreferrer" className='font-bold underline'>trevdev</a></p>
+                <p className='text-sm text-gray-500'>created by <a href="https://www.trevdev.me/" target="_blank" rel="noopener noreferrer" className='font-bold underline'>trevdev</a></p>
             </div>
         </div>
     </div>

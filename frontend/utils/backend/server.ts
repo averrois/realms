@@ -15,21 +15,21 @@ class Server {
 
     public async connect(realmId: string, uid: string, shareId: string, access_token: string) {
         this.socket = io(backend_url, {
-        reconnection: true,
-        autoConnect: false,
-        reconnectionAttempts: 5,
-        reconnectionDelay: 2000,
-        transportOptions: {
-            polling: {
-                extraHeaders: {
-                    'Authorization': `Bearer ${access_token}`
+            reconnection: true,
+            autoConnect: false,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 2000,
+            transportOptions: {
+                polling: {
+                    extraHeaders: {
+                        'Authorization': `Bearer ${access_token}`
+                    }
                 }
+            },
+            query: {
+                uid
             }
-        },
-        query: {
-            uid
-        }
-    })
+        })
 
         return new Promise<ConnectionResponse>((resolve, reject) => {
             this.socket.connect()
