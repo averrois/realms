@@ -13,7 +13,7 @@ Hundreds of tiles!
 Fully customizable room layouts!
 Realtime multiplayer chat!
 
-This is a TypeScript web app primarily built with Next.js, Supabase, Socket.io, and TailwindCSS.
+This is a TypeScript web app primarily built with Next.js, Supabase, Socket.io, TailwindCSS, and Pixi.js.
 
 ### How to install
 
