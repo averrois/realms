@@ -1,68 +1,109 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* globals.css (v4) */
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #0f0f0f;
+  --color-secondary: #232d3f;
+  --color-darkblue: #2e3b52;
+  --color-lightblue: #465b82;
+  --color-tertiary: #005b41;
+  --color-quaternary: #008170;
+  --color-quaternaryhover: #029c87;
+  --color-quaternarydisabled: #014f45;
+
+  /* Background Images - CORRECT SYNTAX */
+  --background-image-gradient-radial: radial-gradient(var(--tw-gradient-stops));
+  --background-image-gradient-conic: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--tw-gradient-stops)
+  );
+  --background-image-rainbow: linear-gradient(
+    to right,
+    red,
+    orange,
+    yellow,
+    green,
+    blue,
+    indigo,
+    violet
+  );
+  --background-image-rainbow-less: linear-gradient(45deg, red, blue, indigo);
+  --background-image-rainbow-less-hover: linear-gradient(
+    45deg,
+    #ff4d4d,
+    #4d4dff,
+    #4d4dff
+  );
+  --background-image-rainbow-less-disabled: linear-gradient(
+    45deg,
+    darkred,
+    darkblue,
+    darkindigo
+  );
+}
 
 html {
-    background: #0F0F0F;
-    color: white;
+  background: #0f0f0f;
+  color: white;
 }
 
 .transparent-scrollbar::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 
 .transparent-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
 }
 
 .transparent-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 .no-scrollbar {
-    -ms-overflow-style: none;  /* Internet Explorer 10+ */
-    scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-    display: none; /* Safari and Chrome */
+  display: none; /* Safari and Chrome */
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    margin: 0; 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
 }
 
 .character-container {
-    width: calc(100% * 4);
-    height: calc(100% * 4);
-    animation: animateY 2s steps(4) infinite;
+  width: calc(100% * 4);
+  height: calc(100% * 4);
+  animation: animateY 2s steps(4) infinite;
 }
 
 .character {
-    height: 100%;
-    width: 100%;
-    animation: animated 0.5s steps(4) infinite;
+  height: 100%;
+  width: 100%;
+  animation: animated 0.5s steps(4) infinite;
 }
 
 @keyframes animated {
-    from {
-        transform: translateX(0);
-    }
-    to {
-        transform: translateX(-100%);
-    }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
 }
 
 @keyframes animateY {
-    from {
-        transform: translateY(0);
-    }
-    to {
-        transform: translateY(-100%);
-    }
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
 }
