@@ -8,10 +8,10 @@ import { access } from 'fs'
 
 export default async function App() {
 
-    const supabase = createClient()
+    const supabase =  createClient()
 
-    const { data: { user } } = await supabase.auth.getUser()
-    const { data: { session } } = await supabase.auth.getSession()
+    const { data: { user } } =  await (await supabase).auth.getUser()
+    const { data: { session } } = await (await supabase).auth.getSession()
 
     if (!user || !session) {
         return redirect('/signin')
